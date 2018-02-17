@@ -1,0 +1,30 @@
+﻿{
+    "logging": {
+        "isEnabled": "true",
+        "isConsoleLoggingEnabled": "true",
+        "isDebugLoggingEnabled": "true",
+        "isEventLoggingEnabled": "true",
+        "isFileLoggingEnabled": "true",
+        "includeScopes": true,
+        "fileLogging": {
+            "logLevel": {
+                "default": "Error"
+            },
+            "pathFormat": "Logs/log-{{Date}}.txt",
+            "json": "false",
+            "fileSizeLimitBytes": "100000",
+            "retainedFileCountLimit": 10,
+            "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss} {Message}{NewLine}"
+        },
+        "debug": {
+            "logLevel": {
+                "default": "Error"
+            }
+        },
+        "console": {
+            "logLevel": {
+                "default": "Error"
+            }
+        }
+    }
+}

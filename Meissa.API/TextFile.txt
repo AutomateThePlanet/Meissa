@@ -1,0 +1,104 @@
+﻿list all running containers
+docker ps
+
+
+docker run -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 -it --rm microsoft/mssql-server-linux:latest --accept-eula
+
+
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=s3curePassw0rD' -p 1433:1433 -it --rm microsoft/mssql-server-linux
+
+
+docker run -d -p 1433:1433 -e sa_password=s3curePassw0rD -e ACCEPT_EULA=Y microsoft/mssql-server-linux:latest
+
+
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=s3curePassw0rD" -p 1401:1433 --name sql1 -d microsoft/mssql-server-linux:2017-latest
+
+
+/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 's3curePassw0rD'
+
+
+stop all containers 
+docker stop $(docker ps -a -q)
+remove all containers
+docker rm $(docker ps -a -q)
+
+
+dotnet restore CityInfo.sln dotnet publish CityInfo.sln -c Release -o ./obj/Docker/publish
+
+docker run -it --rm -p 80:5102 -t cityinfo.api:latest
+
+Server=tcp:127.0.0.1,5433;Initial Catalog=CityInfoDB;User Id=sa;Password=CityInfoDB
+
+
+docker inspect –format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}’ 19aff65f0d21
+
+
+ docker run -d -p 5102:80 myapp
+
+
+dotnet restore CityInfo.sln 
+dotnet publish CityInfo.sln -c Release -o ./obj/Docker/publish
+
+
+
+AppRegistrationExtensions UseLogger
+-- better configure test agent settings
+
+- remove fluent commandline parser from core.services
+
+
+TestAgentRun
+TestAgent
+TestRun
+
+
+-- view models and in controllers add Include clouses for foreign keys
+
+-- create nativeRunner argument "pass here all netive runner args in /""
+
+
+
+
+change how we get the argument for the runner --- directly from console + pass native runner arguments?
+
+filter only by category for now?  test method, test class?
+
+if count of tests is less than the number of agents should execute? --- fix later
+
+native test framework get all tests method and filter service --> return all filtered tests
+
+native runner format the testLists (filters)
+
+should specify testAdapter?
+
+
+--testTechnology mstest   //save in the test run
+register different services based on the technology in the testAgentRunService
+
+get all tests from the test assemly
+--> get all their properties - category, testName, testClassName
+- execute dynamic filter of all these tests -- LINQ dynamic
+
+-- based on agents' count create lists -- or balance logic
+-- in test runner do no build technology specific lists--- write the lists as JSON list
+
+-- build technology specific technology lists (create files or build arguments) on test agent level
+----> save native arguments in DB for the run?
+
+resultsOutputFolder
+originalOutputFilesLocation
+sharedOutputFilesLocation
+testsFilter
+resultsFolder
+testLibraryPath
+agentTag
+testTechnology 
+parallelTestAgentRuns
+
+
+when argument is null exception? better exceptionsss,,,,
+write down all configurations for test create bats, better messages if you miss some params
+
+
+
+

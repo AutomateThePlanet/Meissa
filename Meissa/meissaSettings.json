@@ -1,0 +1,36 @@
+﻿{
+    "testAgent": {
+        "agentTag": "meissaAgent",
+        "testAgentRunTimeout": "180",
+        "testRunTimeout": "180",
+        "nunitConsoleExePath": "C:\\NUnit\\nunit-console\\nunit3-console.exe"
+    },
+    "logging": {
+        "isEnabled": "true",
+        "isConsoleLoggingEnabled": "false",
+        "isDebugLoggingEnabled": "false",
+        "isEventLoggingEnabled": "false",
+        "isFileLoggingEnabled": "true",
+        "includeScopes": true,
+        "fileLogging": {
+            "LogLevel": {
+                "Default": "Information"
+            },
+            "pathFormat": "Logs/log-{{Date}}.txt",
+            "json": "false",
+            "fileSizeLimitBytes": "100000",
+            "retainedFileCountLimit": 10
+        },
+        "Debug": {
+            "LogLevel": {
+                "Default": "Information"
+            }
+        },
+        "Console": {
+            "LogLevel": {
+                "Microsoft.AspNetCore.Mvc.Razor.Internal": "Warning",
+                "Default": "Information"
+            }
+        }
+    }
+}

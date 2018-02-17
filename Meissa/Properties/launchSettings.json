@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Meissa": {
+      "commandName": "Project",
+      "commandLineArgs": "testAgent --testAgentTag=\"Agent1\" --testServerUrl=\"http://127.0.0.1:5000\""
+    }
+  }
+}
