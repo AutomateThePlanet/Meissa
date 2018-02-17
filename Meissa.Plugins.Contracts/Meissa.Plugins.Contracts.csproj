@@ -8,6 +8,9 @@
   
   <PropertyGroup>
     <CodeAnalysisRuleSet>$(SolutionDir)\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>Provides contracts for creating test runner and test workflow plugins for Meissa distributed test runner.</Description>
   </PropertyGroup>
 
   <ItemGroup>
