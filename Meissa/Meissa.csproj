@@ -5,7 +5,9 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
   </PropertyGroup>
-
+  
+  <Import Project="..\SharedAssemblyInfo.targets" />
+  
   <PropertyGroup>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>

@@ -16,6 +16,5 @@
 // attributes that are applied to this project.
 // Project-level suppressions either have no target or are given
 // a specific target and scoped to a namespace, type, member, etc.
-
 using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1627:Documentation text should not be empty", Justification = "Not needed", Scope = "member", Target = "~P:Meissa.Core.Model.NUnit.testrunTestsuiteProperty.name")]
