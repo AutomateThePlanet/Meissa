@@ -1,5 +1,5 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/p2rek52nkxv93ma8?svg=true)](https://ci.appveyor.com/project/angelovstanton/meissa) [![Join the chat at https://gitter.im/meissarunner/Lobby](https://badges.gitter.im/meissarunner/Lobby.svg)](https://gitter.im/meissarunner/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-![](https://img.shields.io/badge/license-%20Apache--2.0-blue.svg) [![Overview](https://img.shields.io/badge/docs-Overview-green.svg?style=flat)](https://github.com/angelovstanton/Meissa) [![ChangeLog](https://img.shields.io/badge/docs-ChangeLog-green.svg?style=flat)](https://github.com/angelovstanton/Meissa/wiki/Change-Log) [![download](https://img.shields.io/badge/download-0.1-orange.svg)](https://github.com/angelovstanton/Meissa)
+![](https://img.shields.io/badge/license-%20Apache--2.0-blue.svg) [![Overview](https://img.shields.io/badge/docs-Overview-green.svg?style=flat)](https://github.com/angelovstanton/Meissa) [![ChangeLog](https://img.shields.io/badge/docs-ChangeLog-green.svg?style=flat)](https://github.com/angelovstanton/Meissa/wiki/Change-Log) [![download](https://img.shields.io/badge/download-1.0.0.0-orange.svg)](https://github.com/angelovstanton/Meissa)
 
 ![Meissa Description](https://i.imgur.com/aMVooJy.png)
 
