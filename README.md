@@ -44,8 +44,9 @@ Usually, you have one test agent per machine. So, more machines you have, faster
 
 3. **Start Meissa tests runner**
 ```
-meissa.exe runner --resultsFilePath="pathToResults\result.trx" --outputFilesLocation="pathToBuildedFiles" --agentTag="APIAgent" 
---testTechnology="MSTestCore" --testLibraryPath="pathToBuildedFiles\SampleTestProj.dll"
+meissa.exe runner --resultsFilePath="pathToResults\result.trx" --outputFilesLocation="pathToBuildedFiles" 
+--agentTag="APIAgent" --testTechnology="MSTestCore" 
+--testLibraryPath="pathToBuildedFiles\SampleTestProj.dll"
 ```
 
 Usually, you start the runner from CI job. The typical workflow will be. Download the tests source code. Build it. Execute tests with Meissa. Publish the results produced by Meissa.
