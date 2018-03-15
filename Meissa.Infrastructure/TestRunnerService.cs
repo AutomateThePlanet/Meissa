@@ -12,11 +12,8 @@
 // <author>Anton Angelov</author>
 // <site>https://automatetheplanet.com/</site>
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Meissa.API.Models;
@@ -36,8 +33,6 @@ namespace Meissa.Infrastructure
         private readonly IConsoleProvider _consoleProvider;
         private readonly ITestsRunnerTestResultsService _testResultsService;
         private readonly IJsonSerializer _jsonSerializer;
-        private readonly IXmlSerializer _xmlSerializer;
-        private readonly IDistributeLogger _distributeLogger;
         private readonly ITestCasesHistoryService _testCasesHistoryService;
         private readonly ITaskProvider _taskProvider;
         private readonly IPluginService _pluginService;
@@ -55,8 +50,6 @@ namespace Meissa.Infrastructure
             IConsoleProvider consoleProvider,
             ITestsRunnerTestResultsService testResultsService,
             IJsonSerializer jsonSerializer,
-            IXmlSerializer xmlSerializer,
-            IDistributeLogger distributeLogger,
             ITestCasesHistoryService testCasesHistoryService,
             ITaskProvider taskProvider,
             IPluginService pluginService,
@@ -71,8 +64,6 @@ namespace Meissa.Infrastructure
             _consoleProvider = consoleProvider;
             _testResultsService = testResultsService;
             _jsonSerializer = jsonSerializer;
-            _xmlSerializer = xmlSerializer;
-            _distributeLogger = distributeLogger;
             _testCasesHistoryService = testCasesHistoryService;
             _taskProvider = taskProvider;
             _pluginService = pluginService;
@@ -296,7 +287,6 @@ namespace Meissa.Infrastructure
                                  }
 
                                  innerCancellationTokenSource.Cancel();
-                                 return;
                              }
                              else if (outerCancellationTokenSource.Token.IsCancellationRequested)
                              {
@@ -319,8 +309,6 @@ namespace Meissa.Infrastructure
                                          }
                                      }
                                  }
-
-                                 return;
                              }
                          },
                          5000);

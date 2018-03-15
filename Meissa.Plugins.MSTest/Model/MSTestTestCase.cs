@@ -12,8 +12,6 @@
 // <author>Anton Angelov</author>
 // <site>https://automatetheplanet.com/</site>
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Meissa.Core.Model;
 
 namespace Meissa.Plugins.MSTest.Model

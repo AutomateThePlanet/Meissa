@@ -13,7 +13,6 @@
 // <site>https://automatetheplanet.com/</site>
 using System;
 using System.IO;
-using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,7 +63,7 @@ namespace Meissa
             try
             {
                 // TODO set the correct IP and Port--> option configure server URL
-                var result = Parser.Default.ParseArguments<
+                Parser.Default.ParseArguments<
                         RunnerModeOptions,
                         InitializeServerModeOptions,
                         TestAgentModeOptions,
@@ -75,7 +74,7 @@ namespace Meissa
                     MapResult(
                         (RunnerModeOptions opts) => ExecuteTestRun(opts),
                         (InitializeServerModeOptions opts) => InitializeServer(),
-                        (TestAgentModeOptions opts) => ExecuteTestAgentRun(opts, args),
+                        (TestAgentModeOptions opts) => ExecuteTestAgentRun(opts),
                         (DumpModeOptions opts) => CreateDumpByFilePath(opts.DumpPath, opts.TestServerUrl),
                         (StatusModeOptions opts) => PrintAgentsStatus(opts.AgentTag, opts.TestServerUrl),
                         (DeleteModeOptions opts) => DeleteAllDumps(opts.TestServerUrl),
@@ -111,7 +110,7 @@ namespace Meissa
             }
         }
 
-        private static int ExecuteTestAgentRun(TestAgentModeOptions options, string[] args)
+        private static int ExecuteTestAgentRun(TestAgentModeOptions options)
         {
             try
             {
@@ -211,7 +210,7 @@ namespace Meissa
 
             InitializeAllTypes(serverUri);
 
-            bool wasSuccessfulRun = false;
+            bool wasSuccessfulRun= false;
             try
             {
                 var testExecutionService = _container.Resolve<TestExecutionService>();
@@ -222,13 +221,11 @@ namespace Meissa
                 var exceptionLogger = _container.Resolve<IDistributeLogger>();
                 exceptionLogger.LogErrorAsync(ex.Message, ex).Wait();
                 Environment.Exit(0);
-                return 0;
             }
             catch (Exception ex) when (ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
             {
                 Console.WriteLine($"A connection with the server {runnerModeOptions.TestServerUrl} could not be established.");
                 Environment.Exit(-1);
-                return -1;
             }
             catch (Exception e)
             {
@@ -236,7 +233,6 @@ namespace Meissa
                 var exceptionLogger = _container.Resolve<IDistributeLogger>();
                 exceptionLogger.LogErrorAsync(e.Message, e).Wait();
                 Environment.Exit(-1);
-                return -1;
             }
 
             DateTime endTime = DateTime.Now;

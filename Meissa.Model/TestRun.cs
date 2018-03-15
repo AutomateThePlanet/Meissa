@@ -12,7 +12,6 @@
 // <author>Anton Angelov</author>
 // <site>https://automatetheplanet.com/</site>
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

@@ -14,12 +14,10 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using Meissa.API.Models;
@@ -163,8 +161,8 @@ namespace Meissa.Plugins.MSTest
                                         var mergedTestRunTestSuiteClass = mergedTestRunTestSuiteNamespace.testsuite.First(x => x.id.Equals(testSuiteNamespace.id));
 
                                         // Merge test suite class level.
-                                        mergedTestRunTestSuiteClass.failed = (int)testSuiteTestSuite.testcase.Count(x => x.result.Equals("Failed"));
-                                        mergedTestRunTestSuiteClass.passed = (int)testSuiteTestSuite.testcase.Count(x => x.result.Equals("Passed"));
+                                        mergedTestRunTestSuiteClass.failed = testSuiteTestSuite.testcase.Count(x => x.result.Equals("Failed"));
+                                        mergedTestRunTestSuiteClass.passed = testSuiteTestSuite.testcase.Count(x => x.result.Equals("Passed"));
                                         if (mergedTestRunTestSuiteClass.passed != testSuiteTestSuite.testcase.Length)
                                         {
                                             mergedTestRunTestSuiteClass.result = "Failed";
@@ -229,8 +227,8 @@ namespace Meissa.Plugins.MSTest
             {
                 foreach (var testSuiteTestSuite in testSuiteNamespace.testsuite)
                 {
-                    testSuiteTestSuite.failed = (int)testSuiteTestSuite.testcase.Count(x => x.result.Equals("Failed"));
-                    testSuiteTestSuite.passed = (int)testSuiteTestSuite.testcase.Count(x => x.result.Equals("Passed"));
+                    testSuiteTestSuite.failed = testSuiteTestSuite.testcase.Count(x => x.result.Equals("Failed"));
+                    testSuiteTestSuite.passed = testSuiteTestSuite.testcase.Count(x => x.result.Equals("Passed"));
                     if (testSuiteTestSuite.passed != testSuiteTestSuite.testcase.Length)
                     {
                         testSuiteNamespace.result = "Failed";
@@ -397,37 +395,6 @@ namespace Meissa.Plugins.MSTest
 
             File.WriteAllText(testListFilePath, sb.ToString());
             return testListFilePath;
-        }
-
-        private List<string> CreateRunFilterArgument(List<TestCase> distributedTestCases)
-        {
-            var runFilterArgumentBuilder = new StringBuilder();
-            var argumentsLists = new List<string>();
-            foreach (var testCase in distributedTestCases)
-            {
-                runFilterArgumentBuilder.Append($"FullyQualifiedName={testCase.FullName}|");
-                if (runFilterArgumentBuilder.ToString().Length > 25000)
-                {
-                    argumentsLists.Add(runFilterArgumentBuilder.ToString().TrimEnd('|'));
-                    runFilterArgumentBuilder = new StringBuilder();
-                }
-            }
-
-            if (runFilterArgumentBuilder.ToString().Length > 0)
-            {
-                argumentsLists.Add(runFilterArgumentBuilder.ToString().TrimEnd('|'));
-            }
-
-            return argumentsLists;
-        }
-
-        private TEntity[] ConcatArrays<TEntity>(TEntity[] firstArray, TEntity[] secondArray)
-        {
-            var resultArray = new TEntity[firstArray.Length + secondArray.Length];
-            firstArray.CopyTo(resultArray, 0);
-            secondArray.CopyTo(resultArray, firstArray.Length);
-
-            return resultArray;
         }
 
         private TEntity Deserialize<TEntity>(string content)

@@ -180,7 +180,7 @@ namespace Meissa.Plugins.MSTest
             {
                 var unitTestId = currentUnitTestResult.testId;
                 var duration = currentUnitTestResult.duration;
-                var currentUnitTest = ((TestRun)testRun).TestDefinitions.FirstOrDefault(x => x.id.Equals(unitTestId));
+                var currentUnitTest = testRun.TestDefinitions.FirstOrDefault(x => x.id.Equals(unitTestId));
 
                 var className = currentUnitTest?.TestMethod.className.Split(',').Last().Trim();
                 var unitTestLibraryName = currentUnitTest?.TestMethod.codeBase;

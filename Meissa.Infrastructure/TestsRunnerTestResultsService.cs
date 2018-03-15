@@ -29,7 +29,6 @@ namespace Meissa.Infrastructure
         private readonly IFileProvider _fileProvider;
         private readonly IDirectoryProvider _directoryProvider;
         private readonly IPathProvider _pathProvider;
-        private readonly IXmlSerializer _xmlSerializer;
         private readonly IPluginService _pluginService;
         private INativeTestsRunnerPluginService _nativeTestsRunnerPluginService;
 
@@ -39,7 +38,6 @@ namespace Meissa.Infrastructure
             IFileProvider fileProvider,
             IDirectoryProvider directoryProvider,
             IPathProvider pathProvider,
-            IXmlSerializer xmlSerializer,
             IPluginService pluginService)
         {
             _testAgentRunRepository = testAgentRunRepository;
@@ -47,7 +45,6 @@ namespace Meissa.Infrastructure
             _fileProvider = fileProvider;
             _directoryProvider = directoryProvider;
             _pathProvider = pathProvider;
-            _xmlSerializer = xmlSerializer;
             _pluginService = pluginService;
         }
 

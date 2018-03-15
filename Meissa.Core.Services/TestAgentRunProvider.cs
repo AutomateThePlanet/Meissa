@@ -60,7 +60,6 @@ namespace Meissa.Core.Services
             ITestAgentsLoggerService testAgentsLoggerService,
             IDistributeLogger logger,
             ITestAgentStateSwitcher testAgentStateSwitcher,
-            ITestAgentsService testAgentsService,
             IPathProvider pathProvider,
             IFileProvider fileProvider,
             IConsoleProvider consoleProvider,

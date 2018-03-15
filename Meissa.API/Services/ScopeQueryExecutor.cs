@@ -21,7 +21,7 @@ namespace Meissa.API.Services
     public static class ScopeQueryExecutor
     {
         public static async Task Execute(Action<MeissaRepository> action) =>
-            await Task.Factory.StartNew(async () =>
+            await Task.Factory.StartNew(() =>
             {
                 var optionsBuilder = new DbContextOptionsBuilder<TestsRunsContext>();
                 optionsBuilder.UseSqlite("Data Source=meissa.db");
