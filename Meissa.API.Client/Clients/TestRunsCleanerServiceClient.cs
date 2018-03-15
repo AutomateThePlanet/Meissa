@@ -13,12 +13,9 @@
 // <site>https://automatetheplanet.com/</site>
 using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
-using Meissa.Model;
 using Newtonsoft.Json;
 
 namespace Meissa.API.Client.Clients
@@ -38,13 +35,13 @@ namespace Meissa.API.Client.Clients
                 HttpClientService.Client.BaseAddress = new Uri(_baseUrl);
             }
 
-            var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-            {
-                Method = HttpMethod.Delete,
-                RequestUri = new Uri($"{_baseUrl}{ControllerUrl}"),
-            },
-            5,
-            2000);
+            await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
+                                                                    {
+                                                                        Method = HttpMethod.Delete,
+                                                                        RequestUri = new Uri($"{_baseUrl}{ControllerUrl}"),
+                                                                    },
+                5,
+                2000);
         }
 
         public async Task DeleteOldTestRunDataByTestRunIdAsync(Guid id)
@@ -57,14 +54,14 @@ namespace Meissa.API.Client.Clients
             string jsonToBeCreated = JsonConvert.SerializeObject(id);
             var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
 
-            var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-            {
-                Method = HttpMethod.Delete,
-                RequestUri = new Uri($"{_baseUrl}{ControllerUrl}/testRun"),
-                Content = httpContent,
-            },
-            5,
-            2000);
+            await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
+                                                                    {
+                                                                        Method = HttpMethod.Delete,
+                                                                        RequestUri = new Uri($"{_baseUrl}{ControllerUrl}/testRun"),
+                                                                        Content = httpContent,
+                                                                    },
+                5,
+                2000);
         }
     }
 }

@@ -13,10 +13,8 @@
 // <site>https://automatetheplanet.com/</site>
 using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
 using Meissa.Model;
 using Newtonsoft.Json;
@@ -37,14 +35,14 @@ namespace Meissa.API.Client.Clients
                 HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
             }
 
-            var response = await HttpClientService.Client.SendAsyncWithRetry(() =>
-            new HttpRequestMessage
-            {
-                Method = HttpMethod.Delete,
-                RequestUri = new Uri($"{BaseUrl}{ControllerUrl}/outputFiles"),
-            },
-            5,
-            2000);
+            await HttpClientService.Client.SendAsyncWithRetry(() =>
+                    new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Delete,
+                        RequestUri = new Uri($"{BaseUrl}{ControllerUrl}/outputFiles"),
+                    },
+                5,
+                2000);
         }
 
         public async Task DeleteTestRunOutputByTestRunIdAsync(Guid id)
@@ -54,19 +52,18 @@ namespace Meissa.API.Client.Clients
                 HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
             }
 
-            var entity = default(TestRunOutputDto);
-            string jsonToBeCreated = JsonConvert.SerializeObject(id);
+            var jsonToBeCreated = JsonConvert.SerializeObject(id);
             var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
 
-            var response = await HttpClientService.Client.SendAsyncWithRetry(() =>
-            new HttpRequestMessage
-            {
-                Method = HttpMethod.Delete,
-                RequestUri = new Uri($"{BaseUrl}{ControllerUrl}/testRun"),
-                Content = httpContent,
-            },
-            5,
-            2000);
+            await HttpClientService.Client.SendAsyncWithRetry(() =>
+                    new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Delete,
+                        RequestUri = new Uri($"{BaseUrl}{ControllerUrl}/testRun"),
+                        Content = httpContent,
+                    },
+                5,
+                2000);
         }
 
         public async Task<TestRunOutputDto> GetTestRunOutputByTestRunIdAsync(Guid id)
@@ -76,7 +73,6 @@ namespace Meissa.API.Client.Clients
                 HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
             }
 
-            var entity = default(TestRunOutputDto);
             string jsonToBeCreated = JsonConvert.SerializeObject(id);
             var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
 
@@ -88,7 +84,7 @@ namespace Meissa.API.Client.Clients
             },
             5,
             2000);
-            entity = await DeserializeResponse<TestRunOutputDto>(response);
+            var entity = await DeserializeResponse<TestRunOutputDto>(response);
 
             return entity;
         }

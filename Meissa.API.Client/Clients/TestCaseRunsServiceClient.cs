@@ -45,14 +45,14 @@ namespace Meissa.API.Client.Clients
             string jsonToBeUpdated = JsonConvert.SerializeObject(testCaseRuns);
             var httpContent = new StringContent(jsonToBeUpdated, Encoding.UTF8, AppJson);
 
-            var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-            {
-                Method = HttpMethod.Put,
-                RequestUri = new Uri($"{_baseUrl}{_controllerUrl}"),
-                Content = httpContent,
-            },
-            5,
-            2000);
+            await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
+                                                                    {
+                                                                        Method = HttpMethod.Put,
+                                                                        RequestUri = new Uri($"{_baseUrl}{_controllerUrl}"),
+                                                                        Content = httpContent,
+                                                                    },
+                5,
+                2000);
         }
 
         public async Task DeleteOlderTestCasesHistoryAsync()
@@ -62,13 +62,13 @@ namespace Meissa.API.Client.Clients
                 HttpClientService.Client.BaseAddress = new Uri(_baseUrl);
             }
 
-            var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-            {
-                Method = HttpMethod.Delete,
-                RequestUri = new Uri($"{_baseUrl}{_controllerUrl}"),
-            },
-            5,
-            2000);
+            await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
+                                                                    {
+                                                                        Method = HttpMethod.Delete,
+                                                                        RequestUri = new Uri($"{_baseUrl}{_controllerUrl}"),
+                                                                    },
+                5,
+                2000);
         }
     }
 }

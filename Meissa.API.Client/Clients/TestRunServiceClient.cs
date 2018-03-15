@@ -11,12 +11,8 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://automatetheplanet.com/</site>
-using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
+
 using Meissa.API.Models;
-using Meissa.Core.Contracts;
 
 namespace Meissa.API.Client.Clients
 {

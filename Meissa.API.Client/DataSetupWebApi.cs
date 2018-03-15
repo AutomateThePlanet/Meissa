@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Meissa.Core.Contracts;
@@ -47,7 +46,6 @@ namespace Meissa.API.Client
                 HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
             }
 
-            var entity = default(TEntityDto);
             string jsonToBeCreated = JsonConvert.SerializeObject(entityToBeCreated);
             var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
             var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
@@ -58,7 +56,7 @@ namespace Meissa.API.Client
             },
             5,
             2000);
-            entity = await DeserializeResponse<TEntityDto>(response);
+            var entity = await DeserializeResponse<TEntityDto>(response);
 
             return entity;
         }
@@ -72,14 +70,14 @@ namespace Meissa.API.Client
 
             string jsonToBeUpdated = JsonConvert.SerializeObject(new KeyValuePair<TSearchCriteria, TEntityDto>(id, entityToBeUpdated));
             var httpContent = new StringContent(jsonToBeUpdated, Encoding.UTF8, AppJson);
-            var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-            {
-                Method = HttpMethod.Put,
-                RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
-                Content = httpContent,
-            },
-            5,
-            2000);
+            await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
+                                                                    {
+                                                                        Method = HttpMethod.Put,
+                                                                        RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
+                                                                        Content = httpContent,
+                                                                    },
+                5,
+                2000);
         }
 
         public async Task DeleteAsync<TSearchCriteria>(TSearchCriteria id)
@@ -91,14 +89,14 @@ namespace Meissa.API.Client
 
             string jsonToBeCreated = JsonConvert.SerializeObject(id);
             var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
-            var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-            {
-                Method = HttpMethod.Delete,
-                RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
-                Content = httpContent,
-            },
-            5,
-            2000);
+            await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
+                                                                    {
+                                                                        Method = HttpMethod.Delete,
+                                                                        RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
+                                                                        Content = httpContent,
+                                                                    },
+                5,
+                2000);
         }
 
         public async Task<TEntityDto> GetAsync<TSearchCriteria>(TSearchCriteria searchCriteria)
@@ -108,7 +106,6 @@ namespace Meissa.API.Client
                 HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
             }
 
-            var entity = default(TEntityDto);
             string jsonToBeCreated = JsonConvert.SerializeObject(searchCriteria);
             var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
 
@@ -120,7 +117,7 @@ namespace Meissa.API.Client
             },
             5,
             2000);
-            entity = await DeserializeResponse<TEntityDto>(response);
+            var entity = await DeserializeResponse<TEntityDto>(response);
 
             return entity;
         }
@@ -132,8 +129,6 @@ namespace Meissa.API.Client
                 HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
             }
 
-            var entitiesList = default(List<TEntityDto>);
-
             var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
@@ -141,7 +136,7 @@ namespace Meissa.API.Client
             },
             5,
             2000);
-            entitiesList = await DeserializeResponse<List<TEntityDto>>(response);
+            var entitiesList = await DeserializeResponse<List<TEntityDto>>(response);
 
             if (entitiesList == null)
             {
@@ -162,7 +157,7 @@ namespace Meissa.API.Client
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                result = null;
+                return null;
             }
 
             return result;
