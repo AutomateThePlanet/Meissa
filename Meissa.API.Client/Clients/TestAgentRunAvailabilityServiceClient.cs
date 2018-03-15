@@ -13,10 +13,8 @@
 // <site>https://automatetheplanet.com/</site>
 using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
 using Meissa.Model;
 using Newtonsoft.Json;
@@ -37,7 +35,6 @@ namespace Meissa.API.Client.Clients
                 HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
             }
 
-            var entity = default(TestAgentRunAvailabilityDto);
             string jsonToBeCreated = JsonConvert.SerializeObject(id);
             var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
 
@@ -49,7 +46,7 @@ namespace Meissa.API.Client.Clients
             },
             5,
             2000);
-            entity = await DeserializeResponse<TestAgentRunAvailabilityDto>(response);
+            var entity = await DeserializeResponse<TestAgentRunAvailabilityDto>(response);
 
             return entity;
         }

@@ -35,10 +35,7 @@ namespace Meissa.Infrastructure
             _shouldRefreshEntities = shouldRefreshEntities;
         }
 
-        public void Dispose()
-        {
-            _context?.Dispose();
-        }
+        public void Dispose() => _context?.Dispose();
 
         public async Task<TEntity> GetByIdAsync<TEntity>(int id)
         where TEntity : class

@@ -52,10 +52,7 @@ namespace Meissa.Core.Services
             return executedTestCases;
         }
 
-        public async Task DeleteOlderTestCasesHistoryAsync()
-        {
-            await _testCaseRunsServiceClient.DeleteOlderTestCasesHistoryAsync();
-        }
+        public async Task DeleteOlderTestCasesHistoryAsync() => await _testCaseRunsServiceClient.DeleteOlderTestCasesHistoryAsync();
 
         public async Task UpdateTestCaseExecutionHistoryAsync(List<TestCaseRun> testCaseRuns)
         {

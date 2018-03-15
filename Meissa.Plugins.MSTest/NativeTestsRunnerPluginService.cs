@@ -14,11 +14,9 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using Meissa.API.Models;
@@ -72,20 +70,20 @@ namespace Meissa.Plugins.MSTest
             var testRun = Deserialize<TestRun>(testRunContent);
             var results = testRun.Results.ToList().Where(x => x.outcome.Equals("Passed")).ToList();
             var passedTestCases = ConvertUnitTestsResultsToTestCases(results, testRun);
-            return results;
+            return passedTestCases;
         }
 
         public int GetAllPassesTestsCount(object testRunObj)
         {
             var testRun = (TestRun)testRunObj;
-            int count = testRun.Results.ToList().Where(x => x.outcome.Equals("Passed")).Count();
+            int count = testRun.Results.Count(x => x.outcome.Equals("Passed"));
             return count;
         }
 
         public int GetAllNotPassesTestsCount(object testRunObj)
         {
             var testRun = (TestRun)testRunObj;
-            int count = testRun.Results.ToList().Where(x => !x.outcome.Equals("Passed")).Count();
+            int count = testRun.Results.Count(x => !x.outcome.Equals("Passed"));
             return count;
         }
 
