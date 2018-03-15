@@ -210,7 +210,7 @@ namespace Meissa
 
             InitializeAllTypes(serverUri);
 
-            bool wasSuccessfulRun= false;
+            bool wasSuccessfulRun = false;
             try
             {
                 var testExecutionService = _container.Resolve<TestExecutionService>();

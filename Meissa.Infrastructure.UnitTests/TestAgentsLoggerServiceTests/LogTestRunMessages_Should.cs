@@ -13,8 +13,6 @@
 // <site>https://automatetheplanet.com/</site>
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using Meissa.API.Models;
@@ -42,7 +40,7 @@ namespace Meissa.Infrastructure.UnitTests.TestAgentsLoggerServiceTests
         }
 
         [Test]
-        public async Task TestRunMessagesNotUpdated_When_NoTestRunLogMessagesExist()
+        public void TestRunMessagesNotUpdated_When_NoTestRunLogMessagesExist()
         {
             // Arrange
             var fixture = new Fixture();
@@ -63,7 +61,7 @@ namespace Meissa.Infrastructure.UnitTests.TestAgentsLoggerServiceTests
         }
 
         [Test]
-        public async Task TestRunMessagesNotUpdated_When_NoNewTestRunLogMessagesExist()
+        public void TestRunMessagesNotUpdated_When_NoNewTestRunLogMessagesExist()
         {
             // Arrange
             var fixture = new Fixture();
@@ -83,14 +81,13 @@ namespace Meissa.Infrastructure.UnitTests.TestAgentsLoggerServiceTests
         }
 
         [Test]
-        public async Task OneTestRunMessageUpdated_When_OneTestRunLogMessageExistsInStatusNew()
+        public void OneTestRunMessageUpdated_When_OneTestRunLogMessageExistsInStatusNew()
         {
             // Arrange
             var fixture = new Fixture();
             var expectedTestRunId = fixture.Create<Guid>();
             var actualTestRunLog = default(TestRunLogDto);
             var testRunLogs = TestRunLogFactory.CreateMany(expectedTestRunId, TestRunLogStatus.New, 1);
-            Debug.WriteLine(testRunLogs.Count());
             _testRunLogRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testRunLogs));
             _testRunLogRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<int>(), It.IsAny<TestRunLogDto>())).Callback((TestRunLogDto testRunLog) => actualTestRunLog = testRunLog);
             var testAgentsLoggerServicePrivate =
@@ -106,14 +103,13 @@ namespace Meissa.Infrastructure.UnitTests.TestAgentsLoggerServiceTests
         }
 
         [Test]
-        public async Task TwoTestRunMessagesUpdated_When_TwoTestRunLogMessagesExistInStatusNew()
+        public void TwoTestRunMessagesUpdated_When_TwoTestRunLogMessagesExistInStatusNew()
         {
             // Arrange
             var fixture = new Fixture();
             var expectedTestRunId = fixture.Create<Guid>();
             List<TestRunLogDto> actualTestRunLogs = new List<TestRunLogDto>();
             var testRunLogs = TestRunLogFactory.CreateMany(expectedTestRunId, TestRunLogStatus.New, 2);
-            Debug.WriteLine(testRunLogs.Count());
             _testRunLogRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testRunLogs));
             _testRunLogRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<int>(), It.IsAny<TestRunLogDto>())).Callback((TestRunLogDto testRunLog) => actualTestRunLogs.Add(testRunLog));
             var testAgentsLoggerServicePrivate =

@@ -30,7 +30,6 @@ namespace Meissa.Core.Services.UnitTests.TestRunProviderTests
         private Mock<IServiceClient<TestRunDto>> _testRunRepositoryMock;
         private Mock<IServiceClient<TestRunCustomArgumentDto>> _testRunCustomArgumentRepositoryMock;
         private Mock<ITestRunOutputServiceClient> _testRunOutputRepositoryMock;
-        private Mock<ITestRunsCleanerServiceClient> _testRunsCleanerServiceClient;
         private Mock<IDateTimeProvider> _dateTimeProviderMock;
         private Mock<IGuidService> _guidServiceMock;
         private ITestRunProvider _testRunProvider;
@@ -44,7 +43,6 @@ namespace Meissa.Core.Services.UnitTests.TestRunProviderTests
             _testRunCustomArgumentRepositoryMock = new Mock<IServiceClient<TestRunCustomArgumentDto>>();
             _dateTimeProviderMock = new Mock<IDateTimeProvider>();
             _guidServiceMock = new Mock<IGuidService>();
-            _testRunsCleanerServiceClient = new Mock<ITestRunsCleanerServiceClient>();
             _testRunOutputRepositoryMock = new Mock<ITestRunOutputServiceClient>();
             _testRunProvider = new TestRunProvider(_testRunRepositoryMock.Object, _testRunCustomArgumentRepositoryMock.Object, _testRunOutputRepositoryMock.Object, _dateTimeProviderMock.Object, _guidServiceMock.Object);
             _fixture = new Fixture();
@@ -54,7 +52,7 @@ namespace Meissa.Core.Services.UnitTests.TestRunProviderTests
         [Test]
         [TestCase(TestRunStatus.Aborted)]
         [TestCase(TestRunStatus.Completed)]
-        public async Task ThrowInvalidOperationException_When_NoTestRunExistForProvidedTestRunId_AndStatus(TestRunStatus status)
+        public void ThrowInvalidOperationException_When_NoTestRunExistForProvidedTestRunId_AndStatus(TestRunStatus status)
         {
             // Arrange
             var testRuns = TestRunFactory.CreateMany();
@@ -70,7 +68,7 @@ namespace Meissa.Core.Services.UnitTests.TestRunProviderTests
         [Test]
         [TestCase(TestRunStatus.Aborted)]
         [TestCase(TestRunStatus.Completed)]
-        public async Task ThrowInvalidOperationException_When_MoreThanOneTestRunExistForProvidedTestRunId_AndStatus(TestRunStatus status)
+        public void ThrowInvalidOperationException_When_MoreThanOneTestRunExistForProvidedTestRunId_AndStatus(TestRunStatus status)
         {
             // Arrange
             var testRuns = TestRunFactory.CreateMany(_testRunId);
@@ -84,7 +82,7 @@ namespace Meissa.Core.Services.UnitTests.TestRunProviderTests
         }
 
         [Test]
-        public async Task ThrowArgumentException_When_ProvidedStatusIsInProgress()
+        public void ThrowArgumentException_When_ProvidedStatusIsInProgress()
         {
             // Arrange
             var testRuns = TestRunFactory.CreateSingleInProgress(_testRunId);
@@ -107,7 +105,7 @@ namespace Meissa.Core.Services.UnitTests.TestRunProviderTests
             _testRunRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testRun));
 
             // Act
-            _testRunProvider.CompleteTestRunAsync(_testRunId, status);
+            await _testRunProvider.CompleteTestRunAsync(_testRunId, status);
 
             // Assert
             _testRunRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<int>(), It.Is<TestRunDto>(i => i.TestRunId == _testRunId && i.Status == status)), Times.Once);
@@ -124,7 +122,7 @@ namespace Meissa.Core.Services.UnitTests.TestRunProviderTests
             _testRunRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(currentTestRun.Union(otherTestRuns)));
 
             // Act
-            _testRunProvider.CompleteTestRunAsync(_testRunId, status);
+            await _testRunProvider.CompleteTestRunAsync(_testRunId, status);
 
             // Assert
             _testRunRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<int>(), It.Is<TestRunDto>(i => i.TestRunId == _testRunId && i.Status == status)), Times.Once);

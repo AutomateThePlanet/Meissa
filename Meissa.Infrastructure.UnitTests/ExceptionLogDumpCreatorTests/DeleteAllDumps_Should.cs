@@ -60,10 +60,10 @@ namespace Meissa.Infrastructure.UnitTests.ExceptionLogDumpCreatorTests
                 _reflectionProvider.Object);
 
             // Act
-            exceptionLogDumpCreator.DeleteAllDumpsAsync();
+            await exceptionLogDumpCreator.DeleteAllDumpsAsync();
 
             // Assert
-            exceptionLogDumpCreator.DeleteAllDumpsAsync();
+            await exceptionLogDumpCreator.DeleteAllDumpsAsync();
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace Meissa.Infrastructure.UnitTests.ExceptionLogDumpCreatorTests
                 _reflectionProvider.Object);
 
             // Act
-            exceptionLogDumpCreator.DeleteAllDumpsAsync();
+            await exceptionLogDumpCreator.DeleteAllDumpsAsync();
 
             // Assert
             _logRepositoryMock.Verify(x => x.DeleteAsync(logs), Times.AtLeastOnce);
@@ -104,7 +104,7 @@ namespace Meissa.Infrastructure.UnitTests.ExceptionLogDumpCreatorTests
                 _reflectionProvider.Object);
 
             // Act
-            exceptionLogDumpCreator.DeleteAllDumpsAsync();
+            await exceptionLogDumpCreator.DeleteAllDumpsAsync();
 
             // Assert
             _logRepositoryMock.Verify(x => x.DeleteAsync(logs), Times.AtLeastOnce());

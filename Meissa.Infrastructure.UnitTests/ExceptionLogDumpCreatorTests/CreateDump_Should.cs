@@ -163,7 +163,7 @@ namespace Meissa.Infrastructure.UnitTests.ExceptionLogDumpCreatorTests
         }
 
         [Test]
-        public async Task ThrowArgumentException_When_DumpLocationDoesNotExist()
+        public void ThrowArgumentException_When_DumpLocationDoesNotExist()
         {
             // Arrange
             var logs = LogFactory.Create(2);
@@ -185,7 +185,7 @@ namespace Meissa.Infrastructure.UnitTests.ExceptionLogDumpCreatorTests
             string dumpLocation = Guid.NewGuid().ToString();
 
             // Assert
-            Assert.Throws<ArgumentException>(() => exceptionLogDumpCreator.CreateDumpAsync(dumpLocation),
+            Assert.Throws<ArgumentException>(() => exceptionLogDumpCreator.CreateDumpAsync(dumpLocation).Wait(),
                                              string.Format("The specified dump location '{0}' does not exist.", dumpLocation));
         }
 

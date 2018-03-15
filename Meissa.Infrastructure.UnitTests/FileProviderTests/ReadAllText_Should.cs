@@ -11,7 +11,6 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://automatetheplanet.com/</site>
-using System.Threading.Tasks;
 using AutoFixture;
 using Meissa.Infrastructure.UnitTests.Factories;
 using NUnit.Framework;
@@ -22,7 +21,7 @@ namespace Meissa.Infrastructure.UnitTests.FileProviderTests
     public class ReadAllText_Should
     {
         [Test]
-        public async Task TextSuccessfullyRead()
+        public void TextSuccessfullyRead()
         {
             // Arrange
             var fixture = new Fixture();

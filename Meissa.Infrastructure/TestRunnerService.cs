@@ -190,7 +190,6 @@ namespace Meissa.Infrastructure
 
             // DEBUG:
             ////await _testRunLogService.CreateTestRunLogAsync($"Number of listOfDistributedTestCases- {listOfDistributedTestCases.Count()}", _currentTestRunId);
-            int index = 1;
             foreach (var distributedTestCasesList in listOfDistributedTestCases)
             {
                 // DEBUG:

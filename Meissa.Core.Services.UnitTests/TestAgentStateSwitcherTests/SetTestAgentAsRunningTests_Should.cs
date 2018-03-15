@@ -48,7 +48,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentStateSwitcherTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
             // Act
-            _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(FixtureFactory.Create().Create<string>());
+            await _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(FixtureFactory.Create().Create<string>());
 
             // Assert
             _testAgentRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<int>(), It.Is<TestAgentDto>(i => i.TestAgentId == testAgentId && i.Status == TestAgentStatus.Inactive)), Times.Never);
@@ -64,7 +64,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentStateSwitcherTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
             // Act
-            _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(testAgents.First().AgentTag);
+            await _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(testAgents.First().AgentTag);
 
             // Assert
             _testAgentRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<int>(), It.Is<TestAgentDto>(i => i.TestAgentId == testAgentId && i.Status == TestAgentStatus.Inactive)), Times.Never);
@@ -78,7 +78,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentStateSwitcherTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
             // Act
-            _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(testAgents.First().AgentTag);
+            await _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(testAgents.First().AgentTag);
 
             // Assert
             _testAgentRepositoryMock.Verify(x => x.GetAllAsync(), Times.Once);
@@ -93,7 +93,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentStateSwitcherTests
             _testAgentRepositoryMock.SetupSequence(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents)).Returns(Task.FromResult(TestAgentFactory.CreateEmpty()));
 
             // Act
-            _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(FixtureFactory.Create().Create<string>());
+            await _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(FixtureFactory.Create().Create<string>());
 
             // Assert
             _testAgentRepositoryMock.Verify(x => x.GetAllAsync(), Times.Once);
@@ -108,7 +108,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentStateSwitcherTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
             // Act
-            _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(FixtureFactory.Create().Create<string>());
+            await _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(FixtureFactory.Create().Create<string>());
 
             // Assert
             _testAgentRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<int>(), It.IsAny<TestAgentDto>()), Times.Never);
@@ -128,7 +128,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentStateSwitcherTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
             // Act
-            _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(FixtureFactory.Create().Create<string>());
+            await _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(FixtureFactory.Create().Create<string>());
 
             // Assert
             _testAgentRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<int>(), It.IsAny<TestAgentDto>()), Times.Never);
@@ -138,7 +138,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentStateSwitcherTests
         [Test]
         [TestCase(TestAgentStatus.Active)]
         [TestCase(TestAgentStatus.Inactive)]
-        public async Task ThrowException_When_MoreThanOneTestAgentExistsForCurrentMachineInStatus(TestAgentStatus status)
+        public void ThrowException_When_MoreThanOneTestAgentExistsForCurrentMachineInStatus(TestAgentStatus status)
         {
             // Arrange
             var testAgents = TestAgentFactory.CreateWithCurrentMachineName(status, 2);
