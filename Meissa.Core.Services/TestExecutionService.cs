@@ -12,11 +12,9 @@
 // <author>Anton Angelov</author>
 // <site>https://automatetheplanet.com/</site>
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Meissa.Core.Contracts;
 using Meissa.Core.Model;
-using Meissa.Core.Model.Exceptions;
 using Meissa.Core.Model.Settings;
 using Meissa.Plugins.Contracts;
 
@@ -87,7 +85,7 @@ namespace Meissa.Core.Services
 
             var activeTestAgents = await _testAgentService.GetAllActiveTestAgentsByTagAsync(testRunSettings.AgentTag);
             await _testAgentService.SetAllActiveAgentsToVerifyTheirStatusAsync(testRunSettings.AgentTag);
-            await _testAgentService.WaitAllActiveAgentsToVerifyTheirStatusAsync(activeTestAgents);
+            _testAgentService.WaitAllActiveAgentsToVerifyTheirStatusAsync(activeTestAgents);
             var availableTestAgents = await _testAgentService.GetAllActiveTestAgentsByTagAsync(testRunSettings.AgentTag);
             bool wasSuccessfulRun = false;
             if (availableTestAgents.Count > 0)

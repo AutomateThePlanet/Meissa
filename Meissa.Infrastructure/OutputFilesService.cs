@@ -13,7 +13,6 @@
 // <site>https://automatetheplanet.com/</site>
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using Meissa.Core.Contracts;
 
 namespace Meissa.Infrastructure
@@ -38,7 +37,7 @@ namespace Meissa.Infrastructure
             _pathProvider = pathProvider;
         }
 
-        public async Task<string> CreateLocalTestListFileAsync(string testList)
+        public string CreateLocalTestListFileAsync(string testList)
         {
             if (string.IsNullOrEmpty(testList))
             {

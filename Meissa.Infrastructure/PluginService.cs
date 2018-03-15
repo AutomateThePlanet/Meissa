@@ -18,7 +18,6 @@ using System.Linq;
 using System.Reflection;
 using Meissa.Core.Contracts;
 using Meissa.Plugins.Contracts;
-using Unity;
 
 namespace Meissa.Infrastructure
 {

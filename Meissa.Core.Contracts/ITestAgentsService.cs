@@ -25,7 +25,7 @@ namespace Meissa.Core.Contracts
 
         Task SetAllActiveAgentsToVerifyTheirStatusAsync(string tag);
 
-        Task WaitAllActiveAgentsToVerifyTheirStatusAsync(List<TestAgentDto> activeTestAgents);
+        void WaitAllActiveAgentsToVerifyTheirStatusAsync(List<TestAgentDto> activeTestAgents);
 
         Task<bool> IsTestAgentActive(string agentTag);
     }

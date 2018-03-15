@@ -36,7 +36,6 @@ namespace Meissa.Core.Services
         private readonly ITestAgentsLoggerService _testAgentsLoggerService;
         private readonly IDistributeLogger _logger;
         private readonly ITestAgentStateSwitcher _testAgentStateSwitcher;
-        private readonly ITestAgentsService _testAgentsService;
         private readonly IConsoleProvider _consoleProvider;
         private readonly IPathProvider _pathProvider;
         private readonly IFileProvider _fileProvider;
@@ -83,7 +82,6 @@ namespace Meissa.Core.Services
             _testAgentsLoggerService = testAgentsLoggerService;
             _logger = logger;
             _testAgentStateSwitcher = testAgentStateSwitcher;
-            _testAgentsService = testAgentsService;
             _consoleProvider = consoleProvider;
             _pathProvider = pathProvider;
             _fileProvider = fileProvider;
@@ -135,7 +133,7 @@ namespace Meissa.Core.Services
         {
             if (await IsAlligibleToStartTestAgentRunAsync(testAgentTag))
             {
-                var newTestAgentRun = await GetFirstNewTestAgentRunForCurrentTestAgentAsync(testAgentTag);
+                var newTestAgentRun = await GetFirstNewTestAgentRunForCurrentTestAgentAsync();
 
                 if (newTestAgentRun != null)
                 {
@@ -180,7 +178,7 @@ namespace Meissa.Core.Services
                                    return;
                                }
 
-                               CheckTestRunnerStatus(newTestAgentRun.TestAgentRunId, executeTestAgentRunTask, cancellationTokenSource);
+                               CheckTestRunnerStatus(newTestAgentRun.TestAgentRunId, cancellationTokenSource);
                            },
                            30000);
 
@@ -194,8 +192,8 @@ namespace Meissa.Core.Services
 
                         if (_wasTestAgentRunCompleted)
                         {
-                            _testRunLogService.CreateTestRunLogAsync($"Test agent with tag {testAgentTag} finished tests execution on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId);
-                            _testRunLogService.CreateTestRunLogAsync($"Test agent with tag {testAgentTag} starts waiting for new jobs on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId);
+                            await _testRunLogService.CreateTestRunLogAsync($"Test agent with tag {testAgentTag} finished tests execution on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId);
+                            await _testRunLogService.CreateTestRunLogAsync($"Test agent with tag {testAgentTag} starts waiting for new jobs on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId);
                         }
                         else
                         {
@@ -246,7 +244,7 @@ namespace Meissa.Core.Services
                             UpdateTestRunnerLastAvailable(testRunId).Wait();
                         },
                         60000);
-                var testRun = await _testRunRepository.GetAsync(testRunId);
+                await _testRunRepository.GetAsync(testRunId);
                 do
                 {
                     if (loggingTask.IsFaulted)
@@ -395,7 +393,7 @@ namespace Meissa.Core.Services
             }
         }
 
-        private void CheckTestRunnerStatus(int testAgentRunId, Task executeTestAgentRunTask, CancellationTokenSource cancellationTokenSource)
+        private void CheckTestRunnerStatus(int testAgentRunId, CancellationTokenSource cancellationTokenSource)
         {
             var testAgentRun = _testAgentRunRepository.GetAsync(testAgentRunId).Result;
             if (testAgentRun == null)
@@ -450,7 +448,7 @@ namespace Meissa.Core.Services
             catch (Exception e)
             {
                 // DEBUG:
-                _consoleProvider.WriteLine($"THERE WAS AN EXCEPTION DURING UPDATING LAST AVAILABLE {e.ToString()}");
+                _consoleProvider.WriteLine($"THERE WAS AN EXCEPTION DURING UPDATING LAST AVAILABLE {e}");
             }
         }
 
@@ -584,7 +582,7 @@ namespace Meissa.Core.Services
             return currentTestAgent.TestAgentId;
         }
 
-        private async Task<TestAgentRunDto> GetFirstNewTestAgentRunForCurrentTestAgentAsync(string agentTag)
+        private async Task<TestAgentRunDto> GetFirstNewTestAgentRunForCurrentTestAgentAsync()
         {
             var newTestAgentRuns = (await _testAgentRunRepository.GetAllAsync()).OrderBy(x => x.TestAgentRunId).FirstOrDefault(x => x.TestAgentId == _currentTestAgentId && x.Status == TestAgentRunStatus.New);
 

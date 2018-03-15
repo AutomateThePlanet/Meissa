@@ -46,7 +46,7 @@ namespace Meissa.Core.Services.UnitTests.TestRunProviderTests
             _guidServiceMock = new Mock<IGuidService>();
             _testRunsCleanerServiceClient = new Mock<ITestRunsCleanerServiceClient>();
             _testRunOutputRepositoryMock = new Mock<ITestRunOutputServiceClient>();
-            _testRunProvider = new TestRunProvider(_testRunRepositoryMock.Object, _testRunCustomArgumentRepositoryMock.Object, _testRunsCleanerServiceClient.Object, _testRunOutputRepositoryMock.Object, _dateTimeProviderMock.Object, _guidServiceMock.Object);
+            _testRunProvider = new TestRunProvider(_testRunRepositoryMock.Object, _testRunCustomArgumentRepositoryMock.Object, _testRunOutputRepositoryMock.Object, _dateTimeProviderMock.Object, _guidServiceMock.Object);
             _fixture = new Fixture();
             _testRunId = _fixture.Create<Guid>();
         }

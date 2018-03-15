@@ -22,6 +22,6 @@ namespace Meissa.Core.Contracts
 
         void CopyResultsOutputFilesToResultsOutputLocation(string workingDirectory, string resultsOutputLocation);
 
-        Task<string> CreateLocalTestListFileAsync(string testList);
+        string CreateLocalTestListFileAsync(string testList);
     }
 }

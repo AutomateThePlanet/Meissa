@@ -53,13 +53,10 @@ namespace Meissa.Infrastructure
         }
 
         public IQueryable<TEntity> GetAllQuery<TEntity>()
-            where TEntity : class
-        {
-            return _context.Set<TEntity>();
-        }
+            where TEntity : class => _context.Set<TEntity>();
 
         public async Task DeleteByIdWithSaveAsync<TEntity>(int id, int retryCount = 3)
-        where TEntity : class => SaveChangesAsync(
+        where TEntity : class => await SaveChangesAsync(
             (context) =>
             {
                 var entity = _context.Set<TEntity>().Find(id);

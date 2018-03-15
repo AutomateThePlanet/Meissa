@@ -13,7 +13,6 @@
 // <site>https://automatetheplanet.com/</site>
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Meissa.API.Models;
 using Meissa.Core.Contracts;
@@ -26,21 +25,18 @@ namespace Meissa.Core.Services
     {
         private readonly IServiceClient<TestRunDto> _testRunServiceClient;
         private readonly ITestRunOutputServiceClient _testRunOutputServiceClient;
-        private readonly ITestRunsCleanerServiceClient _testRunsCleanerServiceClient;
         private readonly IServiceClient<TestRunCustomArgumentDto> _testRunCustomArgumentRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IGuidService _guidService;
 
         public TestRunProvider(IServiceClient<TestRunDto> testRunServiceClient,
             IServiceClient<TestRunCustomArgumentDto> testRunCustomArgumentRepository,
-            ITestRunsCleanerServiceClient testRunsCleanerServiceClient,
             ITestRunOutputServiceClient testRunOutputServiceClient,
             IDateTimeProvider dateTimeProvider,
             IGuidService guidService)
         {
             _testRunServiceClient = testRunServiceClient;
             _testRunCustomArgumentRepository = testRunCustomArgumentRepository;
-            _testRunsCleanerServiceClient = testRunsCleanerServiceClient;
             _testRunOutputServiceClient = testRunOutputServiceClient;
             _dateTimeProvider = dateTimeProvider;
             _guidService = guidService;
@@ -74,7 +70,7 @@ namespace Meissa.Core.Services
                 TestRunId = newTestRun.TestRunId,
                 TestOutputFilesPackage = outputFilesZip,
             };
-            newTestRunOutput = await _testRunOutputServiceClient.CreateAsync(newTestRunOutput);
+            await _testRunOutputServiceClient.CreateAsync(newTestRunOutput);
 
             if (customArgumentsPairs != null)
             {

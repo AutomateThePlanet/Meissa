@@ -13,7 +13,6 @@
 // <site>https://automatetheplanet.com/</site>
 using System;
 using System.Threading.Tasks;
-using Meissa.API.Models;
 using Meissa.Model;
 
 namespace Meissa.Core.Contracts

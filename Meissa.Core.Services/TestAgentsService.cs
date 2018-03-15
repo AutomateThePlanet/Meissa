@@ -54,7 +54,7 @@ namespace Meissa.Core.Services
             }
         }
 
-        public async Task WaitAllActiveAgentsToVerifyTheirStatusAsync(List<TestAgentDto> activeTestAgents)
+        public void WaitAllActiveAgentsToVerifyTheirStatusAsync(List<TestAgentDto> activeTestAgents)
         {
             if (activeTestAgents.Count > 0)
             {

@@ -12,8 +12,6 @@
 // <author>Anton Angelov</author>
 // <site>https://automatetheplanet.com/</site>
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Meissa.Core.Contracts
