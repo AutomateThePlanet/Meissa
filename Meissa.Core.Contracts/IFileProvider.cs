@@ -11,7 +11,6 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://automatetheplanet.com/</site>
-using System.Threading.Tasks;
 
 namespace Meissa.Core.Contracts
 {

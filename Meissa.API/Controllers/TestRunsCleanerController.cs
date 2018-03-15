@@ -12,12 +12,8 @@
 // <author>Anton Angelov</author>
 // <site>https://automatetheplanet.com/</site>
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using Meissa.API.Models;
 using Meissa.API.Services;
 using Meissa.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -29,14 +25,9 @@ namespace Meissa.API.Controllers
     [Route("api/testrunscleaner")]
     public class TestRunsCleanerController : Controller
     {
-        private readonly ILogger<TestRunsCleanerController> _logger;
         private readonly MeissaRepository _meissaRepository;
 
-        public TestRunsCleanerController(ILogger<TestRunsCleanerController> logger, MeissaRepository repository)
-        {
-            _logger = logger;
-            _meissaRepository = repository;
-        }
+        public TestRunsCleanerController(ILogger<TestRunsCleanerController> logger, MeissaRepository repository) => _meissaRepository = repository;
 
         [HttpDelete("testRun")]
         public async Task<IActionResult> DeleteOldTestRunDataByTestRunIdAsync([FromBody] Guid id)
@@ -55,13 +46,13 @@ namespace Meissa.API.Controllers
                     _meissaRepository.DeleteRange(testAgentRuns);
                     var testRunLogs = _meissaRepository.GetAllQuery<TestRunLog>().Where(x => x.TestRunId.Equals(testRun.TestRunId));
                     _meissaRepository.DeleteRange(testRunLogs);
-                    var testRunAvailabilities = _meissaRepository.GetAllQuery<TestRunAvailability>().Where(x => x.TestRunId.Equals(testRun.TestRunId));
+                    _meissaRepository.GetAllQuery<TestRunAvailability>().Where(x => x.TestRunId.Equals(testRun.TestRunId));
                     _meissaRepository.DeleteRange(testRunLogs);
                     await _meissaRepository.DeleteWithSaveAsync(testRun);
                     await _meissaRepository.SaveAsync();
                 }
             }
-            catch (DbUpdateConcurrencyException ex)
+            catch (DbUpdateConcurrencyException)
             {
                 // Ignore.
             }
@@ -88,14 +79,14 @@ namespace Meissa.API.Controllers
                     var testRunLogs = _meissaRepository.GetAllQuery<TestRunLog>().Where(x => x.TestRunId.Equals(testRun.TestRunId));
                     _meissaRepository.DeleteRange(testRunLogs);
 
-                    var testRunAvailabilities = _meissaRepository.GetAllQuery<TestRunAvailability>().Where(x => x.TestRunId.Equals(testRun.TestRunId));
+                    _meissaRepository.GetAllQuery<TestRunAvailability>().Where(x => x.TestRunId.Equals(testRun.TestRunId));
                     _meissaRepository.DeleteRange(testRunLogs);
                 }
 
                 _meissaRepository.DeleteRange(testRuns);
                 await _meissaRepository.SaveAsync();
             }
-            catch (DbUpdateConcurrencyException ex)
+            catch (DbUpdateConcurrencyException)
             {
                 // Ignore.
             }

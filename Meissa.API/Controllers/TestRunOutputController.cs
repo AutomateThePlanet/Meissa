@@ -16,7 +16,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Meissa.API.Models;
 using Meissa.API.Services;
 using Meissa.Model;
 using Microsoft.AspNetCore.Mvc;

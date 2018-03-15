@@ -49,7 +49,7 @@ namespace Meissa.API.Client
                 {
                     if (i == retriesCount - 1)
                     {
-                        throw e;
+                        throw;
                     }
 
                     Thread.Sleep(sleepIntervalMilliseconds);
@@ -57,7 +57,7 @@ namespace Meissa.API.Client
                 catch (Exception e)
                 {
                     Console.WriteLine($"EXCEPTION SendAsyncWithRetry- {response?.Content} URI: {request.RequestUri} TYPE: {request.Method} - TRY {i + 1}");
-                    Console.WriteLine($"EXCEPTION SendAsyncWithRetry- {e.ToString()}");
+                    Console.WriteLine($"EXCEPTION SendAsyncWithRetry- {e}");
                     Thread.Sleep(sleepIntervalMilliseconds);
                 }
             }

@@ -21,15 +21,15 @@ namespace Meissa.API.Services
     public static class ScopeQueryExecutor
     {
         public static async Task Execute(Action<MeissaRepository> action) =>
-            Task.Factory.StartNew(async () =>
-                                    {
-                                        var optionsBuilder = new DbContextOptionsBuilder<TestsRunsContext>();
-                                        optionsBuilder.UseSqlite("Data Source=meissa.db");
+            await Task.Factory.StartNew(async () =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<TestsRunsContext>();
+                optionsBuilder.UseSqlite("Data Source=meissa.db");
 
-                                        using (var repo = new MeissaRepository(new TestsRunsContext(optionsBuilder.Options)))
-                                        {
-                                            action(repo);
-                                        }
-                                    });
+                using (var repo = new MeissaRepository(new TestsRunsContext(optionsBuilder.Options)))
+                {
+                    action(repo);
+                }
+            });
     }
 }

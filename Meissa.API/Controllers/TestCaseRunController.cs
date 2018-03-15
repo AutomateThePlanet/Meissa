@@ -58,7 +58,7 @@ namespace Meissa.API.Controllers
                 _meissaRepository.DeleteRange(outdatedTestCasesHistory);
                 await _meissaRepository.SaveAsync();
             }
-            catch (DbUpdateConcurrencyException ex)
+            catch (DbUpdateConcurrencyException)
             {
                 // Ignore.
             }
@@ -72,7 +72,7 @@ namespace Meissa.API.Controllers
             try
             {
                 Debug.WriteLine("##### Start UpdateTestCaseExecutionHistory");
-                var startTime = DateTime.Now;
+                DateTime startTime;
                 var existingTestCasesHistory = _meissaRepository.GetAllQuery<TestCaseHistory>().Where(x => testCaseRuns.Any(y => y.FullName.Equals(x.FullName))).ToList();
                 var testCaseHistoryEntries = _meissaRepository.GetAllQuery<TestCaseHistoryEntry>();
                 foreach (var testCaseRun in testCaseRuns)
@@ -131,7 +131,7 @@ namespace Meissa.API.Controllers
 
                 await _meissaRepository.SaveAsync();
 
-                var endTime = DateTime.Now;
+                DateTime endTime;
                 Debug.WriteLine($"##### End UpdateTestCaseExecutionHistory for {endTime - startTime}");
 
                 return Ok();
