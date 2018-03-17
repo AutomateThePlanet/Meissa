@@ -12,7 +12,6 @@
 // <author>Anton Angelov</author>
 // <site>https://automatetheplanet.com/</site>
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("LoadTestsProject.NUnit")]

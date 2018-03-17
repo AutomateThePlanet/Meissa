@@ -20,39 +20,39 @@ namespace GenerateLoadTestProjects
     {
         public static void Main(string[] args) => GenerateLoadTestsMsTest();
 
-        private static void GenerateLoadTestsNUnit()
-        {
-            var numberOfTestFiles = 10;
-            var numberOfTests = 100;
-            var deployLocation = @"D:\OneDrive\SourceCode\AutomateThePlanet\Meissa\LoadTestsProject.NUnit";
-            for (var i = 0; i < numberOfTestFiles; i++)
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine("using System;");
-                sb.AppendLine("using System.Threading;");
-                sb.AppendLine("using NUnit.Framework;");
-                sb.AppendLine();
-                sb.AppendLine("namespace LoadTestsProject");
-                sb.AppendLine("{");
-                sb.AppendLine("    [TestFixture]");
-                sb.AppendLine($"    public class Cosmos{i}Tests");
-                sb.AppendLine("    {");
-                sb.AppendLine("        private readonly Random _random = new Random();");
-                for (var j = 0; j < numberOfTests; j++)
-                {
-                    sb.AppendLine("        ");
-                    sb.AppendLine("        [Test]");
-                    sb.AppendLine($"        public void TestMethod{j}()");
-                    sb.AppendLine("        {");
-                    sb.AppendLine("            Thread.Sleep(1000);");
-                    sb.AppendLine("        }");
-                }
-                sb.AppendLine("    }");
-                sb.AppendLine("}");
-                var fileLocation = Path.Combine(deployLocation, $"Cosmos{i}Tests.cs");
-                File.WriteAllText(fileLocation, sb.ToString());
-            }
-        }
+        ////private static void GenerateLoadTestsNUnit()
+        ////{
+        ////    var numberOfTestFiles = 10;
+        ////    var numberOfTests = 100;
+        ////    var deployLocation = @"D:\OneDrive\SourceCode\AutomateThePlanet\Meissa\LoadTestsProject.NUnit";
+        ////    for (var i = 0; i < numberOfTestFiles; i++)
+        ////    {
+        ////        var sb = new StringBuilder();
+        ////        sb.AppendLine("using System;");
+        ////        sb.AppendLine("using System.Threading;");
+        ////        sb.AppendLine("using NUnit.Framework;");
+        ////        sb.AppendLine();
+        ////        sb.AppendLine("namespace LoadTestsProject");
+        ////        sb.AppendLine("{");
+        ////        sb.AppendLine("    [TestFixture]");
+        ////        sb.AppendLine($"    public class Cosmos{i}Tests");
+        ////        sb.AppendLine("    {");
+        ////        sb.AppendLine("        private readonly Random _random = new Random();");
+        ////        for (var j = 0; j < numberOfTests; j++)
+        ////        {
+        ////            sb.AppendLine("        ");
+        ////            sb.AppendLine("        [Test]");
+        ////            sb.AppendLine($"        public void TestMethod{j}()");
+        ////            sb.AppendLine("        {");
+        ////            sb.AppendLine("            Thread.Sleep(1000);");
+        ////            sb.AppendLine("        }");
+        ////        }
+        ////        sb.AppendLine("    }");
+        ////        sb.AppendLine("}");
+        ////        var fileLocation = Path.Combine(deployLocation, $"Cosmos{i}Tests.cs");
+        ////        File.WriteAllText(fileLocation, sb.ToString());
+        ////    }
+        ////}
 
         private static void GenerateLoadTestsMsTest()
         {
