@@ -57,29 +57,44 @@ namespace GenerateLoadTestProjects
         private static void GenerateLoadTestsMsTest()
         {
             // MSTEST
-            var numberOfTestFiles = 10;
-            var numberOfTests = 100;
-            var deployLocation = @"D:\SourceCode\AutomateThePlanet\Meissa\CompareRunnersTestsProject";
-            for (var i = 0; i < numberOfTestFiles; i++)
+            var numberOfTestFiles = 2;
+            var numberOfTests = 1000;
+            var deployLocation = @"D:\SourceCode\AutomateThePlanet\Meissa\LoadTestsProject";
+            for (var i = 1; i < numberOfTestFiles; i++)
             {
                 var sb = new StringBuilder();
                 sb.AppendLine("using System;");
                 sb.AppendLine("using System.Threading;");
                 sb.AppendLine("using Microsoft.VisualStudio.TestTools.UnitTesting;");
+                sb.AppendLine("using System.IO;");
+                sb.AppendLine("using OpenQA.Selenium;");
+                sb.AppendLine("using OpenQA.Selenium.Support.UI;");
+                sb.AppendLine("using System.Reflection;");
                 sb.AppendLine();
                 sb.AppendLine("namespace LoadTestsProject");
                 sb.AppendLine("{");
                 sb.AppendLine("    [TestClass]");
-                sb.AppendLine($"    public class Cosmos{i}Tests");
+                sb.AppendLine($"   public class Cosmos{i}Tests");
                 sb.AppendLine("    {");
-                sb.AppendLine("        private readonly Random _random = new Random();");
+                sb.AppendLine("       [TestInitialize]");
+                sb.AppendLine("       public void TestInit()");
+                sb.AppendLine("       {");
+                sb.AppendLine("          var assembly = Assembly.GetExecutingAssembly();");
+                sb.AppendLine("          string path = Path.GetDirectoryName(assembly.Location);");
+                sb.AppendLine("          string pageFilePath = Path.Combine(path, \"button.html\");");
+                sb.AppendLine("          DriverFactory.GetDriver().Navigate().GoToUrl(new System.Uri(pageFilePath, uriKind: System.UriKind.Absolute));");
+                sb.AppendLine("       }");
                 for (var j = 0; j < numberOfTests; j++)
                 {
                     sb.AppendLine("        ");
                     sb.AppendLine("        [TestMethod]");
                     sb.AppendLine($"        public void TestMethod{j}()");
                     sb.AppendLine("        {");
-                    sb.AppendLine("            Thread.Sleep(1000);");
+                    sb.AppendLine("              var driver = DriverFactory.GetDriver();");
+                    sb.AppendLine("              var buttonElement = driver.FindElement(By.Id(\"myButton\"));");
+                    sb.AppendLine("              buttonElement.Click();");
+                    sb.AppendLine("              var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));");
+                    sb.AppendLine("              wait.Until(d => d.FindElement(By.Id(\"myButton\")).GetAttribute(\"value\").Equals(\"Stop\"));");
                     sb.AppendLine("        }");
                 }
                 sb.AppendLine("    }");
