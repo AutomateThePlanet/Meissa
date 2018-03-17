@@ -11,7 +11,7 @@ namespace LoadTestsProject
    public class Cosmos1Tests
     {
         [AssemblyCleanup]
-        public void AssemblyCleanup(TestContext testContext)
+        public static void AssemblyCleanup()
         {
             DriverFactory.GetDriver().Quit();
         }
