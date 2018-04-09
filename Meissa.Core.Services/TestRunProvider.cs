@@ -69,6 +69,7 @@ namespace Meissa.Core.Services
             {
                 TestRunId = newTestRun.TestRunId,
                 TestOutputFilesPackage = outputFilesZip,
+
             };
             await _testRunOutputServiceClient.CreateAsync(newTestRunOutput);
 

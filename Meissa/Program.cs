@@ -184,6 +184,7 @@ namespace Meissa
             if (serverUri == null)
             {
                 Console.WriteLine("You need to specify a test server URL.");
+                return 0;
             }
 
             DateTime startTime = DateTime.Now;

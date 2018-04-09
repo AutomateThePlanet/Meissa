@@ -72,7 +72,7 @@ namespace Meissa.API.Controllers
             try
             {
                 Debug.WriteLine("##### Start UpdateTestCaseExecutionHistory");
-                DateTime startTime;
+                DateTime startTime = DateTime.Now;
                 var existingTestCasesHistory = _meissaRepository.GetAllQuery<TestCaseHistory>().Where(x => testCaseRuns.Any(y => y.FullName.Equals(x.FullName))).ToList();
                 var testCaseHistoryEntries = _meissaRepository.GetAllQuery<TestCaseHistoryEntry>();
                 foreach (var testCaseRun in testCaseRuns)
@@ -131,7 +131,7 @@ namespace Meissa.API.Controllers
 
                 await _meissaRepository.SaveAsync();
 
-                DateTime endTime;
+                DateTime endTime = DateTime.Now;
                 Debug.WriteLine($"##### End UpdateTestCaseExecutionHistory for {endTime - startTime}");
 
                 return Ok();
