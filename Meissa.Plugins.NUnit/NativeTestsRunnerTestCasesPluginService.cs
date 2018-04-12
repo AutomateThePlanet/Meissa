@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Meissa.Core.Model;
@@ -82,6 +83,7 @@ namespace Meissa.Plugins.NUnit
 
         private Assembly GetAssemblyFromFile(string fullFilePath)
         {
+            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
             var assembly = Assembly.LoadFrom(fullFilePath);
 
             return assembly;

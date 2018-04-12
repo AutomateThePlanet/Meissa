@@ -1,10 +1,4 @@
 ﻿{
-    "testAgent": {
-        "agentTag": "meissaAgent",
-        "testAgentRunTimeout": "180",
-        "testRunTimeout": "180",
-        "nunitConsoleExePath": "C:\\NUnit\\nunit-console\\nunit3-console.exe"
-    },
     "logging": {
         "isEnabled": "true",
         "isConsoleLoggingEnabled": "false",
