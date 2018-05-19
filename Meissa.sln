@@ -58,6 +58,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateLoadTestProjects", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitLoadTest", "NUnitLoadTest\NUnitLoadTest.csproj", "{FAB8ECAE-5356-4EB8-9B8A-5F71B5C3B7A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitReportMerge.Spike", "NUnitReportMerge.Spike\NUnitReportMerge.Spike.csproj", "{51717A40-1C27-4FEC-B1A5-4E5E07DDC3E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -144,6 +146,10 @@ Global
 		{FAB8ECAE-5356-4EB8-9B8A-5F71B5C3B7A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAB8ECAE-5356-4EB8-9B8A-5F71B5C3B7A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAB8ECAE-5356-4EB8-9B8A-5F71B5C3B7A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51717A40-1C27-4FEC-B1A5-4E5E07DDC3E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51717A40-1C27-4FEC-B1A5-4E5E07DDC3E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51717A40-1C27-4FEC-B1A5-4E5E07DDC3E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51717A40-1C27-4FEC-B1A5-4E5E07DDC3E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -168,6 +174,7 @@ Global
 		{38C29C37-FA78-4D32-8092-D84A99ACA6A3} = {4A1A254E-ED74-46CB-B564-AE16BE7C3E7E}
 		{B8DEA08C-41BE-473C-91AC-8AE4733AA88A} = {4A1A254E-ED74-46CB-B564-AE16BE7C3E7E}
 		{467EB9F7-DF48-43B3-80B9-BC630BB5B59D} = {4A1A254E-ED74-46CB-B564-AE16BE7C3E7E}
+		{51717A40-1C27-4FEC-B1A5-4E5E07DDC3E1} = {4A1A254E-ED74-46CB-B564-AE16BE7C3E7E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {547D0377-2E1C-4635-9CCA-FDC4AD0A2300}

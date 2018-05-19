@@ -25,7 +25,7 @@ using Meissa.Core.Model;
 using Meissa.Core.Model.NUnit;
 using Meissa.Plugins.Contracts;
 
-namespace Meissa.Plugins.MSTest
+namespace Meissa.Plugins.NUnit
 {
     [Export(typeof(INativeTestsRunnerPluginService))]
     public class NativeTestsRunnerPluginService : INativeTestsRunnerPluginService
@@ -67,8 +67,8 @@ namespace Meissa.Plugins.MSTest
 
         public object GetAllPassesTests(string testRunContent)
         {
-            var testRun = Deserialize<testrun>(testRunContent);
-            var results = GetAllPassesTests(testRun);
+            ////var testRun = Deserialize<testrun>(testRunContent);
+            var results = GetAllPassesTests(testRunContent as object);
             return results;
         }
 
