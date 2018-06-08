@@ -31,7 +31,7 @@ namespace Meissa.Infrastructure
 
         private static IConfigurationRoot InitializeConfiguration()
         {
-            var filesInExecutionDir = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            var filesInExecutionDir = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException());
             var settingsFile =
                 filesInExecutionDir.FirstOrDefault(x => x.Contains("meissaSettings") && x.EndsWith(".json", StringComparison.Ordinal));
             var builder = new ConfigurationBuilder();

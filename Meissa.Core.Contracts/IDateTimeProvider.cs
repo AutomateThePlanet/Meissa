@@ -18,5 +18,6 @@ namespace Meissa.Core.Contracts
     public interface IDateTimeProvider
     {
         DateTime GetCurrentTime();
+        DateTime GetCurrentTimeUtc();
     }
 }

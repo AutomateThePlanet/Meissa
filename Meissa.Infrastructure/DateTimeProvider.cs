@@ -19,5 +19,6 @@ namespace Meissa.Infrastructure
     public class DateTimeProvider : IDateTimeProvider
     {
         public DateTime GetCurrentTime() => DateTime.Now;
+        public DateTime GetCurrentTimeUtc() => DateTime.UtcNow;
     }
 }

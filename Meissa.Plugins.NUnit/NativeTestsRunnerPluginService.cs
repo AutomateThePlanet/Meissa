@@ -262,21 +262,21 @@ namespace Meissa.Plugins.NUnit
             return testCaseRuns;
         }
 
-        public List<TestCase>[] SplitTestCases(List<TestCase> list, int availableCores)
+        public List<TestCase>[] SplitTestCases(List<TestCase> testCases, int availableCores)
         {
-            if (list == null)
+            if (testCases == null)
             {
-                throw new ArgumentNullException("list");
+                throw new ArgumentNullException(nameof(testCases));
             }
 
             if (availableCores < 1)
             {
-                throw new ArgumentOutOfRangeException("totalPartitions");
+                throw new ArgumentOutOfRangeException(nameof(availableCores), "Available cores cannot be less than 1.");
             }
 
             var partitions = new List<TestCase>[availableCores];
 
-            int maxSize = (int)Math.Ceiling(list.Count / (double)availableCores);
+            int maxSize = (int)Math.Ceiling(testCases.Count / (double)availableCores);
             int k = 0;
 
             for (int i = 0; i < partitions.Length; i++)
@@ -284,12 +284,12 @@ namespace Meissa.Plugins.NUnit
                 partitions[i] = new List<TestCase>();
                 for (int j = k; j < k + maxSize; j++)
                 {
-                    if (j >= list.Count)
+                    if (j >= testCases.Count)
                     {
                         break;
                     }
 
-                    partitions[i].Add(list[j]);
+                    partitions[i].Add(testCases[j]);
                 }
 
                 k += maxSize;

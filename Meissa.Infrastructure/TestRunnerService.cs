@@ -38,6 +38,7 @@ namespace Meissa.Infrastructure
         private readonly IPluginService _pluginService;
         private readonly ITestRunLogService _testRunLogService;
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IEnvironmentService _environmentService;
         private INativeTestsRunnerPluginService _nativeTestsRunner;
         private Guid _currentTestRunId;
 
@@ -54,7 +55,8 @@ namespace Meissa.Infrastructure
             ITaskProvider taskProvider,
             IPluginService pluginService,
             ITestRunLogService testRunLogService,
-            IDateTimeProvider dateTimeProvider)
+            IDateTimeProvider dateTimeProvider,
+            IEnvironmentService environmentService)
         {
             _testRunRepository = testRunRepository;
             _testRunLogRepository = testRunLogRepository;
@@ -69,6 +71,7 @@ namespace Meissa.Infrastructure
             _pluginService = pluginService;
             _testRunLogService = testRunLogService;
             _dateTimeProvider = dateTimeProvider;
+            _environmentService = environmentService;
         }
 
         public async Task<string> ExecuteTestsAsync(string testTechnology, string distributedTestsList, string workingDir, Guid testRunId, string testsLibraryPath, string assemblyName, bool runInParallel, string nativeArguments, int testAgentRunTimeout, bool isTimeBasedBalance, CancellationTokenSource cancellationTokenSource)
@@ -236,6 +239,8 @@ namespace Meissa.Infrastructure
 
                                          if (!ranProcesses.Contains(process.GetHashCode()))
                                          {
+                                             // Set when the last run started.
+                                             _environmentService.SetEnvironmentVariable("Meissa_LRDR", _dateTimeProvider.GetCurrentTimeUtc().ToString());
                                              _processStarter.StartProcess(process, LogStandardOutput, LogErrorOutput);
                                              Thread.Sleep(1000);
                                              ranProcesses.Add(process.GetHashCode());
