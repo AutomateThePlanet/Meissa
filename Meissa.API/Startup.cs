@@ -56,7 +56,7 @@ namespace Meissa.API
             }
             else
             {
-                app.UseExceptionHandler();
+                app.UseExceptionHandler("/Home/Error");
             }
 
             app.UseStatusCodePages();
