@@ -21,7 +21,7 @@ namespace Meissa.Infrastructure
     {
         public string MachineName => Environment.MachineName;
 
-        public void SetEnvironmentVariable(string variable, string value) => Environment.SetEnvironmentVariable(variable, value, EnvironmentVariableTarget.Machine);
+        public void SetEnvironmentVariable(string variable, string value) => Environment.SetEnvironmentVariable(variable, value, EnvironmentVariableTarget.User);
 
         public void Sleep(int seconds) => Thread.Sleep(seconds * 1000);
     }
