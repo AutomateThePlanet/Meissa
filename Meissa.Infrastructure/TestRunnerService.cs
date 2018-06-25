@@ -241,6 +241,7 @@ namespace Meissa.Infrastructure
                                          {
                                              // Set when the last run started.
                                              _environmentService.SetEnvironmentVariable("Meissa_LRDR", _dateTimeProvider.GetCurrentTimeUtc().ToString());
+                                             ////_consoleProvider.WriteLine("SET Meissa_LRDR");
                                              _processStarter.StartProcess(process, LogStandardOutput, LogErrorOutput);
                                              Thread.Sleep(1000);
                                              ranProcesses.Add(process.GetHashCode());
@@ -262,6 +263,8 @@ namespace Meissa.Infrastructure
                                      if (!runInParallel)
                                      {
                                          // Start processes one by one, otherwise they are started all upfront.
+                                         _environmentService.SetEnvironmentVariable("Meissa_LRDR", _dateTimeProvider.GetCurrentTimeUtc().ToString());
+                                         ////_consoleProvider.WriteLine("SET Meissa_LRDR");
                                          _processStarter.StartProcess(process, LogStandardOutput, LogErrorOutput);
                                          ranProcesses.Add(process.GetHashCode());
                                      }
