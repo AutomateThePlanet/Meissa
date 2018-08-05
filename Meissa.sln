@@ -58,7 +58,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateLoadTestProjects", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitLoadTest", "NUnitLoadTest\NUnitLoadTest.csproj", "{FAB8ECAE-5356-4EB8-9B8A-5F71B5C3B7A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitReportMerge.Spike", "NUnitReportMerge.Spike\NUnitReportMerge.Spike.csproj", "{51717A40-1C27-4FEC-B1A5-4E5E07DDC3E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnitReportMerge.Spike", "NUnitReportMerge.Spike\NUnitReportMerge.Spike.csproj", "{51717A40-1C27-4FEC-B1A5-4E5E07DDC3E1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meissa.Plugins.Protractor", "Meissa.Plugins.Protractor\Meissa.Plugins.Protractor.csproj", "{F3218A75-25FE-481E-A6EA-11B0AD31F57F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meissa.Spikes", "Meissa.Spikes\Meissa.Spikes.csproj", "{20685E96-9949-4B07-A0B0-2ABCB6B863BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -150,6 +154,14 @@ Global
 		{51717A40-1C27-4FEC-B1A5-4E5E07DDC3E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51717A40-1C27-4FEC-B1A5-4E5E07DDC3E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51717A40-1C27-4FEC-B1A5-4E5E07DDC3E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3218A75-25FE-481E-A6EA-11B0AD31F57F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3218A75-25FE-481E-A6EA-11B0AD31F57F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3218A75-25FE-481E-A6EA-11B0AD31F57F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3218A75-25FE-481E-A6EA-11B0AD31F57F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20685E96-9949-4B07-A0B0-2ABCB6B863BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20685E96-9949-4B07-A0B0-2ABCB6B863BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20685E96-9949-4B07-A0B0-2ABCB6B863BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20685E96-9949-4B07-A0B0-2ABCB6B863BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -175,6 +187,8 @@ Global
 		{B8DEA08C-41BE-473C-91AC-8AE4733AA88A} = {4A1A254E-ED74-46CB-B564-AE16BE7C3E7E}
 		{467EB9F7-DF48-43B3-80B9-BC630BB5B59D} = {4A1A254E-ED74-46CB-B564-AE16BE7C3E7E}
 		{51717A40-1C27-4FEC-B1A5-4E5E07DDC3E1} = {4A1A254E-ED74-46CB-B564-AE16BE7C3E7E}
+		{F3218A75-25FE-481E-A6EA-11B0AD31F57F} = {0230A84D-7F7E-4C9A-BF57-5DC311106345}
+		{20685E96-9949-4B07-A0B0-2ABCB6B863BA} = {4A1A254E-ED74-46CB-B564-AE16BE7C3E7E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {547D0377-2E1C-4635-9CCA-FDC4AD0A2300}

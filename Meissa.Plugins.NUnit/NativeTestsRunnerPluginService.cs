@@ -10,7 +10,7 @@
 // limitations under the License.
 // </copyright>
 // <author>Anton Angelov</author>
-// <site>https://automatetheplanet.com/</site>
+// <site>https://bellatrix.solutions/</site>
 using System;
 using System.Collections.Generic;
 using System.Composition;
@@ -34,7 +34,7 @@ namespace Meissa.Plugins.NUnit
 
         public string RunnerFile => Path.Combine(GetRunningAssemblyPath(), "Plugins\\nunit-native-runner\\nunit3-console.exe");
 
-        public string ResultsFileExtension => "trx";
+        public string ResultsFileExtension => "xml";
 
         public List<string> RunnerProcessesNamesToKill => new List<string> { "nunit3-console" };
 
@@ -48,7 +48,7 @@ namespace Meissa.Plugins.NUnit
 
         public object DeserializeTestResults(string originalRunTestResults) => Deserialize<testrun>(originalRunTestResults);
 
-        public string SerializeTestResults(object testRun) => Serialize((testrun)testRun);
+        public string SerializeTestResults(object testResults) => Serialize((testrun)testResults);
 
         public object GetAllPassesTests(object testRunContent)
         {
@@ -102,11 +102,11 @@ namespace Meissa.Plugins.NUnit
             return passedTestCases.Count();
         }
 
-        public string MergeTestResults(object testRunsToBeMergedObj)
+        public string MergeTestResults(object testResultsToBeMergedObj)
         {
             var result = string.Empty;
             testrun mergedTestRun = null;
-            var testRunsToBeMerged = (List<object>)testRunsToBeMergedObj;
+            var testRunsToBeMerged = (List<object>)testResultsToBeMergedObj;
             if (testRunsToBeMerged.Any())
             {
                 mergedTestRun = (testrun)testRunsToBeMerged.First();
@@ -433,12 +433,6 @@ namespace Meissa.Plugins.NUnit
             return result;
         }
 
-        private string GetRunningAssemblyPath()
-        {
-            string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-            var uri = new UriBuilder(codeBase);
-            string path = Uri.UnescapeDataString(uri.Path);
-            return Path.GetDirectoryName(path);
-        }
+        private string GetRunningAssemblyPath() => Assembly.GetExecutingAssembly().Location;
     }
 }

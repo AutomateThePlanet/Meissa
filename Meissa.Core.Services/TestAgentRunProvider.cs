@@ -10,7 +10,7 @@
 // limitations under the License.
 // </copyright>
 // <author>Anton Angelov</author>
-// <site>https://automatetheplanet.com/</site>
+// <site>https://bellatrix.solutions/</site>
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -171,8 +171,8 @@ namespace Meissa.Core.Services
                                if (executeTestAgentRunTask.IsFaulted)
                                {
                                    // DEBUG:
-                                   _testRunLogService.CreateTestRunLogAsync($"executeTestAgentRunTask FAULTED on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId);
-                                   _testRunLogService.CreateTestRunLogAsync($"executeTestAgentRunTask FAULTED on machine {_environmentService.MachineName}. Exception: {executeTestAgentRunTask.Exception}", newTestAgentRun.TestRunId);
+                                   ////_testRunLogService.CreateTestRunLogAsync($"executeTestAgentRunTask FAULTED on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId);
+                                   ////_testRunLogService.CreateTestRunLogAsync($"executeTestAgentRunTask FAULTED on machine {_environmentService.MachineName}. Exception: {executeTestAgentRunTask.Exception}", newTestAgentRun.TestRunId);
                                    cancellationTokenSource.Cancel();
                                    return;
                                }
@@ -261,7 +261,7 @@ namespace Meissa.Core.Services
                         if (testAgentRunAvailability == null)
                         {
                             // DEBUG:
-                            _consoleProvider.WriteLine("WaitForTestAgentRunsToFinishAsync testAgentRunAvailability is NULL");
+                            ////_consoleProvider.WriteLine("WaitForTestAgentRunsToFinishAsync testAgentRunAvailability is NULL");
                         }
 
                         if (testAgentRun == null || testAgentRun.Status == TestAgentRunStatus.Completed || testAgentRun.Status == TestAgentRunStatus.Aborted)
@@ -337,7 +337,7 @@ namespace Meissa.Core.Services
 
             // DEBUG:
             ////_consoleProvider.WriteLine();
-            _consoleProvider.WriteLine($"UPDATE Test Run on machine {_environmentService.MachineName} {_dateTimeProvider.GetCurrentTime()}");
+            ////_consoleProvider.WriteLine($"UPDATE Test Run on machine {_environmentService.MachineName} {_dateTimeProvider.GetCurrentTime()}");
 
             await _testRunAvailabilityServiceClient.CreateAsync(testRunAvailability);
         }
@@ -442,12 +442,12 @@ namespace Meissa.Core.Services
                 ////_testRunLogService.CreateTestRunLogAsync($"Update Test Agent Run on machine {_environmentService.MachineName} {_dateTimeProvider.GetCurrentTime()}", testAgentRun.TestRunId).Wait();
                 // DEBUG:
                 ////_consoleProvider.WriteLine();
-                _consoleProvider.WriteLine($"UPDATE Test Agent Run on machine {_environmentService.MachineName} {_dateTimeProvider.GetCurrentTime()}");
+                ////_consoleProvider.WriteLine($"UPDATE Test Agent Run on machine {_environmentService.MachineName} {_dateTimeProvider.GetCurrentTime()}");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // DEBUG:
-                _consoleProvider.WriteLine($"THERE WAS AN EXCEPTION DURING UPDATING LAST AVAILABLE {e}");
+                ////_consoleProvider.WriteLine($"THERE WAS AN EXCEPTION DURING UPDATING LAST AVAILABLE {e}");
             }
         }
 
@@ -508,7 +508,7 @@ namespace Meissa.Core.Services
             if (testRunOutput == null)
             {
                 // DEBUG:
-                _testRunLogService.CreateTestRunLogAsync($"The test run output cannot be null on machine {_environmentService.MachineName}", testAgentRun.TestRunId).Wait();
+                ////_testRunLogService.CreateTestRunLogAsync($"The test run output cannot be null on machine {_environmentService.MachineName}", testAgentRun.TestRunId).Wait();
                 throw new ArgumentException("The test run output cannot be null.");
             }
 
@@ -604,6 +604,11 @@ namespace Meissa.Core.Services
         private async Task<bool> IsTestRunCompleted(Guid testRunId)
         {
             var testRun = await _testRunRepository.GetAsync(testRunId);
+
+            ////if (testRun == null)
+            ////{
+            ////    return false;
+            ////}
 
             if (testRun.Status.Equals(TestRunStatus.InProgress) || testRun.Status.Equals(TestRunStatus.Aborted))
             {

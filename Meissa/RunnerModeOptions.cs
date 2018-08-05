@@ -10,7 +10,7 @@
 // limitations under the License.
 // </copyright>
 // <author>Anton Angelov</author>
-// <site>https://automatetheplanet.com/</site>
+// <site>https://bellatrix.solutions/</site>
 using System;
 using System.Collections.Generic;
 using CommandLine;
@@ -32,8 +32,8 @@ namespace Meissa
         [Option('t', "agentTag", Required = true, HelpText = "The test agents' tag used to filter the machines where the tests will be executed.")]
         public string AgentTag { get; set; }
 
-        [Option("testTechnology", HelpText = "The tests technology that will be used to execute the tests- MSTestCore, NUnit, MSTestFramework, etc.")]
-        public string TestTechnology { get; set; } = "MSTestCore";
+        [Option("testTechnology", HelpText = "The tests technology that will be used to execute the tests- MSTest, NUnit, etc.")]
+        public string TestTechnology { get; set; } = "MSTest";
 
         [Option('n', "nativeRunnerArguments", HelpText = "The native runner arguments that we use in addition to Meissa arguments. (e.g. MSTest /nologo argument).")]
         public string NativeArguments { get; set; }

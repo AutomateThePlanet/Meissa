@@ -10,7 +10,7 @@
 // limitations under the License.
 // </copyright>
 // <author>Anton Angelov</author>
-// <site>https://automatetheplanet.com/</site>
+// <site>https://bellatrix.solutions/</site>
 using System;
 using System.Net.Http;
 using System.Threading;
@@ -34,14 +34,16 @@ namespace Meissa.API.Client
                     {
                         if (i > 0)
                         {
-                            Console.WriteLine($"SendAsyncWithRetry- URI: {request.RequestUri} TYPE: {request.Method} - TRY {i + 1} SUCCESS");
+                            // DEBUG:
+                            ////Console.WriteLine($"SendAsyncWithRetry- URI: {request.RequestUri} TYPE: {request.Method} - TRY {i + 1} SUCCESS");
                         }
 
                         return response;
                     }
                     else
                     {
-                        Console.WriteLine($"The retried request was not successful- {response.Content} URI: {request.RequestUri} TYPE: {request.Method}");
+                        // DEBUG:
+                        ////Console.WriteLine($"The retried request was not successful- {response.Content} URI: {request.RequestUri} TYPE: {request.Method}");
                         Thread.Sleep(sleepIntervalMilliseconds);
                     }
                 }
@@ -54,10 +56,11 @@ namespace Meissa.API.Client
 
                     Thread.Sleep(sleepIntervalMilliseconds);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    Console.WriteLine($"EXCEPTION SendAsyncWithRetry- {response?.Content} URI: {request.RequestUri} TYPE: {request.Method} - TRY {i + 1}");
-                    Console.WriteLine($"EXCEPTION SendAsyncWithRetry- {e}");
+                    // DEBUG:
+                    ////Console.WriteLine($"EXCEPTION SendAsyncWithRetry- {response?.Content} URI: {request.RequestUri} TYPE: {request.Method} - TRY {i + 1}");
+                    ////Console.WriteLine($"EXCEPTION SendAsyncWithRetry- {e}");
                     Thread.Sleep(sleepIntervalMilliseconds);
                 }
             }

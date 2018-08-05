@@ -1,0 +1,18 @@
+﻿1. Install Node.js
+2. In the Plugins folder you should have a folder- node_modules with Protractor installed and updated
+npm install protractor
+- navigate to protractor folder and execute:
+webdriver-manager update
+
+The conf.js file + all spec files are copied to a new temp folder.
+The plugin edit the conf.js and adds a function with custom NUnit Jasmine reporter with a new temp folder for the results.
+The passed results file for all other plugins is a file but here the Jasmine report plugin generate a folder instead of a file. Because of that we delete the file.
+In order the plugin to be able to generate the results we copy node_modules_jasmin_reporters folder where the Jasmin NUnit reporter is installed.
+To filter the tests for different subsets we edit the spec.js files with regex replace and change the tests with specific names - from it to fit (focused)
+Only these tests will be executed.
+
+
+
+
+
+TODO: Release Manager - copy protractor plugin + node_modules_jasmin_reporters

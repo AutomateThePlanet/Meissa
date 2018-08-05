@@ -10,9 +10,8 @@
 // limitations under the License.
 // </copyright>
 // <author>Anton Angelov</author>
-// <site>https://automatetheplanet.com/</site>
+// <site>https://bellatrix.solutions/</site>
 using CommandLine;
-using Meissa.Core.Model.Settings;
 
 namespace Meissa
 {
@@ -27,9 +26,6 @@ namespace Meissa
 
         [Option('r', "testAgentRunTimeout", HelpText = "The time in minutes after which the test agent run will be stopped.")]
         public int TestAgentRunTimeout { get; set; } = 180;
-
-        [Option("testTechnology", HelpText = "The tests technology that will be used to execute the tests- MSTestCore, NUnit, MSTestFramework, etc.")]
-        public TestTechnology TestTechnology { get; set; } = TestTechnology.MSTestCore;
 
         [Option("restarted", HelpText = "Used for internal purposes only.")]
         public bool Restarted { get; set; }

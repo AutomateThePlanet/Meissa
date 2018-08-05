@@ -10,10 +10,12 @@
 // limitations under the License.
 // </copyright>
 // <author>Anton Angelov</author>
-// <site>https://automatetheplanet.com/</site>
+
+// <site>https://bellatrix.solutions/</site>
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Meissa.API.Models;
@@ -29,6 +31,7 @@ namespace Meissa.Infrastructure
         private readonly IServiceClient<TestRunLogDto> _testRunLogRepository;
         private readonly IProcessProvider _processStarter;
         private readonly IFileProvider _fileProvider;
+        private readonly IDirectoryProvider _directoryProvider;
         private readonly IPathProvider _pathProvider;
         private readonly IConsoleProvider _consoleProvider;
         private readonly ITestsRunnerTestResultsService _testResultsService;
@@ -47,6 +50,7 @@ namespace Meissa.Infrastructure
             IServiceClient<TestRunLogDto> testRunLogRepository,
             IProcessProvider processStarter,
             IFileProvider fileProvider,
+            IDirectoryProvider directoryProvider,
             IPathProvider pathProvider,
             IConsoleProvider consoleProvider,
             ITestsRunnerTestResultsService testResultsService,
@@ -62,6 +66,7 @@ namespace Meissa.Infrastructure
             _testRunLogRepository = testRunLogRepository;
             _processStarter = processStarter;
             _fileProvider = fileProvider;
+            _directoryProvider = directoryProvider;
             _pathProvider = pathProvider;
             _consoleProvider = consoleProvider;
             _testResultsService = testResultsService;
@@ -135,12 +140,12 @@ namespace Meissa.Infrastructure
                         _nativeTestsRunner.UpdatePassedTests(passedTests, originalTestRun);
 
                         // DEBUG:
-                        await _testRunLogService.CreateTestRunLogAsync($"{_nativeTestsRunner.GetAllPassesTestsCount(originalTestRun)} passed tests found.", testRunId);
+                        ////await _testRunLogService.CreateTestRunLogAsync($"{_nativeTestsRunner.GetAllPassesTestsCount(originalTestRun)} passed tests found.", testRunId);
 
                         _nativeTestsRunner.UpdateResultsSummary(originalTestRun);
 
                         // DEBUG:
-                        await _testRunLogService.CreateTestRunLogAsync($"{_nativeTestsRunner.GetAllNotPassesTestsCount(originalTestRun)} failed tests after update.", testRunId);
+                        ////await _testRunLogService.CreateTestRunLogAsync($"{_nativeTestsRunner.GetAllNotPassesTestsCount(originalTestRun)} failed tests after update.", testRunId);
                     }
                     else
                     {
@@ -226,7 +231,7 @@ namespace Meissa.Infrastructure
                          {
                              var ranProcesses = new List<int>();
                              do
-                             {
+                         {
                                  var coresCount = availableCores;
                                  if (runInParallel)
                                  {
@@ -325,12 +330,28 @@ namespace Meissa.Infrastructure
             if (!outerCancellationTokenSource.Token.IsCancellationRequested)
             {
                 // DEBUG:
-                _testRunLogService.CreateTestRunLogAsync($"START MERGING RESULTS- on machine {Environment.MachineName}", _currentTestRunId).Wait();
+                ////_testRunLogService.CreateTestRunLogAsync($"START MERGING RESULTS- on machine {Environment.MachineName}", _currentTestRunId).Wait();
                 foreach (var testResultFile in resultsFiles)
                 {
                     if (_fileProvider.Exists(testResultFile))
                     {
                         var testTestResults = _fileProvider.ReadAllText(testResultFile);
+                        var currentTestRun = _nativeTestsRunner.DeserializeTestResults(testTestResults);
+                        testRunsToBeMerged.Add(currentTestRun);
+                    }
+                    else if (_directoryProvider.Exists(testResultFile))
+                    {
+                        // TODO: Added this because of the Protractor Plugin, since it produces folder instead of file.
+                        // Fix it later with something more generic solution. Maybe, we have to save the test results to plugin folder and
+                        // add a plugin method for deleting them at the end.
+                        var files = _directoryProvider.GetFiles(testResultFile);
+                        if (!files.Any())
+                        {
+                            throw new Exception("No test results' file was produced for test run");
+                        }
+
+                        var firstFile = _directoryProvider.GetFiles(testResultFile).First();
+                        var testTestResults = _fileProvider.ReadAllText(firstFile);
                         var currentTestRun = _nativeTestsRunner.DeserializeTestResults(testTestResults);
                         testRunsToBeMerged.Add(currentTestRun);
                     }
@@ -344,14 +365,14 @@ namespace Meissa.Infrastructure
                 if (isTimeBasedBalance)
                 {
                     // DEBUG:
-                    var startTime = _dateTimeProvider.GetCurrentTime();
-                    _testRunLogService.CreateTestRunLogAsync($"START updating test case history- on machine {Environment.MachineName}", _currentTestRunId).Wait();
+                    ////var startTime = _dateTimeProvider.GetCurrentTime();
+                    ////_testRunLogService.CreateTestRunLogAsync($"START updating test case history- on machine {Environment.MachineName}", _currentTestRunId).Wait();
                     var testCaseRuns = _nativeTestsRunner.UpdateTestCasesHistory(mergedTestRun, assemblyName);
                     await _testCasesHistoryService.UpdateTestCaseExecutionHistoryAsync(testCaseRuns);
 
                     // DEBUG:
-                    var endTime = _dateTimeProvider.GetCurrentTime();
-                    _testRunLogService.CreateTestRunLogAsync($"END updating test case history- on machine {Environment.MachineName} for {(endTime - startTime).Seconds} seconds", _currentTestRunId).Wait();
+                    ////var endTime = _dateTimeProvider.GetCurrentTime();
+                    ////_testRunLogService.CreateTestRunLogAsync($"END updating test case history- on machine {Environment.MachineName} for {(endTime - startTime).Seconds} seconds", _currentTestRunId).Wait();
                 }
 
                 result = mergedTestRun;

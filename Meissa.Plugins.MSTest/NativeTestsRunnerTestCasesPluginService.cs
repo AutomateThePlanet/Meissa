@@ -10,7 +10,7 @@
 // limitations under the License.
 // </copyright>
 // <author>Anton Angelov</author>
-// <site>https://automatetheplanet.com/</site>
+// <site>https://bellatrix.solutions/</site>
 using System;
 using System.Collections.Generic;
 using System.Composition;
@@ -28,7 +28,7 @@ namespace Meissa.Plugins.MSTest
         private const string MsTestClassAttributeName = "Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute";
         private const string MsTestTestAttributeName = "Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute";
 
-        public string Name => "MSTestCore";
+        public string Name => "MSTest";
 
         public List<TestCase> ExtractAllTestCasesFromTestLibrary(string testLibraryPath)
         {

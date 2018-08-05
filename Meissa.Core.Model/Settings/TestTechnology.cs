@@ -10,16 +10,12 @@
 // limitations under the License.
 // </copyright>
 // <author>Anton Angelov</author>
-// <site>https://automatetheplanet.com/</site>
+// <site>https://bellatrix.solutions/</site>
 namespace Meissa.Core.Model.Settings
 {
     public enum TestTechnology : byte
     {
-        MSTestCore = 0,
-        MSTestFramework46 = 1,
-        MSTestFramework45 = 2,
-        MSTestFramework40 = 3,
-        MSTestFramework35 = 4,
-        NUnit = 5,
+        MSTest = 0,
+        NUnit = 1,
     }
 }

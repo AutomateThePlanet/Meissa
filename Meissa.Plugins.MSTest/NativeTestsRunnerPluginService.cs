@@ -10,7 +10,7 @@
 // limitations under the License.
 // </copyright>
 // <author>Anton Angelov</author>
-// <site>https://automatetheplanet.com/</site>
+// <site>https://bellatrix.solutions/</site>
 using System;
 using System.Collections.Generic;
 using System.Composition;
@@ -29,7 +29,7 @@ namespace Meissa.Plugins.MSTest
     [Export(typeof(INativeTestsRunnerPluginService))]
     public class NativeTestsRunnerPluginService : INativeTestsRunnerPluginService
     {
-        public string Name => "MSTestCore";
+        public string Name => "MSTest";
 
         public string RunnerFile => "dotnet";
 
@@ -48,7 +48,7 @@ namespace Meissa.Plugins.MSTest
 
         public object DeserializeTestResults(string originalRunTestResults) => Deserialize<TestRun>(originalRunTestResults);
 
-        public string SerializeTestResults(object testRun) => Serialize((TestRun)testRun);
+        public string SerializeTestResults(object testResults) => Serialize((TestRun)testResults);
 
         public List<TestCase> GetAllPassesTestCases(string testResultsFileContent)
         {
@@ -87,10 +87,10 @@ namespace Meissa.Plugins.MSTest
             return count;
         }
 
-        public string MergeTestResults(object testRunsToBeMergedObj)
+        public string MergeTestResults(object testResultsToBeMergedObj)
         {
             var result = string.Empty;
-            var testRunsToBeMerged = (List<object>)testRunsToBeMergedObj;
+            var testRunsToBeMerged = (List<object>)testResultsToBeMergedObj;
             TestRun mergedTestRun = null;
             if (testRunsToBeMerged.Any())
             {

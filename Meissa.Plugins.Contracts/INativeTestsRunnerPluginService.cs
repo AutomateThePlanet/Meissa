@@ -10,7 +10,7 @@
 // limitations under the License.
 // </copyright>
 // <author>Anton Angelov</author>
-// <site>https://automatetheplanet.com/</site>
+// <site>https://bellatrix.solutions/</site>
 using System.Collections.Generic;
 using Meissa.API.Models;
 using Meissa.Core.Model;
@@ -31,13 +31,13 @@ namespace Meissa.Plugins.Contracts
         void UpdatePassedTests(object passedTests, object testRun);
         void UpdateResultsSummary(object testRunObj);
         List<TestCaseRun> UpdateTestCasesHistory(object testRun, string libraryName);
-        string MergeTestResults(object testRunsToBeMergedObj);
+        string MergeTestResults(object testResultsToBeMergedObj);
         string BuildNativeRunnerArguments(string libraryName, string libraryPath, List<TestCase> testCasesToBeExecuted, string testResultsFilePath, string outputFilesDir, string nativeArguments);
         List<TestCase>[] SplitTestCases(List<TestCase> testCases, int availableCores);
         List<TestCase> GetAllNotPassedTests(string testResultsFileContent);
         List<TestCase> GetAllPassesTestCases(string testResultsFileContent);
         object GetRetriedTestResultsForTestRun(List<TestAgentRunDto> testAgentRuns);
         object GetTestResultsForTestRun(List<TestAgentRunDto> testAgentRuns);
-        string SerializeTestResults(object testRun);
+        string SerializeTestResults(object testResults);
     }
 }
