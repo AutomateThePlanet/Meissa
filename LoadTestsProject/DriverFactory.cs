@@ -11,7 +11,7 @@ namespace LoadTestsProject
 {
     public static class DriverFactory
     {
-        private static object lockObj = new Object();
+        private static object lockObj = new object();
 
         public static IWebDriver GetDriver()
         {

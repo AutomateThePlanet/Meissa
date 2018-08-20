@@ -52,11 +52,11 @@
     <PackageReference Include="FluentCommandLineParser-netstandard" Version="1.4.3.13" />
     <PackageReference Include="NUnit.Runners" Version="3.8.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta004" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.1.1" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0-dev-00023" />
     <PackageReference Include="Unity" Version="5.8.6" />
   </ItemGroup>
