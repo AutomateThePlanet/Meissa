@@ -40,7 +40,7 @@ namespace Meissa.Core.Services
             _consoleProvider = consoleProvider;
         }
 
-        public async Task<List<string>> GenerateDistributionListsAsync(int testAgentsCount, List<TestCase> testCasesToBeDistributed)
+        public async Task<List<string>> GenerateDistributionListsAsync(int testAgentsCount, bool sameMachineByClass, List<TestCase> testCasesToBeDistributed)
         {
             if (testAgentsCount <= 0)
             {
@@ -58,7 +58,12 @@ namespace Meissa.Core.Services
             if (executedTestsPercentage < FallBackPercentage)
             {
                 _consoleProvider.WriteLine("---> Distribute tests using ITestsCountsBasedDistributeService");
-                return _testsCountsBasedDistributeService.GenerateDistributionLists(testAgentsCount, testCasesToBeDistributed);
+                return _testsCountsBasedDistributeService.GenerateDistributionLists(testAgentsCount, sameMachineByClass, testCasesToBeDistributed);
+            }
+
+            if (executedTestCasesWithoutTime.Any() && sameMachineByClass)
+            {
+                return _testsCountsBasedDistributeService.GenerateDistributionLists(testAgentsCount, sameMachineByClass, testCasesToBeDistributed);
             }
 
             _consoleProvider.WriteLine("---> Distribute tests using ITestsTimesBasedDistributeService");
@@ -73,9 +78,11 @@ namespace Meissa.Core.Services
             {
                 int distributedIndex = 0;
                 double tempDistributedTestsSeconds = totalSecondsPerList;
+                string previousClass = null;
                 for (int i = 0; i < orderedByClassTestCases.Count; i++)
                 {
-                    if (tempDistributedTestsSeconds <= 0)
+                    bool shouldResetTestsPerList = ShouldResetTestsPerList(sameMachineByClass, orderedByClassTestCases[i].ClassName, previousClass);
+                    if (tempDistributedTestsSeconds <= 0 && shouldResetTestsPerList)
                     {
                         tempDistributedTestsSeconds = totalSecondsPerList;
                         distributedIndex++;
@@ -87,6 +94,7 @@ namespace Meissa.Core.Services
                     }
 
                     distributedTestCases[distributedIndex].Add(orderedByClassTestCases[i]);
+                    previousClass = orderedByClassTestCases[i].ClassName;
                     tempDistributedTestsSeconds -= orderedByClassTestCases[i].AvgExecutionTime.Value.Milliseconds;
                 }
             }
@@ -99,7 +107,7 @@ namespace Meissa.Core.Services
             if (executedTestCasesWithoutTime.Any())
             {
                 var notExecutedTestCases = GetTestCasesFromExecutedTestCases(executedTestCasesWithoutTime.ToList());
-                notDistributedTestCases = _testsCountsBasedDistributeService.GenerateDistributionTestCasesLists(testAgentsCount, notExecutedTestCases);
+                notDistributedTestCases = _testsCountsBasedDistributeService.GenerateDistributionTestCasesLists(testAgentsCount, sameMachineByClass, notExecutedTestCases);
             }
 
             _consoleProvider.WriteLine($"---> Total Count of Tests to be NOT distributed test lists = {notDistributedTestCases.Count}");
@@ -121,6 +129,11 @@ namespace Meissa.Core.Services
             }
 
             return distributedTestsLists;
+        }
+
+        private static bool ShouldResetTestsPerList(bool sameMachineByClass, string currentClass, string previousClass)
+        {
+            return sameMachineByClass ? previousClass != currentClass : true;
         }
 
         private List<TestCase> GetTestCasesFromExecutedTestCases(List<ExecutedTestCase> executedTestCases)

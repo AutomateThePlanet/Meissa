@@ -27,6 +27,7 @@ namespace Meissa.Core.Model.Settings
         public bool RunInParallel { get; set; }
         public int MaxParallelProcessesCount { get; set; }
         public bool TimeBasedBalance { get; set; }
+        public bool SameMachineByClass { get; set; }
         public int TestRunTimeout { get; set; }
         public IEnumerable<string> CustomArguments { get; set; }
         public int RetriesCount { get; set; }

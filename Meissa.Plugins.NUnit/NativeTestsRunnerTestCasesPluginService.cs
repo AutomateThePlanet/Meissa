@@ -19,6 +19,8 @@ using System.Linq;
 using System.Reflection;
 using Meissa.Core.Model;
 using Meissa.Plugins.Contracts;
+using Mono.Cecil;
+using Mono.Cecil.Rocks;
 
 namespace Meissa.Plugins.NUnit
 {
@@ -33,16 +35,16 @@ namespace Meissa.Plugins.NUnit
 
         public List<TestCase> ExtractAllTestCasesFromTestLibrary(string testLibraryPath)
         {
-            var assembly = GetAssemblyFromFile(testLibraryPath);
+            var module = ModuleDefinition.ReadModule(testLibraryPath);
             var testCases = new List<TestCase>();
 
-            foreach (var currentType in assembly.GetTypes())
+            foreach (var currentType in module.GetTypes())
             {
-                if (currentType.GetCustomAttributes().Any(x => x.GetType().FullName.Equals(NunitTestFixtureAttributeName)))
+                if (currentType.CustomAttributes.Any(x => x.AttributeType.FullName.ToString().Contains(NunitTestFixtureAttributeName)))
                 {
                     foreach (var currentMethod in currentType.GetMethods())
                     {
-                        if (currentMethod.GetCustomAttributes().Any(x => x.GetType().FullName.Equals(NunitTestAttributeName)))
+                        if (currentMethod.CustomAttributes.Any(x => x.GetType().FullName.Equals(NunitTestAttributeName)))
                         {
                             // This is a Nunit test - add it to the current test class list of tests.
                             var currentTestCase = CreateTestCase(currentMethod);
@@ -55,20 +57,20 @@ namespace Meissa.Plugins.NUnit
             return testCases;
         }
 
-        private TestCase CreateTestCase(MethodInfo testMethod)
+        private TestCase CreateTestCase(MethodDefinition testMethod)
         {
             var testCase = new TestCase
             {
-                FullName = string.Concat(testMethod?.ReflectedType?.FullName, ".", testMethod.Name),
+                FullName = string.Concat(testMethod?.DeclaringType?.FullName, ".", testMethod.Name),
                 ClassName = testMethod.DeclaringType.FullName,
             };
-            var testCaseCategoryAttributes = testMethod.GetCustomAttributes().Where(x => x.GetType().FullName.Equals(NunitCategoryAttributeName));
+            var testCaseCategoryAttributes = testMethod.CustomAttributes.Where(x => x.GetType().FullName.Contains(NunitCategoryAttributeName));
             testCase.Categories = GetCategoryNamesFromAttributes(testCaseCategoryAttributes);
 
             return testCase;
         }
 
-        private List<string> GetCategoryNamesFromAttributes(IEnumerable<Attribute> attributes)
+        private List<string> GetCategoryNamesFromAttributes(IEnumerable<CustomAttribute> attributes)
         {
             var categoryNames = new List<string>();
 
@@ -79,14 +81,6 @@ namespace Meissa.Plugins.NUnit
             }
 
             return categoryNames;
-        }
-
-        private Assembly GetAssemblyFromFile(string fullFilePath)
-        {
-            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
-            var assembly = Assembly.LoadFrom(fullFilePath);
-
-            return assembly;
         }
     }
 }

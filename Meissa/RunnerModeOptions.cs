@@ -56,6 +56,9 @@ namespace Meissa
         [Option("timeBasedBalance", HelpText = "Specifies whether the tests will be distributed based on previous execution times.")]
         public bool TimeBasedBalance { get; set; }
 
+        [Option("sameMachineByClass", HelpText = "Specifies whether the tests from the same class will be executed on the same machine. The default is false.")]
+        public bool SameMachineByClass { get; set; } = false;
+
         [Option("customArguments", HelpText = "Key value pairs. The first parameter will be the name of the environment variable holding the second one as value.")]
         public IEnumerable<string> CustomArguments { get; set; }
 

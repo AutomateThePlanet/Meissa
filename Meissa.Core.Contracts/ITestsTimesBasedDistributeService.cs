@@ -19,6 +19,6 @@ namespace Meissa.Core.Contracts
 {
     public interface ITestsTimesBasedDistributeService
     {
-        Task<List<string>> GenerateDistributionListsAsync(int testAgentsCount, List<TestCase> testCasesToBeDistributed);
+        Task<List<string>> GenerateDistributionListsAsync(int testAgentsCount, bool sameMachineByClass, List<TestCase> testCasesToBeDistributed);
     }
 }

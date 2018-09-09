@@ -101,8 +101,8 @@ namespace Meissa.Core.Services
                 var filteredTestCases = _testCasesFilterService.FilterCases(allTestCases, testRunSettings.TestsFilter);
 
                 var distributedTestsLists = testRunSettings.TimeBasedBalance ?
-                    await _testsTimesBasedDistributeService.GenerateDistributionListsAsync(availableTestAgents.Count, filteredTestCases) :
-                    _testCountsBasedDistributeService.GenerateDistributionLists(availableTestAgents.Count, filteredTestCases);
+                    await _testsTimesBasedDistributeService.GenerateDistributionListsAsync(availableTestAgents.Count, testRunSettings.SameMachineByClass, filteredTestCases) :
+                    _testCountsBasedDistributeService.GenerateDistributionLists(availableTestAgents.Count, testRunSettings.SameMachineByClass, filteredTestCases);
 
                 var testAgentRuns = await _testAgentRunProvider.CreateNewTestAgentRunsAsync(testRunId, availableTestAgents, distributedTestsLists);
                 try

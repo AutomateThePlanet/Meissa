@@ -407,6 +407,7 @@ framework: 'jasmine',
                         if (passedTestCases.Any(x => x.Name.Equals(currentTestCase.Name)))
                         {
                             currentTestCase.Success = "true";
+                            currentTestCase.Failure = new List<Failure>();
                         }
                     }
 
@@ -432,8 +433,8 @@ framework: 'jasmine',
 
         private void Copy(string sourceDirectory, string targetDirectory)
         {
-            DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
-            DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
+            var diSource = new DirectoryInfo(sourceDirectory);
+            var diTarget = new DirectoryInfo(targetDirectory);
 
             CopyAll(diSource, diTarget);
         }

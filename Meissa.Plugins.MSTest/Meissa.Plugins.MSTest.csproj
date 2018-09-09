@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Mono.Cecil" Version="0.10.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta004" />
   </ItemGroup>
 

@@ -52,7 +52,7 @@ namespace Meissa.Plugins.Protractor
                                             .ToList();
                 foreach (var itName in itNames)
                 {
-                    testCases.Add(new TestCase(itName, itName));
+                    testCases.Add(new TestCase(itName, specFile));
                 }
             }
 

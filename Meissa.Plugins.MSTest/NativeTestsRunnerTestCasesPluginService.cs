@@ -18,6 +18,8 @@ using System.Linq;
 using System.Reflection;
 using Meissa.Core.Model;
 using Meissa.Plugins.Contracts;
+using Mono.Cecil;
+using Mono.Cecil.Rocks;
 
 namespace Meissa.Plugins.MSTest
 {
@@ -27,24 +29,25 @@ namespace Meissa.Plugins.MSTest
         private const string MsTestCategoryAttributeName = "Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute";
         private const string MsTestClassAttributeName = "Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute";
         private const string MsTestTestAttributeName = "Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute";
+        private const string MsCodedUITestClassAttributeName = "Microsoft.VisualStudio.TestTools.UITesting.CodedUITestAttribute"; // search codded UI tests
 
         public string Name => "MSTest";
 
         public List<TestCase> ExtractAllTestCasesFromTestLibrary(string testLibraryPath)
         {
-            var assembly = GetAssemblyFromFile(testLibraryPath);
+            var module = ModuleDefinition.ReadModule(testLibraryPath);
             var testCases = new List<TestCase>();
 
-            foreach (var currentType in assembly.GetTypes())
+            foreach (var currentType in module.GetTypes())
             {
-                if (currentType.GetCustomAttributesData().Any(x => x.ToString().Contains(MsTestClassAttributeName)))
+                if (currentType.CustomAttributes.Any(x => x.AttributeType.FullName.ToString().Contains(MsTestClassAttributeName) || x.AttributeType.FullName.ToString().Contains(MsCodedUITestClassAttributeName)))
                 {
                     // This is a Nunit test class - create new test suite for it.
                     ////var currentTestSuite = CreateTestSuite(currentType);
 
                     foreach (var currentMethod in currentType.GetMethods())
                     {
-                        if (currentMethod.GetCustomAttributes().Any(x => x.GetType().FullName.Equals(MsTestTestAttributeName)))
+                        if (currentMethod.CustomAttributes.Any(x => x.GetType().FullName.Equals(MsTestTestAttributeName)))
                         {
                             // This is a Nunit test - add it to the current test class list of tests.
                             var currentTestCase = CreateTestCase(currentMethod);
@@ -57,20 +60,20 @@ namespace Meissa.Plugins.MSTest
             return testCases;
         }
 
-        private TestCase CreateTestCase(MethodInfo testMethod)
+        private TestCase CreateTestCase(MethodDefinition testMethod)
         {
             var testCase = new TestCase
             {
-                FullName = string.Concat(testMethod?.ReflectedType?.FullName, ".", testMethod.Name),
+                FullName = string.Concat(testMethod?.DeclaringType?.FullName, ".", testMethod.Name),
                 ClassName = testMethod.DeclaringType.FullName,
             };
-            var testCaseCategoryAttributes = testMethod.GetCustomAttributes().Where(x => x.GetType().FullName.Equals(MsTestCategoryAttributeName));
+            var testCaseCategoryAttributes = testMethod.CustomAttributes.Where(x => x.GetType().FullName.Contains(MsTestCategoryAttributeName));
             testCase.Categories = GetCategoryNamesFromAttributes(testCaseCategoryAttributes);
 
             return testCase;
         }
 
-        private List<string> GetCategoryNamesFromAttributes(IEnumerable<Attribute> attributes)
+        private List<string> GetCategoryNamesFromAttributes(IEnumerable<CustomAttribute> attributes)
         {
             var categoryNames = new List<string>();
             if (attributes != null)
@@ -86,13 +89,6 @@ namespace Meissa.Plugins.MSTest
             }
 
             return categoryNames;
-        }
-
-        private Assembly GetAssemblyFromFile(string fullFilePath)
-        {
-            var assembly = Assembly.LoadFrom(fullFilePath);
-
-            return assembly;
         }
     }
 }

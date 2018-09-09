@@ -205,6 +205,7 @@ namespace Meissa
                 AgentTag = runnerModeOptions.AgentTag,
                 RunInParallel = runnerModeOptions.RunInParallel,
                 MaxParallelProcessesCount = runnerModeOptions.MaxParallelProcessesCount,
+                SameMachineByClass = runnerModeOptions.SameMachineByClass,
                 TimeBasedBalance = runnerModeOptions.TimeBasedBalance,
                 NativeArguments = runnerModeOptions.NativeArguments,
                 TestRunTimeout = runnerModeOptions.TestRunTimeout,

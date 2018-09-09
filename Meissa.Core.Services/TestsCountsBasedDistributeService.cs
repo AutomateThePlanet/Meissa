@@ -25,7 +25,7 @@ namespace Meissa.Core.Services
 
         public TestsCountsBasedCountsBasedDistributeService(IJsonSerializer jsonSerializer) => _jsonSerializer = jsonSerializer;
 
-        public List<List<TestCase>> GenerateDistributionTestCasesLists(int testAgentsCount, List<TestCase> testCasesToBeDistributed)
+        public List<List<TestCase>> GenerateDistributionTestCasesLists(int testAgentsCount, bool sameMachineByClass, List<TestCase> testCasesToBeDistributed)
         {
             if (testAgentsCount <= 0)
             {
@@ -40,9 +40,11 @@ namespace Meissa.Core.Services
             {
                 int distributedIndex = 0;
                 int tempDistributedTestsCount = numberOfTestsPerList;
+                string previousClass = null;
                 for (int i = 0; i < orderedByClassTestCases.Count; i++)
                 {
-                    if (tempDistributedTestsCount == 0)
+                    bool shouldResetTestsPerList = ShouldResetTestsPerList(sameMachineByClass, orderedByClassTestCases[i].ClassName, previousClass);
+                    if (tempDistributedTestsCount <= 0 && shouldResetTestsPerList)
                     {
                         tempDistributedTestsCount = numberOfTestsPerList;
                         distributedIndex++;
@@ -54,6 +56,8 @@ namespace Meissa.Core.Services
                     }
 
                     distributedTestCases[distributedIndex].Add(orderedByClassTestCases[i]);
+                    previousClass = orderedByClassTestCases[i].ClassName;
+
                     tempDistributedTestsCount--;
                 }
             }
@@ -65,14 +69,19 @@ namespace Meissa.Core.Services
             return distributedTestCases;
         }
 
-        public List<string> GenerateDistributionLists(int testAgentsCount, List<TestCase> testCasesToBeDistributed)
+        private static bool ShouldResetTestsPerList(bool sameMachineByClass, string currentClass, string previousClass)
+        {
+            return sameMachineByClass ? previousClass != currentClass : true;
+        }
+
+        public List<string> GenerateDistributionLists(int testAgentsCount, bool sameMachineByClass, List<TestCase> testCasesToBeDistributed)
         {
             if (testAgentsCount <= 0)
             {
                 throw new ArgumentException("Test Agents Count Must be Greater Than 0.");
             }
 
-            List<List<TestCase>> distributedTestCases = GenerateDistributionTestCasesLists(testAgentsCount, testCasesToBeDistributed);
+            List<List<TestCase>> distributedTestCases = GenerateDistributionTestCasesLists(testAgentsCount, sameMachineByClass, testCasesToBeDistributed);
 
             var distributedTestsLists = new List<string>();
             foreach (var currentList in distributedTestCases)
