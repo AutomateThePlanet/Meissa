@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Meissa.Linux</id>
+        <version>1.3.0.0</version>
+        <authors>Automate The Planet Ltd.</authors>
+        <summary>Installs Meissa Distributed Test Runner.</summary>
+        <description> Open-source cross-platform test runner that executes tests in parallel, time balanced.</description>
+        <language>en-US</language>
+        <projectUrl>https://meissarunner.com/</projectUrl>
+        <licenseUrl>https://github.com/AutomateThePlanet/Meissa/blob/master/LICENSE</licenseUrl>
+        <iconUrl>http://www.automatetheplanet.com/wp-content/uploads/2018/09/meissa-ico.ico</iconUrl>
+        <tags>Distributed Test Runner</tags>
+        <packageTypes>
+            <packageType name="Template" />
+        </packageTypes>
+    </metadata>
+</package>

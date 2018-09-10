@@ -1,0 +1,8 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Automate The Planet Ltd.",
+    "classifications": [ "Tools", "Test", "Runner", "Meissa", "Distribute", "Parallel" ],
+    "identity": "Meissa.MacOS64",
+    "name": "Meissa.MacOS64",
+    "shortName": "meissa-macos64"
+}
