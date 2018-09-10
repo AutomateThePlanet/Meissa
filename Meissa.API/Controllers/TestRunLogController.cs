@@ -136,54 +136,5 @@ namespace Meissa.API.Controllers
 
             return NoContent();
         }
-
-        ////[HttpDelete("testrun")]
-        ////public async Task<IActionResult> DeleteTestRunLogAsync([FromBody] Guid testRunId)
-        ////{
-        ////    var logs = (await _meissaRepository.GetAllQueryWithRefreshAsync<TestRunLog>()).Where(x => x.TestRunId == testRunId);
-        ////    await _meissaRepository.DeleteRangeWithSaveAsync(logs);
-
-        ////    return NoContent();
-        ////}
-
-        ////[HttpDelete("inprogress")]
-        ////public async Task<IActionResult> DeleteNotInProgressTestRunLogsAsync()
-        ////{
-        ////    var completedTestRuns = (await _meissaRepository.GetAllQueryWithRefreshAsync<TestRun>()).Where(t => t.Status != TestRunStatus.InProgress);
-        ////    var logsToBeDeleted = (await _meissaRepository.GetAllQueryWithRefreshAsync<TestRunLog>()).Where(x => completedTestRuns.Count(t => t.TestRunId.Equals(x.TestRunId)) > 0);
-        ////    await _meissaRepository.DeleteRangeWithSaveAsync(logsToBeDeleted);
-
-        ////    return NoContent();
-        ////}
-
-        ////[HttpDelete("printed")]
-        ////public async Task<IActionResult> DeletePrintedTestRunLogsAsync([FromBody] List<TestRunLogDto> testRunLogDtosToBeDeleted)
-        ////{
-        ////    if (testRunLogDtosToBeDeleted == null)
-        ////    {
-        ////        return BadRequest();
-        ////    }
-
-        ////    if (!ModelState.IsValid)
-        ////    {
-        ////        return BadRequest(ModelState);
-        ////    }
-
-        ////    if (testRunLogDtosToBeDeleted.Count == 0)
-        ////    {
-        ////        return NoContent();
-        ////    }
-
-        ////    var testRunLogToBeDeleted = new List<TestRunLog>();
-
-        ////    foreach (var dto in testRunLogDtosToBeDeleted)
-        ////    {
-        ////        testRunLogToBeDeleted.Add(Mapper.Map<TestRunLog>(dto));
-        ////    }
-
-        ////    await _meissaRepository.DeleteRangeWithSaveAsync(testRunLogToBeDeleted);
-
-        ////    return NoContent();
-        ////}
     }
 }

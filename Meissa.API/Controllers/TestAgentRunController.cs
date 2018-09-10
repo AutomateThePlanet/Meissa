@@ -116,11 +116,6 @@ namespace Meissa.API.Controllers
                 return NotFound();
             }
 
-            ////if (entityToBeUpdated.Status.Equals(TestAgentRunStatus.Completed) && !entityToBeUpdated.Status.Equals(updateObject.Value.Status) && updateObject.Value.Status.Equals(TestAgentRunStatus.Aborted))
-            ////{
-            ////    return NoContent();
-            ////}
-
             entityToBeUpdated = Mapper.Map(updateObject.Value, entityToBeUpdated);
             await _meissaRepository.UpdateWithSaveAsync(entityToBeUpdated);
 
