@@ -103,8 +103,8 @@ namespace Meissa
 
                 // change path later with the latest version of the API use GetExecutingAssemblyFolder
                 // when started with timeout 0, the process will be killed after the console is closed.
-                ////processProvider.StartProcessAndWaitToFinish("dotnet", $"{GetExecutingAssemblyFolder()}\\Server", " Meissa.API.dll", 0);
-                processProvider.StartProcessAndWaitToFinish($"{GetExecutingAssemblyFolder()}\\Meissa.API.exe", $"{GetExecutingAssemblyFolder()}", string.Empty, 0);
+                processProvider.StartProcessAndWaitToFinish("dotnet", $"{GetExecutingAssemblyFolder()}", " Meissa.API.dll", 0);
+                ////processProvider.StartProcessAndWaitToFinish($"{GetExecutingAssemblyFolder()}\\Meissa.API.exe", $"{GetExecutingAssemblyFolder()}", string.Empty, 0);
                 Console.WriteLine("Meissa server successfully initialized.");
                 return 1;
             }

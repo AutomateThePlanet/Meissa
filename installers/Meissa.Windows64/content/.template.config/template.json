@@ -2,7 +2,7 @@
     "$schema": "http://json.schemastore.org/template",
     "author": "Automate The Planet Ltd.",
     "classifications": [ "Tools", "Test", "Runner", "Meissa", "Distribute", "Parallel" ],
-    "identity": "Meissa.Windows",
-    "name": "Meissa.Windows",
-    "shortName": "meissa-windows"
+    "identity": "Meissa.Windows64",
+    "name": "Meissa.Windows64",
+    "shortName": "meissa-windows64"
 }
