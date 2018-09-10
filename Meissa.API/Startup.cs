@@ -45,6 +45,9 @@ namespace Meissa.API
             });
             services.AddScoped<DbRepository<TestsRunsContext>, MeissaRepository>();
             services.AddScoped<MeissaRepository>();
+
+            services.AddHostedService<QueuedHostedService>();
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
