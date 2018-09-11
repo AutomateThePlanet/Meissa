@@ -20,6 +20,7 @@ using Meissa.Core.Model;
 using Meissa.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Meissa.API.Controllers
@@ -27,15 +28,13 @@ namespace Meissa.API.Controllers
     [Route("api/testcaseruns")]
     public class TestCaseRunsController : Controller
     {
-        private readonly ILogger<TestCaseRunsController> _logger;
-        private readonly MeissaRepository _meissaRepository;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+        private readonly IServiceProvider _serviceProvider;
 
-        public TestCaseRunsController(ILogger<TestCaseRunsController> logger, MeissaRepository repository, IBackgroundTaskQueue backgroundTaskQueue)
+        public TestCaseRunsController(IBackgroundTaskQueue backgroundTaskQueue, IServiceProvider serviceProvider)
         {
-            _logger = logger;
-            _meissaRepository = repository;
             _backgroundTaskQueue = backgroundTaskQueue;
+            _serviceProvider = serviceProvider;
         }
 
         [HttpDelete]
@@ -43,30 +42,34 @@ namespace Meissa.API.Controllers
         {
             _backgroundTaskQueue.QueueBackgroundWorkItem(async token =>
             {
-                try
+                using (var scope = _serviceProvider.CreateScope())
                 {
-                    // Get all test cases history where are not updated in the last 30 days.
-                    var testCasesHistory = _meissaRepository.GetAllQuery<TestCaseHistory>();
-                    foreach (var currentTestCaseHistory in testCasesHistory)
+                    var meissaRepository = scope.ServiceProvider.GetRequiredService<MeissaRepository>();
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<TestCaseRunsController>>();
+                    try
                     {
-                        var allHistoryEntries = _meissaRepository.GetAllQuery<TestCaseHistoryEntry>();
-                        if (allHistoryEntries.Count(x => x.TestCaseHistoryId.Equals(currentTestCaseHistory.TestCaseHistoryId)) > 3)
+                        // Get all test cases history where are not updated in the last 30 days.
+                        var testCasesHistory = meissaRepository.GetAllQuery<TestCaseHistory>();
+                        foreach (var currentTestCaseHistory in testCasesHistory)
                         {
-                            var filteredEntries = allHistoryEntries.Where(x => x.TestCaseHistoryId.Equals(currentTestCaseHistory.TestCaseHistoryId)).OrderByDescending(j => j.TestCaseHistoryEntryId).Skip(3).ToList();
-                            _meissaRepository.DeleteRange(filteredEntries);
+                            var allHistoryEntries = meissaRepository.GetAllQuery<TestCaseHistoryEntry>();
+                            if (allHistoryEntries.Count(x => x.TestCaseHistoryId.Equals(currentTestCaseHistory.TestCaseHistoryId)) > 3)
+                            {
+                                var filteredEntries = allHistoryEntries.Where(x => x.TestCaseHistoryId.Equals(currentTestCaseHistory.TestCaseHistoryId)).OrderByDescending(j => j.TestCaseHistoryEntryId).Skip(3).ToList();
+                                meissaRepository.DeleteRange(filteredEntries);
+                            }
                         }
-                    }
 
-                    var outdatedTestCasesHistory = _meissaRepository.GetAllQuery<TestCaseHistory>().Where(x => x.LastUpdatedTime < DateTime.Now.AddDays(-30));
-                    _meissaRepository.DeleteRange(outdatedTestCasesHistory);
-                    await _meissaRepository.SaveAsync();
-                }
-                catch (DbUpdateConcurrencyException ex)
-                {
-                    _logger.LogError(ex.Message, ex);
+                        var outdatedTestCasesHistory = meissaRepository.GetAllQuery<TestCaseHistory>().Where(x => x.LastUpdatedTime < DateTime.Now.AddDays(-30));
+                        meissaRepository.DeleteRange(outdatedTestCasesHistory);
+                        await meissaRepository.SaveAsync();
+                    }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        logger.LogError(ex.Message, ex);
+                    }
                 }
             });
-           
 
             return NoContent();
         }
@@ -76,69 +79,75 @@ namespace Meissa.API.Controllers
         {
             _backgroundTaskQueue.QueueBackgroundWorkItem(async token =>
             {
-                try
+                using (var scope = _serviceProvider.CreateScope())
                 {
-                    var existingTestCasesHistory = _meissaRepository.GetAllQuery<TestCaseHistory>().Where(x => testCaseRuns.Any(y => y.FullName.Equals(x.FullName))).ToList();
-                    var testCaseHistoryEntries = _meissaRepository.GetAllQuery<TestCaseHistoryEntry>();
-                    foreach (var testCaseRun in testCaseRuns)
-                    {
-                        if (existingTestCasesHistory.Any(x => x.FullName.Equals(testCaseRun.FullName)))
-                        {
-                            var existingTestCaseHistory = existingTestCasesHistory.FirstOrDefault(x => x.FullName.Equals(testCaseRun.FullName));
+                    var meissaRepository = scope.ServiceProvider.GetRequiredService<MeissaRepository>();
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<TestCaseRunsController>>();
 
-                            // Creates the new test case history entry for the current run.
-                            if (existingTestCaseHistory != null)
+                    try
+                    {
+                        var existingTestCasesHistory = meissaRepository.GetAllQuery<TestCaseHistory>().Where(x => testCaseRuns.Any(y => y.FullName.Equals(x.FullName))).ToList();
+                        var testCaseHistoryEntries = meissaRepository.GetAllQuery<TestCaseHistoryEntry>();
+                        foreach (var testCaseRun in testCaseRuns)
+                        {
+                            if (existingTestCasesHistory.Any(x => x.FullName.Equals(testCaseRun.FullName)))
                             {
+                                var existingTestCaseHistory = existingTestCasesHistory.FirstOrDefault(x => x.FullName.Equals(testCaseRun.FullName));
+
+                                // Creates the new test case history entry for the current run.
+                                if (existingTestCaseHistory != null)
+                                {
+                                    var testCaseHistoryEntry = new TestCaseHistoryEntry
+                                    {
+                                        AvgDuration = testCaseRun.Duration,
+                                        TestCaseHistoryId = existingTestCaseHistory.TestCaseHistoryId,
+                                    };
+                                    meissaRepository.Insert(testCaseHistoryEntry);
+
+                                    // Get all previous runs for the test and add to the list the new entry.
+                                    var allCurrentTestCaseHistoryEntries = testCaseHistoryEntries.Where(x => x.TestCaseHistoryId.Equals(existingTestCaseHistory.TestCaseHistoryId)).ToList();
+                                    allCurrentTestCaseHistoryEntries.Add(testCaseHistoryEntry);
+                                }
+
+                                // Calculate the new average duration for the current tests based on the new entry.
+                                double newAverageDurationTicks = testCaseHistoryEntries.Average(x => x.AvgDuration.Ticks);
+                                var newAverageDuration = new TimeSpan(Convert.ToInt64(newAverageDurationTicks));
+
+                                // Update the test case history info.
+                                if (existingTestCaseHistory != null)
+                                {
+                                    existingTestCaseHistory.AvgDuration = newAverageDuration;
+                                    existingTestCaseHistory.LastUpdatedTime = DateTime.Now;
+
+                                    meissaRepository.Update(existingTestCaseHistory);
+                                }
+                            }
+                            else
+                            {
+                                // If no entries exist, we create the history test case and a new history entry.
+                                var testCaseHistoryDto = new TestCaseHistory()
+                                {
+                                    FullName = testCaseRun.FullName,
+                                    LastUpdatedTime = DateTime.Now,
+                                    AvgDuration = testCaseRun.Duration,
+                                };
+                                testCaseHistoryDto = await meissaRepository.InsertWithSaveAsync(testCaseHistoryDto);
+
                                 var testCaseHistoryEntry = new TestCaseHistoryEntry
                                 {
                                     AvgDuration = testCaseRun.Duration,
-                                    TestCaseHistoryId = existingTestCaseHistory.TestCaseHistoryId,
+                                    TestCaseHistoryId = testCaseHistoryDto.TestCaseHistoryId,
                                 };
-                                _meissaRepository.Insert(testCaseHistoryEntry);
-
-                                // Get all previous runs for the test and add to the list the new entry.
-                                var allCurrentTestCaseHistoryEntries = testCaseHistoryEntries.Where(x => x.TestCaseHistoryId.Equals(existingTestCaseHistory.TestCaseHistoryId)).ToList();
-                                allCurrentTestCaseHistoryEntries.Add(testCaseHistoryEntry);
-                            }
-
-                            // Calculate the new average duration for the current tests based on the new entry.
-                            double newAverageDurationTicks = testCaseHistoryEntries.Average(x => x.AvgDuration.Ticks);
-                            var newAverageDuration = new TimeSpan(Convert.ToInt64(newAverageDurationTicks));
-
-                            // Update the test case history info.
-                            if (existingTestCaseHistory != null)
-                            {
-                                existingTestCaseHistory.AvgDuration = newAverageDuration;
-                                existingTestCaseHistory.LastUpdatedTime = DateTime.Now;
-
-                                _meissaRepository.Update(existingTestCaseHistory);
+                                meissaRepository.Insert(testCaseHistoryEntry);
                             }
                         }
-                        else
-                        {
-                            // If no entries exist, we create the history test case and a new history entry.
-                            var testCaseHistoryDto = new TestCaseHistory()
-                            {
-                                FullName = testCaseRun.FullName,
-                                LastUpdatedTime = DateTime.Now,
-                                AvgDuration = testCaseRun.Duration,
-                            };
-                            testCaseHistoryDto = await _meissaRepository.InsertWithSaveAsync(testCaseHistoryDto);
 
-                            var testCaseHistoryEntry = new TestCaseHistoryEntry
-                            {
-                                AvgDuration = testCaseRun.Duration,
-                                TestCaseHistoryId = testCaseHistoryDto.TestCaseHistoryId,
-                            };
-                            _meissaRepository.Insert(testCaseHistoryEntry);
-                        }
+                        await meissaRepository.SaveAsync();
                     }
-
-                    await _meissaRepository.SaveAsync();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogCritical("Exception while updating test cases execution history.", ex);
+                    catch (Exception ex)
+                    {
+                        logger.LogCritical("Exception while updating test cases execution history.", ex);
+                    }
                 }
             });
 

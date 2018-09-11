@@ -43,8 +43,8 @@ namespace Meissa.API
                 options.UseSqlite("Data Source=meissa.db");
                 ////options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
-            services.AddScoped<DbRepository<TestsRunsContext>, MeissaRepository>();
-            services.AddScoped<MeissaRepository>();
+            services.AddTransient<DbRepository<TestsRunsContext>, MeissaRepository>();
+            services.AddTransient<MeissaRepository>();
 
             services.AddHostedService<QueuedHostedService>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
