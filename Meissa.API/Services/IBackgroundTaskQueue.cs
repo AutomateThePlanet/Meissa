@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Meissa.API.Services
 {
@@ -24,5 +25,7 @@ namespace Meissa.API.Services
         void QueueBackgroundWorkItem(Func<CancellationToken, Task> workItem);
 
         Task<Func<CancellationToken, Task>> DequeueAsync(CancellationToken cancellationToken);
+
+        IServiceScope CreateScope();
     }
 }

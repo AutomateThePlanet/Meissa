@@ -299,3 +299,6 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+/installers/Meissa.Windows64/content
+/installers/Meissa.MacOS64/content
+/installers/Meissa.Linux64/content

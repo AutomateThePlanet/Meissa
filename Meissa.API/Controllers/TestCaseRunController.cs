@@ -29,12 +29,10 @@ namespace Meissa.API.Controllers
     public class TestCaseRunsController : Controller
     {
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
-        private readonly IServiceProvider _serviceProvider;
 
-        public TestCaseRunsController(IBackgroundTaskQueue backgroundTaskQueue, IServiceProvider serviceProvider)
+        public TestCaseRunsController(IBackgroundTaskQueue backgroundTaskQueue)
         {
             _backgroundTaskQueue = backgroundTaskQueue;
-            _serviceProvider = serviceProvider;
         }
 
         [HttpDelete]
@@ -42,7 +40,7 @@ namespace Meissa.API.Controllers
         {
             _backgroundTaskQueue.QueueBackgroundWorkItem(async token =>
             {
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _backgroundTaskQueue.CreateScope())
                 {
                     var meissaRepository = scope.ServiceProvider.GetRequiredService<MeissaRepository>();
                     var logger = scope.ServiceProvider.GetRequiredService<ILogger<TestCaseRunsController>>();
@@ -79,7 +77,7 @@ namespace Meissa.API.Controllers
         {
             _backgroundTaskQueue.QueueBackgroundWorkItem(async token =>
             {
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _backgroundTaskQueue.CreateScope())
                 {
                     var meissaRepository = scope.ServiceProvider.GetRequiredService<MeissaRepository>();
                     var logger = scope.ServiceProvider.GetRequiredService<ILogger<TestCaseRunsController>>();
