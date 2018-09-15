@@ -37,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A4938590
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmallMSTestTestProject", "SmallMSTestTestProject\SmallMSTestTestProject.csproj", "{283023A3-CCCA-466F-A182-E0DBE1AEF83F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnitReportMerge.Spike", "NUnitReportMerge.Spike\NUnitReportMerge.Spike.csproj", "{192F14FA-71BC-4674-93A5-0A36F631EABF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,6 +105,10 @@ Global
 		{283023A3-CCCA-466F-A182-E0DBE1AEF83F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{283023A3-CCCA-466F-A182-E0DBE1AEF83F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{283023A3-CCCA-466F-A182-E0DBE1AEF83F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{192F14FA-71BC-4674-93A5-0A36F631EABF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{192F14FA-71BC-4674-93A5-0A36F631EABF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{192F14FA-71BC-4674-93A5-0A36F631EABF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{192F14FA-71BC-4674-93A5-0A36F631EABF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,6 +128,7 @@ Global
 		{C5791008-DD10-4C98-832C-C68C1CD2A0E7} = {0230A84D-7F7E-4C9A-BF57-5DC311106345}
 		{F3218A75-25FE-481E-A6EA-11B0AD31F57F} = {0230A84D-7F7E-4C9A-BF57-5DC311106345}
 		{283023A3-CCCA-466F-A182-E0DBE1AEF83F} = {A4938590-6875-45A5-972A-CDEA1CFF5E59}
+		{192F14FA-71BC-4674-93A5-0A36F631EABF} = {A4938590-6875-45A5-972A-CDEA1CFF5E59}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {547D0377-2E1C-4635-9CCA-FDC4AD0A2300}

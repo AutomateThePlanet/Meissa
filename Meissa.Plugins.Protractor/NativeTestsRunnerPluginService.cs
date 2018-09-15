@@ -171,7 +171,10 @@ framework: 'jasmine',
                         continue;
                     }
 
-                    Testresults currentTestResults = (Testresults)testResultsToBeMerged[i];
+                    var currentTestResults = (Testresults)testResultsToBeMerged[i];
+
+                    MergeTestSuites(mergedTestResults.Testsuite, currentTestResults.Testsuite);
+
                     var passedTestCases = GetAllNativePassedTestCases(currentTestResults.Testsuite, true);
                     UpdateNativePassedTestCases(mergedTestResults.Testsuite, passedTestCases);
                     UpdateNativePassedTestCasesSummary(mergedTestResults.Testsuite);
@@ -316,6 +319,44 @@ framework: 'jasmine',
             return testRuns;
         }
 
+        private void MergeTestSuites(List<Testsuite> mergedTestSuites, List<Testsuite> testSuites)
+        {
+            foreach (var testSuite in testSuites)
+            {
+                if (mergedTestSuites != null && !mergedTestSuites.Any(x => x.Name.Equals(testSuite.Name)))
+                {
+                    mergedTestSuites.Add(testSuite);
+                }
+                else if (mergedTestSuites == null)
+                {
+                    mergedTestSuites = new List<Testsuite>();
+                    mergedTestSuites.Add(testSuite);
+                }
+            }
+
+            foreach (var testSuite in testSuites)
+            {
+                foreach (var currentTestCase in testSuite.Results.Testcase)
+                {
+                    var currentSuiteMergedTestCases = mergedTestSuites.First(x => x.Name.Equals(testSuite.Name)).Results.Testcase;
+                    if (currentSuiteMergedTestCases != null && !currentSuiteMergedTestCases.Any(x => x.Name.Equals(currentTestCase.Name)))
+                    {
+                        currentSuiteMergedTestCases.Add(currentTestCase);
+                    }
+                    else if (currentSuiteMergedTestCases == null)
+                    {
+                        currentSuiteMergedTestCases = new List<Testcase>();
+                        currentSuiteMergedTestCases.Add(currentTestCase);
+                    }
+                }
+
+                if (testSuite.Results.Testsuite != null)
+                {
+                    MergeTestSuites(mergedTestSuites.First(x => x.Name.Equals(testSuite.Name)).Results.Testsuite, testSuite.Results.Testsuite);
+                }
+            }
+        }
+
         private TEntity Deserialize<TEntity>(string content)
         {
             var serializer = new XmlSerializer(typeof(TEntity));
@@ -365,7 +406,7 @@ framework: 'jasmine',
             {
                 if (testSuite != null && testSuite.Results != null && testSuite.Results.Testcase != null)
                 {
-                    passedTestCases.AddRange(testSuite.Results.Testcase.Where(x => x.Success.Equals(shouldBePassed.ToString())).ToList());
+                    passedTestCases.AddRange(testSuite.Results.Testcase.Where(x => !x.Failure.Any()).ToList());
 
                     if (testSuite.Results.Testsuite != null)
                     {
@@ -413,7 +454,7 @@ framework: 'jasmine',
 
                     if (testSuite.Results.Testsuite != null)
                     {
-                        UpdateNativePassedTestCasesSummary(testSuite.Results.Testsuite);
+                        UpdateNativePassedTestCases(testSuite.Results.Testsuite);
                     }
                 }
             }

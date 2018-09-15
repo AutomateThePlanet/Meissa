@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Meissa.Plugins.NUnit\Meissa.Plugins.NUnit.csproj" />
+    <ProjectReference Include="..\Meissa.Plugins.Protractor\Meissa.Plugins.Protractor.csproj" />
   </ItemGroup>
 
 </Project>
