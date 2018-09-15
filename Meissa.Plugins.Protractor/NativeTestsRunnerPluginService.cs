@@ -454,7 +454,7 @@ framework: 'jasmine',
 
                     if (testSuite.Results.Testsuite != null)
                     {
-                        UpdateNativePassedTestCases(testSuite.Results.Testsuite);
+                        UpdateNativePassedTestCases(testSuite.Results.Testsuite, passedTestCases);
                     }
                 }
             }
