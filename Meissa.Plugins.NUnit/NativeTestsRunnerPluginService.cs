@@ -262,40 +262,48 @@ namespace Meissa.Plugins.NUnit
             return testCaseRuns;
         }
 
-        public List<TestCase>[] SplitTestCases(List<TestCase> testCases, int availableCores)
+        public List<List<TestCase>> SplitTestCases(int availableCores, bool sameMachineByClass, List<TestCase> testCasesToBeDistributed)
         {
-            if (testCases == null)
+            if (availableCores <= 0)
             {
-                throw new ArgumentNullException(nameof(testCases));
+                throw new ArgumentException("Test Agents Count Must be Greater Than 0.");
             }
 
-            if (availableCores < 1)
+            var orderedByClassTestCases = testCasesToBeDistributed.OrderBy(x => x.ClassName).ToList();
+            int numberOfTestsPerList = (int)Math.Ceiling(orderedByClassTestCases.Count / (double)availableCores);
+
+            List<List<TestCase>> distributedTestCases = new List<List<TestCase>>();
+            if (numberOfTestsPerList > 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(availableCores), "Available cores cannot be less than 1.");
-            }
-
-            var partitions = new List<TestCase>[availableCores];
-
-            int maxSize = (int)Math.Ceiling(testCases.Count / (double)availableCores);
-            int k = 0;
-
-            for (int i = 0; i < partitions.Length; i++)
-            {
-                partitions[i] = new List<TestCase>();
-                for (int j = k; j < k + maxSize; j++)
+                int distributedIndex = 0;
+                int tempDistributedTestsCount = numberOfTestsPerList;
+                string previousClass = null;
+                for (int i = 0; i < orderedByClassTestCases.Count; i++)
                 {
-                    if (j >= testCases.Count)
+                    bool shouldResetTestsPerList = ShouldResetTestsPerList(sameMachineByClass, orderedByClassTestCases[i].ClassName, previousClass);
+                    if (tempDistributedTestsCount <= 0 && shouldResetTestsPerList)
                     {
-                        break;
+                        tempDistributedTestsCount = numberOfTestsPerList;
+                        distributedIndex++;
                     }
 
-                    partitions[i].Add(testCases[j]);
-                }
+                    if (tempDistributedTestsCount == numberOfTestsPerList)
+                    {
+                        distributedTestCases.Add(new List<TestCase>());
+                    }
 
-                k += maxSize;
+                    distributedTestCases[distributedIndex].Add(orderedByClassTestCases[i]);
+                    previousClass = orderedByClassTestCases[i].ClassName;
+
+                    tempDistributedTestsCount--;
+                }
+            }
+            else
+            {
+                distributedTestCases.Add(testCasesToBeDistributed);
             }
 
-            return partitions;
+            return distributedTestCases;
         }
 
         public List<TestCase> GetAllNotPassedTests(string testResultsFileContent)
@@ -368,6 +376,15 @@ namespace Meissa.Plugins.NUnit
             }
 
             return testRuns;
+        }
+
+        public void ExecutePostRunActions()
+        {
+        }
+
+        private bool ShouldResetTestsPerList(bool sameMachineByClass, string currentClass, string previousClass)
+        {
+            return sameMachineByClass ? previousClass != currentClass : true;
         }
 
         private List<testrunTestsuiteTestsuiteTestsuiteTestcase> GetAllExecutedTestCases(testrun testRun)

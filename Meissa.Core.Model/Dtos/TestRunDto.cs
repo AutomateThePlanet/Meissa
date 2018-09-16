@@ -38,6 +38,8 @@ namespace Meissa.API.Models
 
         public bool IsTimeBasedBalance { get; set; }
 
+        public bool SameMachineByClass { get; set; }
+
         public int MaxParallelProcessesCount { get; set; }
 
         public string TestTechnology { get; set; }

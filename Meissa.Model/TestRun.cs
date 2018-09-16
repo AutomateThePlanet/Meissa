@@ -43,6 +43,8 @@ namespace Meissa.Model
 
         public bool IsTimeBasedBalance { get; set; }
 
+        public bool SameMachineByClass { get; set; }
+
         public int MaxParallelProcessesCount { get; set; }
 
         [Required]

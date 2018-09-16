@@ -42,8 +42,8 @@ framework: 'jasmine',
         filePrefix: 'xmloutput'
     }));
   },";
-
         private const string ItNamePattern = @"(?'before'.*)(?'itBegin'it\(')(?'itName'.*)(?'thirdPart'(',).*)";
+        private readonly string DeleteItemsFilePath = Path.Combine(Path.GetTempPath(), "protractorMeissaDeleteItemsPostExecute.txt");
 
         public string Name => "Protractor";
 
@@ -62,9 +62,16 @@ framework: 'jasmine',
             // 1. copy all js files to temp folder
             // 2. edit conf.js and add results logger
             // 3. edit js files and set to focus all present here in the testCases names
-            var specFiles = Directory.GetFiles(new FileInfo(libraryPath).Directory.FullName, "*.js", SearchOption.TopDirectoryOnly);
+            var allJsFiles = Directory.GetFiles(new FileInfo(libraryPath).Directory.FullName, "*.js", SearchOption.AllDirectories);
+
+            // Ignore all files in node_modules folder
+            var specFiles = allJsFiles.Where(x => !x.Contains("node_modules"));
             var tempFolderPath = Path.GetTempPath();
             var newTempFolder = Path.Combine(tempFolderPath, Guid.NewGuid().ToString());
+
+            // Write the path of the file that we will later delete.
+            File.AppendAllText(DeleteItemsFilePath, newTempFolder + Environment.NewLine);
+
             Directory.CreateDirectory(newTempFolder);
 
             // Copy all spec files to a temporary folder so that we can update them.
@@ -77,8 +84,10 @@ framework: 'jasmine',
             }
 
             // Gather the paths to all copied spec files.
-            var newSpecFiles = Directory.GetFiles(newTempFolder, "*.js", SearchOption.TopDirectoryOnly);
-            var confFile = newSpecFiles.FirstOrDefault(x => x.Contains(libraryName));
+            var copiedSpecFiles = Directory.GetFiles(newTempFolder, "*.js", SearchOption.AllDirectories);
+
+            // locate the conf.js file
+            var confFile = copiedSpecFiles.FirstOrDefault(x => x.Contains(libraryName));
 
             // If the mentioned conf file doesn't exist we throw an exception since we cannot proceed.
             if (confFile == null)
@@ -101,7 +110,7 @@ framework: 'jasmine',
             File.WriteAllText(confFile, confFileContent);
 
             // To execute only the mentioned test cases we edit all spec files and set the 'f' infront of all it functions so that they are filtered.
-            foreach (var newSpecFile in newSpecFiles)
+            foreach (var newSpecFile in copiedSpecFiles)
             {
                 string newSpecFileContent = File.ReadAllText(newSpecFile);
 
@@ -221,40 +230,48 @@ framework: 'jasmine',
             return testCaseRuns;
         }
 
-        public List<TestCase>[] SplitTestCases(List<TestCase> testCases, int availableCores)
+        public List<List<TestCase>> SplitTestCases(int availableCores, bool sameMachineByClass, List<TestCase> testCasesToBeDistributed)
         {
-            if (testCases == null)
+            if (availableCores <= 0)
             {
-                throw new ArgumentNullException(nameof(testCases));
+                throw new ArgumentException("Test Agents Count Must be Greater Than 0.");
             }
 
-            if (availableCores < 1)
+            var orderedByClassTestCases = testCasesToBeDistributed.OrderBy(x => x.ClassName).ToList();
+            int numberOfTestsPerList = (int)Math.Ceiling(orderedByClassTestCases.Count / (double)availableCores);
+
+            List<List<TestCase>> distributedTestCases = new List<List<TestCase>>();
+            if (numberOfTestsPerList > 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(availableCores), "Available cores cannot be less than 1.");
-            }
-
-            var partitions = new List<TestCase>[availableCores];
-
-            int maxSize = (int)Math.Ceiling(testCases.Count / (double)availableCores);
-            int k = 0;
-
-            for (int i = 0; i < partitions.Length; i++)
-            {
-                partitions[i] = new List<TestCase>();
-                for (int j = k; j < k + maxSize; j++)
+                int distributedIndex = 0;
+                int tempDistributedTestsCount = numberOfTestsPerList;
+                string previousClass = null;
+                for (int i = 0; i < orderedByClassTestCases.Count; i++)
                 {
-                    if (j >= testCases.Count)
+                    bool shouldResetTestsPerList = ShouldResetTestsPerList(sameMachineByClass, orderedByClassTestCases[i].ClassName, previousClass);
+                    if (tempDistributedTestsCount <= 0 && shouldResetTestsPerList)
                     {
-                        break;
+                        tempDistributedTestsCount = numberOfTestsPerList;
+                        distributedIndex++;
                     }
 
-                    partitions[i].Add(testCases[j]);
-                }
+                    if (tempDistributedTestsCount == numberOfTestsPerList)
+                    {
+                        distributedTestCases.Add(new List<TestCase>());
+                    }
 
-                k += maxSize;
+                    distributedTestCases[distributedIndex].Add(orderedByClassTestCases[i]);
+                    previousClass = orderedByClassTestCases[i].ClassName;
+
+                    tempDistributedTestsCount--;
+                }
+            }
+            else
+            {
+                distributedTestCases.Add(testCasesToBeDistributed);
             }
 
-            return partitions;
+            return distributedTestCases;
         }
 
         public List<TestCase> GetAllNotPassedTests(string testResultsFileContent)
@@ -317,6 +334,11 @@ framework: 'jasmine',
             }
 
             return testRuns;
+        }
+
+        private bool ShouldResetTestsPerList(bool sameMachineByClass, string currentClass, string previousClass)
+        {
+            return sameMachineByClass ? previousClass != currentClass : true;
         }
 
         private void MergeTestSuites(List<Testsuite> mergedTestSuites, List<Testsuite> testSuites)
@@ -494,12 +516,44 @@ framework: 'jasmine',
             // Copy each subdirectory using recursion.
             foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
             {
-                DirectoryInfo nextTargetSubDir =
-                    target.CreateSubdirectory(diSourceSubDir.Name);
+                DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
                 CopyAll(diSourceSubDir, nextTargetSubDir);
             }
         }
 
         private string GetRunningAssemblyPath() => Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+
+        public void ExecutePostRunActions()
+        {
+            if (File.Exists(DeleteItemsFilePath))
+            {
+                var fileLines = File.ReadAllLines(DeleteItemsFilePath);
+                foreach (var fileLine in fileLines)
+                {
+                    if (Directory.Exists(fileLine))
+                    {
+                        try
+                        {
+                            Directory.Delete(fileLine, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"There was a problem with deleting temp protractor folder- {fileLine}");
+                            Console.WriteLine(ex);
+                        }
+                    }
+                }
+
+                try
+                {
+                    File.Delete(DeleteItemsFilePath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"There was a problem with deleting temp protractor file- {DeleteItemsFilePath}");
+                    Console.WriteLine(ex);
+                }
+            }
+        }
     }
 }

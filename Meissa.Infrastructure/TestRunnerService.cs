@@ -79,13 +79,13 @@ namespace Meissa.Infrastructure
             _environmentService = environmentService;
         }
 
-        public async Task<string> ExecuteTestsAsync(string testTechnology, string distributedTestsList, string workingDir, Guid testRunId, string testsLibraryPath, string assemblyName, bool runInParallel, string nativeArguments, int testAgentRunTimeout, bool isTimeBasedBalance, CancellationTokenSource cancellationTokenSource)
+        public async Task<string> ExecuteTestsAsync(string testTechnology, string distributedTestsList, string workingDir, Guid testRunId, string testsLibraryPath, string assemblyName, bool runInParallel, string nativeArguments, int testAgentRunTimeout, bool isTimeBasedBalance, bool sameMachineByClass, CancellationTokenSource cancellationTokenSource)
         {
             _currentTestRunId = testRunId;
             _nativeTestsRunner = _pluginService.GetNativeTestRunnerService(testTechnology);
             var testRun = await _testRunRepository.GetAsync(testRunId);
             var distributedTestCases = _jsonSerializer.Deserialize<List<TestCase>>(distributedTestsList);
-            var testTestResults = await ExecuteTestsWithNativeRunnerAsync(workingDir, testsLibraryPath, assemblyName, runInParallel, testRun.MaxParallelProcessesCount, nativeArguments, testAgentRunTimeout, isTimeBasedBalance, distributedTestCases, cancellationTokenSource);
+            var testTestResults = await ExecuteTestsWithNativeRunnerAsync(workingDir, testsLibraryPath, assemblyName, runInParallel, testRun.MaxParallelProcessesCount, nativeArguments, testAgentRunTimeout, isTimeBasedBalance, sameMachineByClass, distributedTestCases, cancellationTokenSource);
 
             return testTestResults;
         }
@@ -104,6 +104,7 @@ namespace Meissa.Infrastructure
             int retriesCount,
             double threshold,
             bool isTimeBasedBalance,
+            bool sameMachineByClass,
             CancellationTokenSource cancellationTokenSource)
         {
             _currentTestRunId = testRunId;
@@ -134,7 +135,7 @@ namespace Meissa.Infrastructure
                     if (failedTests.Count > 0)
                     {
                         await _testRunLogService.CreateTestRunLogAsync($"{failedTests.Count} tests will be retried.", testRunId);
-                        retriedTestTestResults = await ExecuteTestsWithNativeRunnerAsync(workingDir, testsLibraryPath, assemblyName, runInParallel, testRun.MaxParallelProcessesCount, nativeArguments, testAgentRunTimeout, isTimeBasedBalance, failedTests, cancellationTokenSource);
+                        retriedTestTestResults = await ExecuteTestsWithNativeRunnerAsync(workingDir, testsLibraryPath, assemblyName, runInParallel, testRun.MaxParallelProcessesCount, nativeArguments, testAgentRunTimeout, isTimeBasedBalance, sameMachineByClass, failedTests, cancellationTokenSource);
 
                         var passedTests = _nativeTestsRunner.GetAllPassesTests(retriedTestTestResults);
                         _nativeTestsRunner.UpdatePassedTests(passedTests, originalTestRun);
@@ -177,6 +178,7 @@ namespace Meissa.Infrastructure
             string nativeArguments,
             int testAgentRunTimeout,
             bool isTimeBasedBalance,
+            bool sameMachineByClass,
             List<TestCase> distributedTestCases,
             CancellationTokenSource outerCancellationTokenSource)
         {
@@ -185,7 +187,7 @@ namespace Meissa.Infrastructure
             int availableCores = runInParallel ? maxParallelProcessesCount : 1;
 
             // Merge logic of CreateRunFilterArgument here. remove inner foreach
-            var listOfDistributedTestCases = _nativeTestsRunner.SplitTestCases(distributedTestCases, availableCores);
+            var listOfDistributedTestCases = _nativeTestsRunner.SplitTestCases(availableCores, sameMachineByClass, distributedTestCases);
             var testRunsToBeMerged = new List<object>();
 
             var testRunProcesses = new List<Process>();
@@ -374,6 +376,16 @@ namespace Meissa.Infrastructure
                     ////var endTime = _dateTimeProvider.GetCurrentTime();
                     ////_testRunLogService.CreateTestRunLogAsync($"END updating test case history- on machine {Environment.MachineName} for {(endTime - startTime).Seconds} seconds", _currentTestRunId).Wait();
                 }
+
+                try
+                {
+                    _nativeTestsRunner.ExecutePostRunActions();
+                }
+                catch (Exception ex)
+                {
+                    _testRunLogService.CreateTestRunLogAsync($"There was a problem executing ExecutePostRunActions on {Environment.MachineName}. Exception: {ex}", _currentTestRunId).Wait();
+                }
+                
 
                 result = mergedTestRun;
             }

@@ -19,7 +19,7 @@ namespace Meissa.Core.Contracts
 {
     public interface ITestsRunnerService
     {
-        Task<string> ExecuteTestsAsync(string testTechnology, string distributedTestsList, string workingDir, Guid testRunId, string testsLibraryPath, string assemblyName, bool runInParallel, string nativeArguments, int testAgentRunTimeout, bool isTimeBasedBalance, CancellationTokenSource cancellationTokenSource);
-        Task<string> ExecuteTestsWithRetryAsync(string testTechnology, string originalRunTestResults, string distributedTestsList, string workingDir, Guid testRunId, string testsLibraryPath, string assemblyName, bool runInParallel, string nativeArguments, int testAgentRunTimeout, int retriesCount, double threshold, bool isTimeBasedBalance, CancellationTokenSource cancellationTokenSource);
+        Task<string> ExecuteTestsAsync(string testTechnology, string distributedTestsList, string workingDir, Guid testRunId, string testsLibraryPath, string assemblyName, bool runInParallel, string nativeArguments, int testAgentRunTimeout, bool isTimeBasedBalance, bool sameMachineByClass, CancellationTokenSource cancellationTokenSource);
+        Task<string> ExecuteTestsWithRetryAsync(string testTechnology, string originalRunTestResults, string distributedTestsList, string workingDir, Guid testRunId, string testsLibraryPath, string assemblyName, bool runInParallel, string nativeArguments, int testAgentRunTimeout, int retriesCount, double threshold, bool isTimeBasedBalance, bool sameMachineByClass, CancellationTokenSource cancellationTokenSource);
     }
 }

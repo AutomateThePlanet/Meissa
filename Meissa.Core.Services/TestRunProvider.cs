@@ -42,7 +42,7 @@ namespace Meissa.Core.Services
             _guidService = guidService;
         }
 
-        public async Task<Guid> CreateNewTestRunAsync(string testAssemblyName, byte[] outputFilesZip, int retriesCount, double threshold, bool runInParallel, int maxParallelProcessesCount, string nativeArguments, string testTechnology, bool isTimeBasedBalance, IEnumerable<string> customArgumentsPairs = null)
+        public async Task<Guid> CreateNewTestRunAsync(string testAssemblyName, byte[] outputFilesZip, int retriesCount, double threshold, bool runInParallel, int maxParallelProcessesCount, string nativeArguments, string testTechnology, bool isTimeBasedBalance, bool sameMachineByClass, IEnumerable<string> customArgumentsPairs = null)
         {
             if (testAssemblyName == null)
             {
@@ -62,6 +62,7 @@ namespace Meissa.Core.Services
                 MaxParallelProcessesCount = maxParallelProcessesCount,
                 TestTechnology = testTechnology,
                 IsTimeBasedBalance = isTimeBasedBalance,
+                SameMachineByClass = sameMachineByClass,
             };
             newTestRun = await _testRunServiceClient.CreateAsync(newTestRun);
 

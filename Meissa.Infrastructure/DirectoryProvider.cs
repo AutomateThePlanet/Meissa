@@ -27,5 +27,7 @@ namespace Meissa.Infrastructure
         public void CreateDirectory(string path) => Directory.CreateDirectory(path);
 
         public bool Exists(string path) => Directory.Exists(path);
+
+        public void Delete(string path, bool recursive) => Directory.Delete(path, recursive);
     }
 }

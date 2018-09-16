@@ -32,6 +32,7 @@ namespace Meissa.Core.Contracts
             string nativeArguments,
             string testTechnology,
             bool isTimeBasedBalance,
+            bool sameMachineByClass,
             IEnumerable<string> customArgumentsPairs = null);
     }
 }

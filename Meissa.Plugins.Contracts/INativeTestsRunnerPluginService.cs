@@ -33,11 +33,12 @@ namespace Meissa.Plugins.Contracts
         List<TestCaseRun> UpdateTestCasesHistory(object testRun, string libraryName);
         string MergeTestResults(object testResultsToBeMergedObj);
         string BuildNativeRunnerArguments(string libraryName, string libraryPath, List<TestCase> testCasesToBeExecuted, string testResultsFilePath, string outputFilesDir, string nativeArguments);
-        List<TestCase>[] SplitTestCases(List<TestCase> testCases, int availableCores);
+        List<List<TestCase>> SplitTestCases(int availableCores, bool sameMachineByClass, List<TestCase> testCasesToBeDistributed);
         List<TestCase> GetAllNotPassedTests(string testResultsFileContent);
         List<TestCase> GetAllPassesTestCases(string testResultsFileContent);
         object GetRetriedTestResultsForTestRun(List<TestAgentRunDto> testAgentRuns);
         object GetTestResultsForTestRun(List<TestAgentRunDto> testAgentRuns);
         string SerializeTestResults(object testResults);
+        void ExecutePostRunActions();
     }
 }

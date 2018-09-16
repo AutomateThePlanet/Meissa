@@ -2,7 +2,7 @@
   "profiles": {
     "Meissa": {
       "commandName": "Project",
-      "commandLineArgs": "runner --outputFilesLocation=\"C:\\meissa-tests\" --testLibraryPath=\"C:\\meissa-tests\\SmallMSTestTestProject.dll\" --agentTag=\"Agent1\" --testTechnology=\"MSTest\" --resultsFilePath=\"C:\\meissa-tests-results\\all.trx\" --testServerUrl=\"http://127.0.0.1:5000\""
+      "commandLineArgs": "testAgent --testAgentTag=\"Agent1\" --testServerUrl=\"http://127.0.0.1:5000\""
     }
   }
 }

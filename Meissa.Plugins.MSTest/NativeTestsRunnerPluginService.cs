@@ -195,6 +195,58 @@ namespace Meissa.Plugins.MSTest
             return testCaseRuns;
         }
 
+        public List<List<TestCase>> SplitTestCases(int availableCores, bool sameMachineByClass, List<TestCase> testCasesToBeDistributed)
+        {
+            if (availableCores <= 0)
+            {
+                throw new ArgumentException("Test Agents Count Must be Greater Than 0.");
+            }
+
+            var orderedByClassTestCases = testCasesToBeDistributed.OrderBy(x => x.ClassName).ToList();
+            var runFilterArgs = CreateRunFilterArgument(testCasesToBeDistributed);
+
+            int totalPartitions = availableCores >= runFilterArgs.Count ? availableCores : runFilterArgs.Count;
+            int numberOfTestsPerList = (int)Math.Ceiling(orderedByClassTestCases.Count / (double)totalPartitions);
+
+            var distributedTestCases = new List<List<TestCase>>();
+            if (numberOfTestsPerList > 0)
+            {
+                int distributedIndex = 0;
+                int tempDistributedTestsCount = numberOfTestsPerList;
+                string previousClass = null;
+                for (int i = 0; i < orderedByClassTestCases.Count; i++)
+                {
+                    bool shouldResetTestsPerList = ShouldResetTestsPerList(sameMachineByClass, orderedByClassTestCases[i].ClassName, previousClass);
+                    if (tempDistributedTestsCount <= 0 && shouldResetTestsPerList)
+                    {
+                        tempDistributedTestsCount = numberOfTestsPerList;
+                        distributedIndex++;
+                    }
+
+                    if (tempDistributedTestsCount == numberOfTestsPerList)
+                    {
+                        distributedTestCases.Add(new List<TestCase>());
+                    }
+
+                    distributedTestCases[distributedIndex].Add(orderedByClassTestCases[i]);
+                    previousClass = orderedByClassTestCases[i].ClassName;
+
+                    tempDistributedTestsCount--;
+                }
+            }
+            else
+            {
+                distributedTestCases.Add(testCasesToBeDistributed);
+            }
+
+            return distributedTestCases;
+        }
+
+        private bool ShouldResetTestsPerList(bool sameMachineByClass, string currentClass, string previousClass)
+        {
+            return sameMachineByClass ? previousClass != currentClass : true;
+        }
+
         public List<TestCase>[] SplitTestCases(List<TestCase> testCases, int availableCores)
         {
             if (testCases == null)
@@ -277,6 +329,10 @@ namespace Meissa.Plugins.MSTest
             }
 
             return msTestTestRuns;
+        }
+
+        public void ExecutePostRunActions()
+        {
         }
 
         private List<TestCase> ConvertUnitTestsResultsToTestCases(List<TestRunUnitTestResult> unitTestResults, TestRun testRun)

@@ -47,6 +47,7 @@ namespace Meissa.Core.Services
         private readonly ITestRunLogService _testRunLogService;
         private readonly ITestAgentRunAvailabilityServiceClient _testAgentRunAvailabilityServiceClient;
         private readonly ITestRunAvailabilityServiceClient _testRunAvailabilityServiceClient;
+        private readonly IDirectoryProvider _directoryProvider;
         private int? _currentTestAgentId;
         private bool _wasTestAgentRunCompleted;
 
@@ -70,7 +71,8 @@ namespace Meissa.Core.Services
             ITaskProvider taskProvider,
             ITestRunLogService testRunLogService,
             ITestAgentRunAvailabilityServiceClient testAgentRunAvailabilityServiceClient,
-            ITestRunAvailabilityServiceClient testRunAvailabilityServiceClient)
+            ITestRunAvailabilityServiceClient testRunAvailabilityServiceClient,
+            IDirectoryProvider directoryProvider)
         {
             _testRunRepository = testRunRepository;
             _testRunOutputServiceClient = testRunOutputServiceClient;
@@ -92,6 +94,7 @@ namespace Meissa.Core.Services
             _testRunLogService = testRunLogService;
             _testAgentRunAvailabilityServiceClient = testAgentRunAvailabilityServiceClient;
             _testRunAvailabilityServiceClient = testRunAvailabilityServiceClient;
+            _directoryProvider = directoryProvider;
             _wasTestAgentRunCompleted = false;
         }
 
@@ -531,6 +534,7 @@ namespace Meissa.Core.Services
                 testRun.NativeArguments,
                 testAgentRunTimeout,
                 testRun.IsTimeBasedBalance,
+                testRun.SameMachineByClass,
                 cancellationTokenSource);
             string retriedTestResults = string.Empty;
             if (testRun.RetriesCount > 0)
@@ -549,6 +553,7 @@ namespace Meissa.Core.Services
                     testRun.RetriesCount,
                     testRun.Threshold,
                     testRun.IsTimeBasedBalance,
+                    testRun.SameMachineByClass,
                     cancellationTokenSource);
             }
 
@@ -560,6 +565,16 @@ namespace Meissa.Core.Services
             await CompleteTestAgentRunAsync(testAgentRun.TestAgentRunId, testsResults, retriedTestResults);
 
             _pluginService.ExecuteAllTestAgentPluginsPostTestRunLogic();
+
+            DeleteTempExecutionFolder(tempExecutionFolder);
+        }
+
+        private void DeleteTempExecutionFolder(string tempExecutionFolder)
+        {
+            if (_directoryProvider.DoesDirectoryExists(tempExecutionFolder))
+            {
+                _directoryProvider.Delete(tempExecutionFolder, true);
+            }
         }
 
         private async Task CompleteTestAgentRunAsync(int testAgentRunId, string testResults, string retriedTestResults)

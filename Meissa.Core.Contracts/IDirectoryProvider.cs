@@ -24,5 +24,7 @@ namespace Meissa.Core.Contracts
         void CreateDirectory(string path);
 
         bool Exists(string path);
+
+        void Delete(string path, bool recursive);
     }
 }
