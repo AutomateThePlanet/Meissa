@@ -243,9 +243,7 @@ namespace Meissa.Plugins.MSTest
         }
 
         private bool ShouldResetTestsPerList(bool sameMachineByClass, string currentClass, string previousClass)
-        {
-            return sameMachineByClass ? previousClass != currentClass : true;
-        }
+            => sameMachineByClass ? previousClass != currentClass : true;
 
         public List<TestCase>[] SplitTestCases(List<TestCase> testCases, int availableCores)
         {

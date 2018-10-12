@@ -70,9 +70,7 @@ namespace Meissa.Core.Services
         }
 
         private static bool ShouldResetTestsPerList(bool sameMachineByClass, string currentClass, string previousClass)
-        {
-            return sameMachineByClass ? previousClass != currentClass : true;
-        }
+            => sameMachineByClass ? previousClass != currentClass : true;
 
         public List<string> GenerateDistributionLists(int testAgentsCount, bool sameMachineByClass, List<TestCase> testCasesToBeDistributed)
         {

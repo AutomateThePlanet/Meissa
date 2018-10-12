@@ -13,8 +13,6 @@
 // <site>https://bellatrix.solutions/</site>
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,17 +24,11 @@ namespace Meissa.API.Services
         private ConcurrentQueue<Func<CancellationToken, Task>> _workItems = new ConcurrentQueue<Func<CancellationToken, Task>>();
         private SemaphoreSlim _signal = new SemaphoreSlim(0);
         private readonly IServiceProvider _serviceProvider;
-        public BackgroundTaskQueue(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
+        public BackgroundTaskQueue(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
 
         public IServiceProvider ServiceProvider { get; set; }
 
-        public IServiceScope CreateScope()
-        {
-            return _serviceProvider.CreateScope();
-        }
+        public IServiceScope CreateScope() => _serviceProvider.CreateScope();
 
         public void QueueBackgroundWorkItem(Func<CancellationToken, Task> workItem)
         {

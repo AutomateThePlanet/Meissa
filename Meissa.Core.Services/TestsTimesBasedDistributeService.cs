@@ -132,9 +132,7 @@ namespace Meissa.Core.Services
         }
 
         private static bool ShouldResetTestsPerList(bool sameMachineByClass, string currentClass, string previousClass)
-        {
-            return sameMachineByClass ? previousClass != currentClass : true;
-        }
+            => sameMachineByClass ? previousClass != currentClass : true;
 
         private List<TestCase> GetTestCasesFromExecutedTestCases(List<ExecutedTestCase> executedTestCases)
         {

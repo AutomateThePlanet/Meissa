@@ -337,9 +337,7 @@ framework: 'jasmine',
         }
 
         private bool ShouldResetTestsPerList(bool sameMachineByClass, string currentClass, string previousClass)
-        {
-            return sameMachineByClass ? previousClass != currentClass : true;
-        }
+            => sameMachineByClass ? previousClass != currentClass : true;
 
         private void MergeTestSuites(List<Testsuite> mergedTestSuites, List<Testsuite> testSuites)
         {
@@ -420,6 +418,7 @@ framework: 'jasmine',
             return regex.Replace(input, m => ReplaceNamedGroupItName(groupName, replacement, m, testNamesToBeChanged));
         }
 
+        // ReSharper disable once UnusedParameter.Local
         private List<Testcase> GetAllNativePassedTestCases(List<Testsuite> testSuites, bool shouldBePassed)
         {
             var passedTestCases = new List<Testcase>();

@@ -11,12 +11,9 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
-using System;
 using System.Collections.Generic;
 using System.Composition;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using Meissa.Core.Model;
 using Meissa.Plugins.Contracts;
 using Mono.Cecil;

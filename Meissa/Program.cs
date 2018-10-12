@@ -15,6 +15,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
@@ -54,7 +55,10 @@ namespace Meissa
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Clear();
                 Console.Title = "Meissa Distributed Test Runner- Bellatrix Test Automation Framework";
-                Console.WindowHeight = 30;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    Console.WindowHeight = 30;
+                }
             }
             catch (IOException)
             {

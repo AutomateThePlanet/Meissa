@@ -30,10 +30,7 @@ namespace Meissa.API.Controllers
     {
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
-        public TestCaseRunsController(IBackgroundTaskQueue backgroundTaskQueue)
-        {
-            _backgroundTaskQueue = backgroundTaskQueue;
-        }
+        public TestCaseRunsController(IBackgroundTaskQueue backgroundTaskQueue) => _backgroundTaskQueue = backgroundTaskQueue;
 
         [HttpDelete]
         public async Task<IActionResult> DeleteOlderTestCasesHistoryAsync()

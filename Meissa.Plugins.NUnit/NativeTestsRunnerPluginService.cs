@@ -383,9 +383,7 @@ namespace Meissa.Plugins.NUnit
         }
 
         private bool ShouldResetTestsPerList(bool sameMachineByClass, string currentClass, string previousClass)
-        {
-            return sameMachineByClass ? previousClass != currentClass : true;
-        }
+            => sameMachineByClass ? previousClass != currentClass : true;
 
         private List<testrunTestsuiteTestsuiteTestsuiteTestcase> GetAllExecutedTestCases(testrun testRun)
         {
