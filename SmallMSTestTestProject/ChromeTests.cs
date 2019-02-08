@@ -7,6 +7,7 @@ namespace SmallMSTestTestProject
     public class ChromeTests
     {
         [TestMethod]
+        [TestCategory("CI")]
         public void ChromeTest1()
         {
             Thread.Sleep(1000);

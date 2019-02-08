@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Meissa.Plugins.MSTest\Meissa.Plugins.MSTest.csproj" />
     <ProjectReference Include="..\Meissa.Plugins.Protractor\Meissa.Plugins.Protractor.csproj" />
   </ItemGroup>
 

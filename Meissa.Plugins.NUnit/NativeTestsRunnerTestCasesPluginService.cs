@@ -41,7 +41,7 @@ namespace Meissa.Plugins.NUnit
                 {
                     foreach (var currentMethod in currentType.GetMethods())
                     {
-                        if (currentMethod.CustomAttributes.Any(x => x.GetType().FullName.Equals(NunitTestAttributeName)))
+                        if (currentMethod.CustomAttributes.Any(x => x.AttributeType.FullName.ToString().Equals(NunitTestAttributeName)))
                         {
                             // This is a Nunit test - add it to the current test class list of tests.
                             var currentTestCase = CreateTestCase(currentMethod);
@@ -61,7 +61,7 @@ namespace Meissa.Plugins.NUnit
                 FullName = string.Concat(testMethod?.DeclaringType?.FullName, ".", testMethod.Name),
                 ClassName = testMethod.DeclaringType.FullName,
             };
-            var testCaseCategoryAttributes = testMethod.CustomAttributes.Where(x => x.GetType().FullName.Contains(NunitCategoryAttributeName));
+            var testCaseCategoryAttributes = testMethod.CustomAttributes.Where(x => x.AttributeType.FullName.ToString().Contains(NunitCategoryAttributeName));
             testCase.Categories = GetCategoryNamesFromAttributes(testCaseCategoryAttributes);
 
             return testCase;
@@ -73,8 +73,13 @@ namespace Meissa.Plugins.NUnit
 
             foreach (var categoryAttribute in attributes)
             {
-                var currentCategoryName = categoryAttribute.GetType().GetProperty("Name").GetValue(categoryAttribute, null);
-                categoryNames.Add((string)currentCategoryName);
+                if (categoryAttribute.HasConstructorArguments)
+                {
+                    foreach (var constructorArg in categoryAttribute.ConstructorArguments)
+                    {
+                        categoryNames.Add(constructorArg.Value.ToString());
+                    }
+                }
             }
 
             return categoryNames;

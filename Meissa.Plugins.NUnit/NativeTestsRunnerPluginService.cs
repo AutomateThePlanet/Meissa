@@ -67,7 +67,6 @@ namespace Meissa.Plugins.NUnit
 
         public object GetAllPassesTests(string testRunContent)
         {
-            ////var testRun = Deserialize<testrun>(testRunContent);
             var results = GetAllPassesTests(testRunContent as object);
             return results;
         }
@@ -383,7 +382,7 @@ namespace Meissa.Plugins.NUnit
         }
 
         private bool ShouldResetTestsPerList(bool sameMachineByClass, string currentClass, string previousClass)
-            => sameMachineByClass ? previousClass != currentClass : true;
+            => !sameMachineByClass || previousClass != currentClass;
 
         private List<testrunTestsuiteTestsuiteTestsuiteTestcase> GetAllExecutedTestCases(testrun testRun)
         {

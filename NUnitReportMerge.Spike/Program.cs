@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Meissa.Plugins.Protractor;
+using Meissa.Plugins.MSTest;
 
 namespace NUnitReportMerge.Spike
 {
@@ -10,14 +10,19 @@ namespace NUnitReportMerge.Spike
         public static void Main(string[] args)
         {
             var plugin = new NativeTestsRunnerPluginService();
-            string file1 = File.ReadAllText(@"C:\protractor-merge-results\results1.xml");
-            string file2 = File.ReadAllText(@"C:\protractor-merge-results\results2.xml");
-            var deserializedResults = new List<object>();
-            deserializedResults.Add(plugin.DeserializeTestResults(file1));
-            deserializedResults.Add(plugin.DeserializeTestResults(file2));
-            string mergedContent = plugin.MergeTestResults(deserializedResults);
+            string file1 = File.ReadAllText(@"C:\meissa-tests-results\corrupted.trx");
+            var deserializedResults = plugin.DeserializeTestResults(file1);
+            ////string mergedContent = plugin.MergeTestResults(deserializedResults);
 
-            Console.WriteLine(mergedContent);
+            Console.WriteLine(deserializedResults);
+
+            var nativeTestsRunnerTestCasesPluginService = new NativeTestsRunnerTestCasesPluginService();
+            var testCases = nativeTestsRunnerTestCasesPluginService.ExtractAllTestCasesFromTestLibrary(@"C:\meissa-tests\SmallMSTestTestProject.dll");
+
+            foreach (var testCase in testCases)
+            {
+                Console.WriteLine(testCase.FullName);
+            }
             ////string filePath1 = File.ReadAllText(@"C:\Users\aangelov\Downloads\Meissa_Fixes\_nunit_reports_\tmpCD7E.tmp");
             ////string filePath2 = File.ReadAllText(@"C:\Users\aangelov\Downloads\Meissa_Fixes\_nunit_reports_\tmpCD8F.tmp");
             ////var passedTests1 = (testrun)plugin.DeserializeTestResults(filePath1);

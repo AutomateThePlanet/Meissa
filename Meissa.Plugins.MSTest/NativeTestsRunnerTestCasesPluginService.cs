@@ -46,7 +46,7 @@ namespace Meissa.Plugins.MSTest
 
                     foreach (var currentMethod in currentType.GetMethods())
                     {
-                        if (currentMethod.CustomAttributes.Any(x => x.GetType().FullName.Equals(MsTestTestAttributeName)))
+                        if (currentMethod.CustomAttributes.Any(x => x.AttributeType.FullName.ToString().Equals(MsTestTestAttributeName)))
                         {
                             // This is a Nunit test - add it to the current test class list of tests.
                             var currentTestCase = CreateTestCase(currentMethod);
@@ -66,7 +66,7 @@ namespace Meissa.Plugins.MSTest
                 FullName = string.Concat(testMethod?.DeclaringType?.FullName, ".", testMethod.Name),
                 ClassName = testMethod.DeclaringType.FullName,
             };
-            var testCaseCategoryAttributes = testMethod.CustomAttributes.Where(x => x.GetType().FullName.Contains(MsTestCategoryAttributeName));
+            var testCaseCategoryAttributes = testMethod.CustomAttributes.Where(x => x.AttributeType.FullName.ToString().Contains(MsTestCategoryAttributeName));
             testCase.Categories = GetCategoryNamesFromAttributes(testCaseCategoryAttributes);
 
             return testCase;
@@ -79,10 +79,12 @@ namespace Meissa.Plugins.MSTest
             {
                 foreach (var categoryAttribute in attributes)
                 {
-                    var testCategories = categoryAttribute.GetType().GetProperty("TestCategories").GetValue(categoryAttribute, null);
-                    if (testCategories != null && ((List<string>)testCategories).Any())
+                    if (categoryAttribute.HasConstructorArguments)
                     {
-                        categoryNames.AddRange((List<string>)testCategories);
+                        foreach (var constructorArg in categoryAttribute.ConstructorArguments)
+                        {
+                            categoryNames.Add(constructorArg.Value.ToString());
+                        }
                     }
                 }
             }
