@@ -51,14 +51,18 @@ namespace Meissa
                 Thread.CurrentThread.CurrentCulture = ci;
                 Thread.CurrentThread.CurrentUICulture = ci;
 
-                Console.BackgroundColor = ConsoleColor.DarkCyan;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Clear();
-                Console.Title = "Meissa Distributed Test Runner- Bellatrix Test Automation Framework";
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
+                    Console.BackgroundColor = ConsoleColor.DarkCyan;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Clear();
+                    Console.Title = "Meissa Distributed Test Runner- Bellatrix Test Automation Framework";
                     Console.WindowHeight = 30;
                 }
+            }
+            catch (PlatformNotSupportedException)
+            {
+                // Ignore because the process is started not from the console.
             }
             catch (IOException)
             {
