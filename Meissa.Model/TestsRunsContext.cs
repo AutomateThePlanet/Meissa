@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestsRunsContext.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2020 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,6 +11,8 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
+
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -18,10 +20,13 @@ namespace Meissa.Model
 {
     public sealed class TestsRunsContext : DbContext
     {
+        public TestsRunsContext()
+        {   
+        }    
+
         public TestsRunsContext(DbContextOptions<TestsRunsContext> options)
            : base(options)
         {
-            Database.EnsureCreated();
             this.EnsureSeedDataForContext();
         }
 
@@ -37,13 +42,22 @@ namespace Meissa.Model
         public DbSet<TestRunAvailability> TestRunAvailabilities { get; set; }
         public DbSet<TestAgentRunAvailability> TestAgentRunAvailabilities { get; set; }
 
-        public class TestsRunsContextDesignFactory : IDesignTimeDbContextFactory<TestsRunsContext>
-        {
-            public TestsRunsContext CreateDbContext(string[] args)
-            {
-                var optionsBuilder = new DbContextOptionsBuilder<TestsRunsContext>().UseSqlite("Data Source=meissa.db");
-                return new TestsRunsContext(optionsBuilder.Options);
-            }
-        }
+        ////protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        ////{
+        ////    var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = "meissa.db" };
+        ////    var connectionString = connectionStringBuilder.ToString();
+        ////    var connection = new SqliteConnection(connectionString);
+
+        ////    optionsBuilder.UseSqlite(connection);
+        ////}
+
+        ////public class TestsRunsContextDesignFactory : IDesignTimeDbContextFactory<TestsRunsContext>
+        ////{
+        ////    public TestsRunsContext CreateDbContext(string[] args)
+        ////    {
+        ////        var optionsBuilder = new DbContextOptionsBuilder<TestsRunsContext>().UseSqlite("Filename=meissa.db");
+        ////        return new TestsRunsContext(optionsBuilder.Options);
+        ////    }
+        ////}
     }
 }
