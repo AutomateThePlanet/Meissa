@@ -6,6 +6,10 @@
       <LangVersion>8.0</LangVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <!--<RuntimeIdentifiers>win-x64,osx-x64,linux-x64</RuntimeIdentifiers>-->
+
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>meissa</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
   </PropertyGroup>
   
   <Import Project="..\SharedAssemblyInfo.targets" />
@@ -20,7 +24,7 @@
     <Description>Meissa Distributed Test Runner- Bellatrix Test Automation Framework</Description>
     <Company>Automate The Planet Ltd.</Company>
     <Authors>Automate The Planet Ltd.</Authors>
-    <Version>1.1.0</Version>
+    <Version>1.5.0</Version>
     <PackageId>Meissa Distributed Test Runner</PackageId>
     <PackageProjectUrl>https://bellatrix.solutions/</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>

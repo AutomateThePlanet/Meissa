@@ -42,24 +42,17 @@ namespace Meissa.API
                 .AddMvcOptions(o => o.OutputFormatters.Add(
                     new XmlDataContractSerializerOutputFormatter()));
           
-
             services.AddDbContext<TestsRunsContext>(options =>
             {
-                //options.UseSqlite("Filename=meissa.db");
-                options.UseInMemoryDatabase("meissa");
+                options.UseSqlite("Filename=meissa.db");
+                //options.UseInMemoryDatabase("meissa");
             });
-            ////services.AddDbContext<TestsRunsContext>(options =>
-            ////{
-            ////    ////options.UseInMemoryDatabase("TodoList"));
-            ////    options.UseSqlite("Filename=meissa.db");
-            ////    ////options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-            ////});
+
             services.AddTransient<DbRepository<TestsRunsContext>, MeissaRepository>();
             services.AddTransient<MeissaRepository>();
 
             services.AddHostedService<QueuedHostedService>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-            ////services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -73,13 +66,6 @@ namespace Meissa.API
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
-            ////using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            ////{
-            ////    using var context = scope.ServiceProvider.GetService<TestsRunsContext>();
-            ////    context.Database.EnsureCreated();
-            ////    context.Database.Migrate();
-            ////}
 
             using (var scope = app.ApplicationServices.CreateScope())
             {

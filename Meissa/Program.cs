@@ -29,6 +29,8 @@ using Meissa.Infrastructure;
 using Meissa.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Configuration;
+using Microsoft.Extensions.Logging.Console;
 using Unity;
 using Unity.Injection;
 using TestAgentStatus = Meissa.Model.TestAgentStatus;
@@ -433,23 +435,25 @@ namespace Meissa
             var resultLogger = default(ILogger);
             if (loggingSettings != null && loggingSettings.IsEnabled)
             {
-                ILoggerFactory loggerFactory = new LoggerFactory();
-
-                if (loggingSettings.IsConsoleLoggingEnabled)
+                var loggerFactory = LoggerFactory.Create(builder =>
                 {
-                    loggerFactory.AddConsole(loggingSection);
-                }
+                    builder.AddConfiguration(loggingSection);
+                    if (loggingSettings.IsConsoleLoggingEnabled)
+                    {
+                        builder.AddConsole();
+                    }
 
-                if (loggingSettings.IsDebugLoggingEnabled)
-                {
-                    loggerFactory.AddDebug();
-                }
+                    if (loggingSettings.IsDebugLoggingEnabled)
+                    {
+                        builder.AddDebug();
+                    }
 
-                if (loggingSettings.IsFileLoggingEnabled)
-                {
-                    var fileLoggingSection = ConfigurationService.Root.GetSection("logging:fileLogging");
-                    loggerFactory.AddFile(fileLoggingSection);
-                }
+                    if (loggingSettings.IsFileLoggingEnabled)
+                    {
+                        var fileLoggingSection = ConfigurationService.Root.GetSection("logging:fileLogging");
+                        builder.AddFile(fileLoggingSection);
+                    }
+                });
 
                 resultLogger = loggerFactory.CreateLogger("Bellatrix");
             }
