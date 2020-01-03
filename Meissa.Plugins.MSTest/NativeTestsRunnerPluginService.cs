@@ -52,7 +52,7 @@ namespace Meissa.Plugins.MSTest
 
         public List<TestCase> GetAllPassesTestCases(string testResultsFileContent)
         {
-            TestRun testRun = Deserialize<TestRun>(testResultsFileContent);
+            var testRun = Deserialize<TestRun>(testResultsFileContent);
             var passedUnitTestResults = testRun.Results.Where(x => x.outcome.Equals("Passed")).ToList();
             var passedTestCases = ConvertUnitTestsResultsToTestCases(passedUnitTestResults, testRun);
             return passedTestCases;

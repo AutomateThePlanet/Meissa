@@ -69,7 +69,7 @@ namespace Meissa.Core.Services
                             return true;
                         }
 
-                        Thread.Sleep(1000);
+                        Thread.Sleep(200);
 
                         return false;
                     },

@@ -43,7 +43,15 @@ namespace Meissa.Infrastructure
                                 return;
                             }
 
-                            action.Invoke();
+                            try
+                            {
+                                action.Invoke();
+                            }
+                            catch (OperationCanceledException)
+                            {
+                                return;
+                            }
+                            
 
                             if (cancellationTokenSource.Token.IsCancellationRequested)
                             {
@@ -61,13 +69,11 @@ namespace Meissa.Infrastructure
                             Console.WriteLine(ex);
                             _logger.LogErrorAsync(ex.GetType().Name, ex).Wait();
                         }
-                        ////throw;
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex);
                         _logger.LogErrorAsync(ex.Message, ex).Wait();
-                        ////throw;
                     }
                 },
                 cancellationTokenSource.Token,
@@ -91,17 +97,16 @@ namespace Meissa.Infrastructure
                         {
                             _logger.LogErrorAsync(ex.GetType().Name, ex).Wait();
                         }
-                        ////throw;
                     }
                     catch (Exception ex)
                     {
                         _logger.LogErrorAsync(ex.Message, ex).Wait();
-                        ////throw;
                     }
                 },
                 cancellationTokenSource.Token,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
+
             return waitTask;
         }
     }

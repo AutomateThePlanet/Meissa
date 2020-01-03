@@ -112,11 +112,21 @@ namespace Meissa.Core.Services
 
         private void LoadTestCaseHistoryCollection()
         {
-            var testCaseHistoryFileContent = _fileProvider.ReadAllText(GetTestCasesHistoryFileNamePath());
-            if (string.IsNullOrEmpty(testCaseHistoryFileContent))
+            var testCasesHistoryFilePath = GetTestCasesHistoryFileNamePath();
+            var testCaseHistoryFileContent = string.Empty;
+            if (_fileProvider.Exists(testCasesHistoryFilePath))
+            {
+                testCaseHistoryFileContent = _fileProvider.ReadAllText(testCasesHistoryFilePath);
+            }
+
+            if (!string.IsNullOrEmpty(testCaseHistoryFileContent))
             {
                 _testCaseHistoryCollection =
                     _jsonSerializer.Deserialize<List<TestCaseHistoryDto>>(testCaseHistoryFileContent);
+            }
+            else
+            {
+                _testCaseHistoryCollection = new List<TestCaseHistoryDto>();
             }
         }
 

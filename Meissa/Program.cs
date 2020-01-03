@@ -112,8 +112,6 @@ namespace Meissa
                 // change path later with the latest version of the API use GetExecutingAssemblyFolder
                 // when started with timeout 0, the process will be killed after the console is closed.
                 processProvider.StartProcessAndWaitToFinish("meissaserver", $"{GetExecutingAssemblyFolder()}", string.Empty, 0);
-                ////processProvider.StartProcessAndWaitToFinish($"{GetExecutingAssemblyFolder()}\\Meissa.Server.exe", $"{GetExecutingAssemblyFolder()}", string.Empty, 0);
-                Console.WriteLine("Meissa server successfully initialized.");
                 return 1;
             }
             catch (Exception e)
@@ -155,21 +153,21 @@ namespace Meissa
                             cancellationTokenSource,
                             () =>
                             {
-                                testAgentRunProvider.RunTestsForCurrentAgentAsync(options.TestAgentTag, options.TestAgentRunTimeout).Wait();
+                                testAgentRunProvider.RunTestsForCurrentAgentAsync(options.TestAgentTag, options.TestAgentRunTimeout).Wait(cancellationTokenSource.Token);
                             },
-                            10000);
+                            1000);
 
-                    var veryfyStatusTask = taskProvider.StartNewLongRunningRepeating(
+                    var verifyStatusTask = taskProvider.StartNewLongRunningRepeating(
                             cancellationTokenSource,
                             () => testAgentsService.VerifyActiveStatusAsync(options.TestAgentTag).Wait(cancellationTokenSource.Token),
-                            15000);
+                            1000);
 
-                    Task.WaitAll(testsRunTask, veryfyStatusTask);
+                    Task.WaitAll(testsRunTask, verifyStatusTask);
 
                     cancellationTokenSource.Cancel();
                     testAgentStateSwitcher.SetTestAgentAsInactiveAsync(options.TestAgentTag).Wait(cancellationTokenSource.Token);
                 }
-                catch (Exception ex) when (ex.InnerException != null && ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
+                catch (Exception ex) when (ex.InnerException?.InnerException != null && ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
                 {
                     Console.WriteLine($"A connection with the server {options.TestServerUrl} could not be established.");
                     return -1;
@@ -201,13 +199,12 @@ namespace Meissa
                 return 0;
             }
 
-            DateTime startTime = DateTime.Now;
+            var startTime = DateTime.Now;
             Console.WriteLine("Test Execution started....");
 
             var testRunSettings = new TestRunSettings
             {
                 ResultsFilePath = runnerModeOptions.ResultsFilePath,
-                OutputFilesLocation = runnerModeOptions.OutputFilesLocation,
                 TestsFilter = runnerModeOptions.TestsFilter,
                 TestLibraryPath = runnerModeOptions.TestLibraryPath,
                 AgentTag = runnerModeOptions.AgentTag,
@@ -226,7 +223,7 @@ namespace Meissa
 
             InitializeAllTypes(serverUri);
 
-            bool wasSuccessfulRun = false;
+            var wasSuccessfulRun = false;
             try
             {
                 var testExecutionService = _container.Resolve<TestExecutionService>();
@@ -238,7 +235,7 @@ namespace Meissa
                 exceptionLogger.LogErrorAsync(ex.Message, ex).Wait();
                 Environment.Exit(0);
             }
-            catch (Exception ex) when (ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
+            catch (Exception ex) when (ex.InnerException?.InnerException != null && ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
             {
                 Console.WriteLine($"A connection with the server {runnerModeOptions.TestServerUrl} could not be established.");
                 Environment.Exit(-1);
@@ -251,8 +248,8 @@ namespace Meissa
                 Environment.Exit(-1);
             }
 
-            DateTime endTime = DateTime.Now;
-            TimeSpan completionTime = endTime - startTime;
+            var endTime = DateTime.Now;
+            var completionTime = endTime - startTime;
             Console.WriteLine($"Test Run Completed for {(int)completionTime.TotalMinutes} minutes and {completionTime.Seconds:00} seconds");
 
             return wasSuccessfulRun ? 1 : 0;
@@ -283,7 +280,7 @@ namespace Meissa
                 _logger.LogError(UnexpectedProblemOccurredMessage, e);
                 return -1;
             }
-            catch (Exception ex) when (ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
+            catch (Exception ex) when (ex.InnerException?.InnerException != null && ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
             {
                 Console.WriteLine($"A connection with the server {serverUrl} could not be established.");
                 return -1;
@@ -298,7 +295,7 @@ namespace Meissa
 
         private static string LoadSavedSettings()
         {
-            string fileContent = string.Empty;
+            var fileContent = string.Empty;
             if (File.Exists(TestServerSettingsFileName))
             {
                 fileContent = File.ReadAllText(TestServerSettingsFileName);
@@ -310,7 +307,7 @@ namespace Meissa
         private static Uri LoadSavedTestExecutionServerUrl()
         {
             Uri savedUri = null;
-            string savedContent = LoadSavedSettings();
+            var savedContent = LoadSavedSettings();
             if (!string.IsNullOrEmpty(savedContent))
             {
                 savedUri = new Uri(savedContent);
@@ -348,7 +345,7 @@ namespace Meissa
 
                 return 1;
             }
-            catch (Exception ex) when (ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
+            catch (Exception ex) when (ex.InnerException?.InnerException != null && ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
             {
                 Console.WriteLine($"A connection with the server {serverUrl} could not be established.");
                 return -1;
@@ -376,7 +373,7 @@ namespace Meissa
                 exceptionLogDumpCreator.CreateDumpAsync(dumpLocation).Wait();
                 return 1;
             }
-            catch (Exception ex) when (ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
+            catch (Exception ex) when (ex.InnerException?.InnerException != null && ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
             {
                 Console.WriteLine($"A connection with the server {serverUrl} could not be established.");
                 return -1;
@@ -405,7 +402,7 @@ namespace Meissa
                 Console.WriteLine("All dumps successfully deleted.");
                 return 1;
             }
-            catch (Exception ex) when (ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
+            catch (Exception ex) when (ex.InnerException?.InnerException != null && ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
             {
                 Console.WriteLine($"A connection with the server {serverUrl} could not be established.");
                 return -1;
@@ -420,9 +417,9 @@ namespace Meissa
 
         public static string GetExecutingAssemblyFolder()
         {
-            string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-            UriBuilder uri = new UriBuilder(codeBase);
-            string path = Uri.UnescapeDataString(uri.Path);
+            var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+            var uri = new UriBuilder(codeBase);
+            var path = Uri.UnescapeDataString(uri.Path);
             return Path.GetDirectoryName(path);
         }
 

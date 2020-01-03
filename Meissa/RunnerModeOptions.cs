@@ -20,9 +20,6 @@ namespace Meissa
     [Verb("runner", HelpText = "Executes Meissa in --runner mode. You need to pass all native runner arguments using the argument nativeRunnerArguments.")]
     public class RunnerModeOptions
     {
-        [Option("outputFilesLocation", Required = true, HelpText = "The folder where all test lib files should be present prior the tests run.")]
-        public string OutputFilesLocation { get; set; }
-
         [Option("resultsFilePath", Required = true, HelpText = "The path to the file where all results will be stored.")]
         public string ResultsFilePath { get; set; }
 

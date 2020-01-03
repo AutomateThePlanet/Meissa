@@ -12,12 +12,12 @@
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
 using System.Collections.Generic;
+using System.IO;
 
 namespace Meissa.Core.Model.Settings
 {
     public class TestRunSettings
     {
-        public string OutputFilesLocation { get; set; }
         public string TestsFilter { get; set; }
         public string ResultsFilePath { get; set; }
         public string TestLibraryPath { get; set; }
@@ -33,5 +33,10 @@ namespace Meissa.Core.Model.Settings
         public int RetriesCount { get; set; }
         public double Threshold { get; set; }
         public string RetriedResultsFilePath { get; set; }
+
+        public string GetOutputFilesLocation()
+        {
+            return Path.GetDirectoryName(TestLibraryPath);
+        }
     }
 }

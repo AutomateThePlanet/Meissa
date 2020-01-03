@@ -20,7 +20,7 @@ namespace Meissa.Server.Client
 {
     public static class HttpClientExtensions
     {
-        public static async Task<HttpResponseMessage> SendAsyncWithRetry(this HttpClient client, Func<HttpRequestMessage> createRequest, int retriesCount = 3, int sleepIntervalMilliseconds = 1000)
+        public static async Task<HttpResponseMessage> SendAsyncWithRetry(this HttpClient client, Func<HttpRequestMessage> createRequest, int retriesCount = 3, int sleepIntervalMilliseconds = 500)
         {
             var response = default(HttpResponseMessage);
             for (int i = 0; i < retriesCount; i++)
@@ -32,22 +32,12 @@ namespace Meissa.Server.Client
 
                     if (response.IsSuccessStatusCode)
                     {
-                        if (i > 0)
-                        {
-                            // DEBUG:
-                            ////Console.WriteLine($"SendAsyncWithRetry- URI: {request.RequestUri} TYPE: {request.Method} - TRY {i + 1} SUCCESS");
-                        }
-
                         return response;
                     }
-                    else
-                    {
-                        // DEBUG:
-                        ////Console.WriteLine($"The retried request was not successful- {response.Content} URI: {request.RequestUri} TYPE: {request.Method}");
-                        Thread.Sleep(sleepIntervalMilliseconds);
-                    }
+
+                    Thread.Sleep(sleepIntervalMilliseconds);
                 }
-                catch (HttpRequestException e) when (e.InnerException.Message.Contains("A connection with the server could not be established"))
+                catch (HttpRequestException e) when (e.InnerException != null && e.InnerException.Message.Contains("A connection with the server could not be established"))
                 {
                     if (i == retriesCount - 1)
                     {
@@ -58,9 +48,6 @@ namespace Meissa.Server.Client
                 }
                 catch (Exception)
                 {
-                    // DEBUG:
-                    ////Console.WriteLine($"EXCEPTION SendAsyncWithRetry- {response?.Content} URI: {request.RequestUri} TYPE: {request.Method} - TRY {i + 1}");
-                    ////Console.WriteLine($"EXCEPTION SendAsyncWithRetry- {e}");
                     Thread.Sleep(sleepIntervalMilliseconds);
                 }
             }

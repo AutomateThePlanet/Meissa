@@ -119,7 +119,7 @@ namespace Meissa.Infrastructure
 
         private void EnsureResultsDirectoryExists(string testResultsFolder)
         {
-            if (!_directoryProvider.DoesDirectoryExists(testResultsFolder))
+            if (!string.IsNullOrEmpty(testResultsFolder) && !_directoryProvider.DoesDirectoryExists(testResultsFolder))
             {
                 _directoryProvider.CreateDirectory(testResultsFolder);
             }
@@ -127,12 +127,15 @@ namespace Meissa.Infrastructure
 
         private void DeleteAllFilesInResultsDirectory(string testResultsFolder)
         {
-            var files = _directoryProvider.GetFiles(testResultsFolder);
-            foreach (var file in files)
+            if (_directoryProvider.Exists(testResultsFolder))
             {
-                if (_fileProvider.IsWithExtension(file, "trx"))
+                var files = _directoryProvider.GetFiles(testResultsFolder);
+                foreach (var file in files)
                 {
-                    _fileProvider.Delete(file);
+                    if (_fileProvider.IsWithExtension(file, "trx"))
+                    {
+                        _fileProvider.Delete(file);
+                    }
                 }
             }
         }

@@ -1,0 +1,281 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "Meissa.Plugins.NUnit/1.5.0.0": {
+        "dependencies": {
+          "Meissa.Plugins.Contracts": "1.5.0",
+          "Microsoft.CodeAnalysis.FxCopAnalyzers": "2.9.8",
+          "Mono.Cecil": "0.11.1",
+          "StyleCop.Analyzers": "1.1.118",
+          "System.Composition": "1.4.0"
+        },
+        "runtime": {
+          "Meissa.Plugins.NUnit.dll": {}
+        }
+      },
+      "Microsoft.CodeAnalysis.FxCopAnalyzers/2.9.8": {
+        "dependencies": {
+          "Microsoft.CodeAnalysis.VersionCheckAnalyzer": "2.9.8",
+          "Microsoft.CodeQuality.Analyzers": "2.9.8",
+          "Microsoft.NetCore.Analyzers": "2.9.8",
+          "Microsoft.NetFramework.Analyzers": "2.9.8"
+        }
+      },
+      "Microsoft.CodeAnalysis.VersionCheckAnalyzer/2.9.8": {},
+      "Microsoft.CodeQuality.Analyzers/2.9.8": {},
+      "Microsoft.NetCore.Analyzers/2.9.8": {},
+      "Microsoft.NETCore.Platforms/1.1.0": {},
+      "Microsoft.NETCore.Targets/1.1.0": {},
+      "Microsoft.NetFramework.Analyzers/2.9.8": {},
+      "Mono.Cecil/0.11.1": {
+        "runtime": {
+          "lib/netstandard2.0/Mono.Cecil.Mdb.dll": {
+            "assemblyVersion": "0.11.1.0",
+            "fileVersion": "0.11.1.0"
+          },
+          "lib/netstandard2.0/Mono.Cecil.Pdb.dll": {
+            "assemblyVersion": "0.11.1.0",
+            "fileVersion": "0.11.1.0"
+          },
+          "lib/netstandard2.0/Mono.Cecil.Rocks.dll": {
+            "assemblyVersion": "0.11.1.0",
+            "fileVersion": "0.11.1.0"
+          },
+          "lib/netstandard2.0/Mono.Cecil.dll": {
+            "assemblyVersion": "0.11.1.0",
+            "fileVersion": "0.11.1.0"
+          }
+        }
+      },
+      "StyleCop.Analyzers/1.1.118": {},
+      "System.ComponentModel/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Composition/1.4.0": {
+        "dependencies": {
+          "System.Composition.AttributedModel": "1.4.0",
+          "System.Composition.Convention": "1.4.0",
+          "System.Composition.Hosting": "1.4.0",
+          "System.Composition.Runtime": "1.4.0",
+          "System.Composition.TypedParts": "1.4.0"
+        }
+      },
+      "System.Composition.AttributedModel/1.4.0": {
+        "runtime": {
+          "lib/netstandard2.0/System.Composition.AttributedModel.dll": {
+            "assemblyVersion": "1.0.35.0",
+            "fileVersion": "4.700.19.56404"
+          }
+        }
+      },
+      "System.Composition.Convention/1.4.0": {
+        "dependencies": {
+          "System.Composition.AttributedModel": "1.4.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Composition.Convention.dll": {
+            "assemblyVersion": "1.0.35.0",
+            "fileVersion": "4.700.19.56404"
+          }
+        }
+      },
+      "System.Composition.Hosting/1.4.0": {
+        "dependencies": {
+          "System.Composition.Runtime": "1.4.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Composition.Hosting.dll": {
+            "assemblyVersion": "1.0.35.0",
+            "fileVersion": "4.700.19.56404"
+          }
+        }
+      },
+      "System.Composition.Runtime/1.4.0": {
+        "runtime": {
+          "lib/netstandard2.0/System.Composition.Runtime.dll": {
+            "assemblyVersion": "1.0.35.0",
+            "fileVersion": "4.700.19.56404"
+          }
+        }
+      },
+      "System.Composition.TypedParts/1.4.0": {
+        "dependencies": {
+          "System.Composition.AttributedModel": "1.4.0",
+          "System.Composition.Hosting": "1.4.0",
+          "System.Composition.Runtime": "1.4.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Composition.TypedParts.dll": {
+            "assemblyVersion": "1.0.35.0",
+            "fileVersion": "4.700.19.56404"
+          }
+        }
+      },
+      "System.Runtime/4.3.0": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0",
+          "Microsoft.NETCore.Targets": "1.1.0"
+        }
+      },
+      "Meissa.Core.Model/1.5.0": {
+        "dependencies": {
+          "System.ComponentModel": "4.3.0"
+        },
+        "runtime": {
+          "Meissa.Core.Model.dll": {}
+        }
+      },
+      "Meissa.Plugins.Contracts/1.5.0": {
+        "dependencies": {
+          "Meissa.Core.Model": "1.5.0"
+        },
+        "runtime": {
+          "Meissa.Plugins.Contracts.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Meissa.Plugins.NUnit/1.5.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.CodeAnalysis.FxCopAnalyzers/2.9.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-FZhO7S+xinFrcRvPyIxPbFgY0Jg3X+KNkawhg7wwoVxnT/ySdoO162dyIMXfQQ6/qCmjNFHmTDXiNlpPNvKNyQ==",
+      "path": "microsoft.codeanalysis.fxcopanalyzers/2.9.8",
+      "hashPath": "microsoft.codeanalysis.fxcopanalyzers.2.9.8.nupkg.sha512"
+    },
+    "Microsoft.CodeAnalysis.VersionCheckAnalyzer/2.9.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-iSjqkECKpagJPjzc7sMjD6rQWSznVYqTfUZ96yR0r0jDzA45TymBof350tlOfGDRvn4OrU/KKJav21/oZDttrA==",
+      "path": "microsoft.codeanalysis.versioncheckanalyzer/2.9.8",
+      "hashPath": "microsoft.codeanalysis.versioncheckanalyzer.2.9.8.nupkg.sha512"
+    },
+    "Microsoft.CodeQuality.Analyzers/2.9.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KevAiJKuolGKK84jDHMVGJjBAigH/86xyCVtbOzh5avUYzW7jPErdJW708byKKMiVKTwv027mbKCNnnOgNQHsA==",
+      "path": "microsoft.codequality.analyzers/2.9.8",
+      "hashPath": "microsoft.codequality.analyzers.2.9.8.nupkg.sha512"
+    },
+    "Microsoft.NetCore.Analyzers/2.9.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zbGttCZ8T5wJiBDhgIaFWTrYa/X7zbCnQ76PEu/B4gb64KY+yB9gjkndsKWR+2TbOId76PN7WrSQAn+W7gr5jQ==",
+      "path": "microsoft.netcore.analyzers/2.9.8",
+      "hashPath": "microsoft.netcore.analyzers.2.9.8.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Platforms/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
+      "path": "microsoft.netcore.platforms/1.1.0",
+      "hashPath": "microsoft.netcore.platforms.1.1.0.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Targets/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-aOZA3BWfz9RXjpzt0sRJJMjAscAUm3Hoa4UWAfceV9UTYxgwZ1lZt5nO2myFf+/jetYQo4uTP7zS8sJY67BBxg==",
+      "path": "microsoft.netcore.targets/1.1.0",
+      "hashPath": "microsoft.netcore.targets.1.1.0.nupkg.sha512"
+    },
+    "Microsoft.NetFramework.Analyzers/2.9.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-8fZYJqeKBW5uuKBact26IeOBogchn5Km85klHqHneRY7Jxp+ERtrw8zJVumNFUVL68pIcf4uKPOY7zfBQ7eY3A==",
+      "path": "microsoft.netframework.analyzers/2.9.8",
+      "hashPath": "microsoft.netframework.analyzers.2.9.8.nupkg.sha512"
+    },
+    "Mono.Cecil/0.11.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-RWBcccuMn8gxAasJxBBAb848qkt3S2t/7bEaEXtxQU6ROv1v0p7kk3+Xga4G+k+bKbLBla1bsrUt+8pAccaDwQ==",
+      "path": "mono.cecil/0.11.1",
+      "hashPath": "mono.cecil.0.11.1.nupkg.sha512"
+    },
+    "StyleCop.Analyzers/1.1.118": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-OYYZdiCF/b3K/AzGWQ2PLQH5BnQRzQfHbbUgucMpJqBe9jsPTnyQh92oMabffFcTcBR2EOpJyMcp9D05fs8yvA==",
+      "path": "stylecop.analyzers/1.1.118",
+      "hashPath": "stylecop.analyzers.1.1.118.nupkg.sha512"
+    },
+    "System.ComponentModel/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-VyGn1jGRZVfxnh8EdvDCi71v3bMXrsu8aYJOwoV7SNDLVhiEqwP86pPMyRGsDsxhXAm2b3o9OIqeETfN5qfezw==",
+      "path": "system.componentmodel/4.3.0",
+      "hashPath": "system.componentmodel.4.3.0.nupkg.sha512"
+    },
+    "System.Composition/1.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-aU1FPtKDcPHCwKi+XZf3lizUCUDWa3CawtE/KtqTG7kmpDdX8YsRYQ/gd1mIXxqcJtcnM5zsiLUPv5YXRFYUTw==",
+      "path": "system.composition/1.4.0",
+      "hashPath": "system.composition.1.4.0.nupkg.sha512"
+    },
+    "System.Composition.AttributedModel/1.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-nJpwGXzcKLPKHx1mvXbwtxU6o2tpzR529/pBe5NerXq75R5XcZHu6yMRUHcuroRor3+YlJi6l/l0klQfTYRzlQ==",
+      "path": "system.composition.attributedmodel/1.4.0",
+      "hashPath": "system.composition.attributedmodel.1.4.0.nupkg.sha512"
+    },
+    "System.Composition.Convention/1.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-jEi0SwIWi4SilLi0i83U5kMM8A2aUIe8t8VmXvcoVHPKo0h0UeizLyIcQ6AgeJNVTmZ7uoRp5trWJDjtBeXsNA==",
+      "path": "system.composition.convention/1.4.0",
+      "hashPath": "system.composition.convention.1.4.0.nupkg.sha512"
+    },
+    "System.Composition.Hosting/1.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Ek5lYb00NCMzBecuV/zI4734PrrdoruiMbbR7S3joTOCSrLGND2Xt3aCp8Jg1ZvgA0SFH1Aov2/ZobLazwdd6g==",
+      "path": "system.composition.hosting/1.4.0",
+      "hashPath": "system.composition.hosting.1.4.0.nupkg.sha512"
+    },
+    "System.Composition.Runtime/1.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-2+RKi0a4qg7cO0w/6YS1B17MWhfSpDDUZ94ibQWhb9XM/L6MD9tcS1VgejpyPobVxsrlvh7rVtfkPPOetaKhRA==",
+      "path": "system.composition.runtime/1.4.0",
+      "hashPath": "system.composition.runtime.1.4.0.nupkg.sha512"
+    },
+    "System.Composition.TypedParts/1.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-azJdjOUf50JMUH+iactt0629uJg/ahoerGDnFDeBeQ1BrV6+4cpA5tiQIIZMSTpkj3fHlmdlJQBoRsJIqtNguw==",
+      "path": "system.composition.typedparts/1.4.0",
+      "hashPath": "system.composition.typedparts.1.4.0.nupkg.sha512"
+    },
+    "System.Runtime/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-JufQi0vPQ0xGnAczR13AUFglDyVYt4Kqnz1AZaiKZ5+GICq0/1MH/mO/eAJHt/mHW1zjKBJd7kV26SrxddAhiw==",
+      "path": "system.runtime/4.3.0",
+      "hashPath": "system.runtime.4.3.0.nupkg.sha512"
+    },
+    "Meissa.Core.Model/1.5.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Meissa.Plugins.Contracts/1.5.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

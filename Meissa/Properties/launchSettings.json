@@ -1,15 +1,15 @@
 {
+  "runtimeOptions": {
+    "tfm": "netcoreapp3.1",
+    "framework": {
+      "name": "Microsoft.NETCore.App",
+      "version": "3.1.0"
+    }
+  },
   "profiles": {
     "Meissa": {
       "commandName": "Project",
-      "commandLineArgs": "initServer"
+      "commandLineArgs": "runner --resultsFilePath=\"C:\\SourceCode\\Meissa\\SmallMSTestTestProject\\bin\\Debug\\netcoreapp3.1\\result.trx\" --agentTag=\"APIAgent\" --testTechnology=\"MSTest\" --testLibraryPath=\"C:\\SourceCode\\Meissa\\SmallMSTestTestProject\\bin\\Debug\\netcoreapp3.1\\SmallMSTestTestProject.dll\" --testServerUrl=\"http://127.0.0.1:5000\" --timeBasedBalance"
     }
-  },
-  "runtimeOptions": {
-      "tfm": "netcoreapp3.1",
-      "framework": {
-          "name": "Microsoft.NETCore.App",
-          "version": "3.1.0"
-      }
   }
 }

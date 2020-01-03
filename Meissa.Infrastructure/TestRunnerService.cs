@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -139,14 +140,7 @@ namespace Meissa.Infrastructure
 
                         var passedTests = _nativeTestsRunner.GetAllPassesTests(retriedTestTestResults);
                         _nativeTestsRunner.UpdatePassedTests(passedTests, originalTestRun);
-
-                        // DEBUG:
-                        ////await _testRunLogService.CreateTestRunLogAsync($"{_nativeTestsRunner.GetAllPassesTestsCount(originalTestRun)} passed tests found.", testRunId);
-
                         _nativeTestsRunner.UpdateResultsSummary(originalTestRun);
-
-                        // DEBUG:
-                        ////await _testRunLogService.CreateTestRunLogAsync($"{_nativeTestsRunner.GetAllNotPassesTestsCount(originalTestRun)} failed tests after update.", testRunId);
                     }
                     else
                     {
@@ -182,28 +176,19 @@ namespace Meissa.Infrastructure
             List<TestCase> distributedTestCases,
             CancellationTokenSource outerCancellationTokenSource)
         {
-            string outputFilesDir = _pathProvider.GetDirectoryName(testsLibraryPath);
-            ////var updatedMaxParallelProcessesCount = maxParallelProcessesCount > 1 ? maxParallelProcessesCount - 1 : maxParallelProcessesCount;
-            int availableCores = runInParallel ? maxParallelProcessesCount : 1;
+            var outputFilesDir = _pathProvider.GetDirectoryName(testsLibraryPath);
+            var availableCores = runInParallel ? maxParallelProcessesCount : 1;
 
             // Merge logic of CreateRunFilterArgument here. remove inner foreach
             var listOfDistributedTestCases = _nativeTestsRunner.SplitTestCases(availableCores, sameMachineByClass, distributedTestCases);
             var testRunsToBeMerged = new List<object>();
-
             var testRunProcesses = new List<Process>();
             var resultsFiles = new List<string>();
 
-            DateTime processCreationTime = _dateTimeProvider.GetCurrentTime();
+            var processCreationTime = _dateTimeProvider.GetCurrentTime();
 
-            // DEBUG:
-            ////await _testRunLogService.CreateTestRunLogAsync($"Number of tests to be executed- {distributedTestCases.Count}", _currentTestRunId);
-
-            // DEBUG:
-            ////await _testRunLogService.CreateTestRunLogAsync($"Number of listOfDistributedTestCases- {listOfDistributedTestCases.Count()}", _currentTestRunId);
             foreach (var distributedTestCasesList in listOfDistributedTestCases)
             {
-                // DEBUG:
-                ////await _testRunLogService.CreateTestRunLogAsync($"{index++} distributedTestCasesList items- {distributedTestCasesList.Count()}", _currentTestRunId);
                 var currentTestResultsFilePath = _pathProvider.GetTempFileName();
                 resultsFiles.Add(currentTestResultsFilePath);
                 var arguments = _nativeTestsRunner.BuildNativeRunnerArguments(
@@ -225,15 +210,12 @@ namespace Meissa.Infrastructure
 
             var innerCancellationTokenSource = new CancellationTokenSource();
 
-            // DEBUG:
-            ////await _testRunLogService.CreateTestRunLogAsync($"The native runs will be executed in parallel- {runInParallel}. Available core on machine {Environment.MachineName}- {availableCores}", _currentTestRunId);
-            ////await _testRunLogService.CreateTestRunLogAsync($"Number of native test runner process to be run- {testRunProcesses.Count}", _currentTestRunId);
             var waitForNativeRunnerProcessesToFinishTask = _taskProvider.StartNewLongRunning(
                          (c) =>
                          {
                              var ranProcesses = new List<int>();
                              do
-                         {
+                             {
                                  var coresCount = availableCores;
                                  if (runInParallel)
                                  {
@@ -259,7 +241,7 @@ namespace Meissa.Infrastructure
 
                                  // Do not start all processes upfront
                                  // if parallel here start all of them?
-                                 // run in task and pass cancelation token. If is canceled kill all processes. DO IT for NUNIT TOO
+                                 // run in task and pass cancellation token. If is canceled kill all processes. DO IT for NUNIT TOO
                                  foreach (var process in testRunProcesses)
                                  {
                                      if (outerCancellationTokenSource.Token.IsCancellationRequested)
@@ -270,8 +252,7 @@ namespace Meissa.Infrastructure
                                      if (!runInParallel)
                                      {
                                          // Start processes one by one, otherwise they are started all upfront.
-                                         _environmentService.SetEnvironmentVariable("Meissa_LRDR", _dateTimeProvider.GetCurrentTimeUtc().ToString());
-                                         ////_consoleProvider.WriteLine("SET Meissa_LRDR");
+                                         _environmentService.SetEnvironmentVariable("Meissa_LRDR", _dateTimeProvider.GetCurrentTimeUtc().ToString(CultureInfo.InvariantCulture));
                                          _processStarter.StartProcess(process, LogStandardOutput, LogErrorOutput);
                                          ranProcesses.Add(process.GetHashCode());
                                      }
@@ -281,9 +262,6 @@ namespace Meissa.Infrastructure
                                          _processStarter.WaitForProcessToFinish(testAgentRunTimeout, process);
                                      }
                                  }
-
-                                 // DEBUG:
-                                 ////_testRunLogService.CreateTestRunLogAsync($"ranProcesses.Count {ranProcesses.Count} testRunProcesses.Count {testRunProcesses.Count} {_dateTimeProvider.GetCurrentTime()}", _currentTestRunId).Wait();
                              }
                              while (ranProcesses.Count != testRunProcesses.Count);
                          },
@@ -297,7 +275,7 @@ namespace Meissa.Infrastructure
                              {
                                  if (waitForNativeRunnerProcessesToFinishTask.IsFaulted)
                                  {
-                                    _testRunLogService.CreateTestRunLogAsync($"waitForNativeRunnerProcessesToFinishTask FAULTED- {waitForNativeRunnerProcessesToFinishTask.Exception}", _currentTestRunId).Wait();
+                                     _testRunLogService.CreateTestRunLogAsync($"waitForNativeRunnerProcessesToFinishTask FAULTED- {waitForNativeRunnerProcessesToFinishTask.Exception}", _currentTestRunId).Wait();
                                  }
 
                                  innerCancellationTokenSource.Cancel();
@@ -326,13 +304,11 @@ namespace Meissa.Infrastructure
                              }
                          },
                          5000);
-            checkCancellationRequestsTask.Wait();
+            checkCancellationRequestsTask.Wait(innerCancellationTokenSource.Token);
 
             string result = null;
             if (!outerCancellationTokenSource.Token.IsCancellationRequested)
             {
-                // DEBUG:
-                ////_testRunLogService.CreateTestRunLogAsync($"START MERGING RESULTS- on machine {Environment.MachineName}", _currentTestRunId).Wait();
                 foreach (var testResultFile in resultsFiles)
                 {
                     if (_fileProvider.Exists(testResultFile))
@@ -366,15 +342,11 @@ namespace Meissa.Infrastructure
                 var mergedTestRun = _nativeTestsRunner.MergeTestResults(testRunsToBeMerged);
                 if (isTimeBasedBalance)
                 {
-                    // DEBUG:
-                    ////var startTime = _dateTimeProvider.GetCurrentTime();
-                    ////_testRunLogService.CreateTestRunLogAsync($"START updating test case history- on machine {Environment.MachineName}", _currentTestRunId).Wait();
+                    // TODO: This is run on the agent. So, the info should be sent back to the runner or if we have the info there?
+                    // Maybe we should return the tables and persists there.
                     var testCaseRuns = _nativeTestsRunner.UpdateTestCasesHistory(mergedTestRun, assemblyName);
                     _testCasesHistoryService.UpdateTestCaseExecutionHistory(testCaseRuns);
-
-                    // DEBUG:
-                    ////var endTime = _dateTimeProvider.GetCurrentTime();
-                    ////_testRunLogService.CreateTestRunLogAsync($"END updating test case history- on machine {Environment.MachineName} for {(endTime - startTime).Seconds} seconds", _currentTestRunId).Wait();
+                    _testCasesHistoryService.Dispose();
                 }
 
                 try

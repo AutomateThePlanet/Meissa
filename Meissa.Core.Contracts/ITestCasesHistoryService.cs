@@ -11,12 +11,14 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
+
+using System;
 using System.Collections.Generic;
 using Meissa.Core.Model;
 
 namespace Meissa.Core.Contracts
 {
-    public interface ITestCasesHistoryService
+    public interface ITestCasesHistoryService : IDisposable
     {
         void UpdateTestCaseExecutionHistory(List<TestCaseRun> testCaseRuns);
         void DeleteOlderTestCasesHistory();
