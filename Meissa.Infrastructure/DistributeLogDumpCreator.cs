@@ -15,8 +15,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
+using Meissa.Server.Models;
 
 namespace Meissa.Infrastructure
 {
@@ -75,7 +75,7 @@ namespace Meissa.Infrastructure
                 }
             }
 
-            var exceptionLogs = (await _logRepository.GetAllAsync()).ToList();
+            var exceptionLogs = (await _logRepository.GetAllAsync().ConfigureAwait(false)).ToList();
             var sb = new StringBuilder();
             foreach (var exceptionLog in exceptionLogs)
             {
@@ -92,10 +92,10 @@ namespace Meissa.Infrastructure
 
         public async Task DeleteAllDumpsAsync()
         {
-            var exceptionLogs = await _logRepository.GetAllAsync();
+            var exceptionLogs = await _logRepository.GetAllAsync().ConfigureAwait(false);
             foreach (var exceptionLog in exceptionLogs)
             {
-                await _logRepository.DeleteAsync(exceptionLog.Id);
+                await _logRepository.DeleteAsync(exceptionLog.Id).ConfigureAwait(false);
             }
         }
 

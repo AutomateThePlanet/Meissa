@@ -14,10 +14,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
 using Meissa.Core.Model;
 using Meissa.Model;
+using Meissa.Server.Models;
 
 namespace Meissa.Core.Services
 {
@@ -64,18 +64,18 @@ namespace Meissa.Core.Services
                 IsTimeBasedBalance = isTimeBasedBalance,
                 SameMachineByClass = sameMachineByClass,
             };
-            newTestRun = await _testRunServiceClient.CreateAsync(newTestRun);
+            newTestRun = await _testRunServiceClient.CreateAsync(newTestRun).ConfigureAwait(false);
 
             var newTestRunOutput = new TestRunOutputDto()
             {
                 TestRunId = newTestRun.TestRunId,
                 TestOutputFilesPackage = outputFilesZip,
             };
-            await _testRunOutputServiceClient.CreateAsync(newTestRunOutput);
+            await _testRunOutputServiceClient.CreateAsync(newTestRunOutput).ConfigureAwait(false);
 
             if (customArgumentsPairs != null)
             {
-                await CreateTestRunCustomArgumentsAsync(newTestRun.TestRunId, customArgumentsPairs);
+                await CreateTestRunCustomArgumentsAsync(newTestRun.TestRunId, customArgumentsPairs).ConfigureAwait(false);
             }
 
             return newTestRun.TestRunId;
@@ -99,7 +99,7 @@ namespace Meissa.Core.Services
                             Value = value,
                             TestRunId = testRunId,
                         };
-                        await _testRunCustomArgumentRepository.CreateAsync(testRunCustomArgumentDto);
+                        await _testRunCustomArgumentRepository.CreateAsync(testRunCustomArgumentDto).ConfigureAwait(false);
                     }
                 }
             }
@@ -112,14 +112,14 @@ namespace Meissa.Core.Services
                 throw new ArgumentException("Cannot complete test run with status InProgress!");
             }
 
-            var testRun = await _testRunServiceClient.GetAsync(testRunId);
+            var testRun = await _testRunServiceClient.GetAsync(testRunId).ConfigureAwait(false);
             testRun.Status = testRunStatus;
             testRun.DateFinished = _dateTimeProvider.GetCurrentTime();
 
             // DEBUG: Before COMPLETING RUN
             ////Console.WriteLine("Before COMPLETING RUN");
-            await _testRunServiceClient.UpdateAsync(testRun.TestRunId, testRun);
-            await _testRunOutputServiceClient.DeleteTestRunOutputByTestRunIdAsync(testRun.TestRunId);
+            await _testRunServiceClient.UpdateAsync(testRun.TestRunId, testRun).ConfigureAwait(false);
+            await _testRunOutputServiceClient.DeleteTestRunOutputByTestRunIdAsync(testRun.TestRunId).ConfigureAwait(false);
         }
     }
 }

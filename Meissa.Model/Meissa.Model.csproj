@@ -8,11 +8,11 @@
   <Import Project="..\SharedAssemblyInfo.targets" />
   
   <PropertyGroup>
-    <CodeAnalysisRuleSet>$(SolutionDir)\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="$(SolutionDir)\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,14 +28,16 @@
   
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="3.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Design" Version="2.0.0-preview1-final" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="StyleCopeRules.ruleset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+      <None Update="..\StyleCopeRules.ruleset">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="..\stylecop.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
   </ItemGroup>
 
   <ItemGroup>

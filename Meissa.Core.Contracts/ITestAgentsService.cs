@@ -13,7 +13,7 @@
 // <site>https://bellatrix.solutions/</site>
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Meissa.API.Models;
+using Meissa.Server.Models;
 
 namespace Meissa.Core.Contracts
 {

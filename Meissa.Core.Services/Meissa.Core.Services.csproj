@@ -5,14 +5,14 @@
       <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   
-  <Import Project="..\SharedAssemblyInfo.targets" />
+    <Import Project="..\SharedAssemblyInfo.targets" />
   
   <PropertyGroup>
-    <CodeAnalysisRuleSet>$(SolutionDir)\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="$(SolutionDir)\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,13 +30,14 @@
     <ProjectReference Include="..\Meissa.Core.Contracts\Meissa.Core.Contracts.csproj" />
     <ProjectReference Include="..\Meissa.Core.Model\Meissa.Core.Model.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="StyleCopeRules.ruleset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
+    <ItemGroup>
+        <None Update="..\StyleCopeRules.ruleset">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="..\stylecop.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
   <ItemGroup>
     <PackageReference Update="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>

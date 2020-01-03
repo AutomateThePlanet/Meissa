@@ -15,9 +15,9 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
 using Meissa.Core.Model;
+using Meissa.Server.Models;
 
 namespace Meissa.Infrastructure
 {

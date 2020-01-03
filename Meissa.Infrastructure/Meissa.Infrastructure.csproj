@@ -1,29 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-      <TargetFramework>netcoreapp3.1</TargetFramework>
-      <LangVersion>8.0</LangVersion>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <Import Project="..\SharedAssemblyInfo.targets" />
-  
+
   <PropertyGroup>
-    <CodeAnalysisRuleSet>$(SolutionDir)\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-      <NoWarn>1701;1702;1705;NU1603;NU1605</NoWarn>
+    <NoWarn>1701;1702;1705;NU1603;NU1605</NoWarn>
     <WarningsAsErrors />
   </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-        <NoWarn>1701;1702;1705;NU1603;NU1605</NoWarn>
-        <Optimize>false</Optimize>
-        <WarningLevel>0</WarningLevel>
-        <WarningsAsErrors />
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>1701;1702;1705;NU1603;NU1605</NoWarn>
+    <Optimize>false</Optimize>
+    <WarningLevel>0</WarningLevel>
+    <WarningsAsErrors />
+  </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="TestTechnologySpecific\**" />
@@ -32,13 +32,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="$(SolutionDir)\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\AutomateThePlanet.licenseheader" Link="AutomateThePlanet.licenseheader" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.0" />
     <PackageReference Include="Mono.Cecil" Version="0.11.1" />
@@ -59,7 +59,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="StyleCopeRules.ruleset">
+    <None Update="..\StyleCopeRules.ruleset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="..\stylecop.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

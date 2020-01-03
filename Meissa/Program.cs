@@ -19,21 +19,19 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
-using Meissa.API.Client.Clients;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
+using Meissa.Core.Model;
 using Meissa.Core.Model.Exceptions;
 using Meissa.Core.Model.Settings;
 using Meissa.Core.Services;
 using Meissa.Infrastructure;
 using Meissa.Model;
+using Meissa.Server.Client.Clients;
+using Meissa.Server.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Configuration;
-using Microsoft.Extensions.Logging.Console;
 using Unity;
 using Unity.Injection;
-using TestAgentStatus = Meissa.Model.TestAgentStatus;
 
 namespace Meissa
 {
@@ -113,8 +111,8 @@ namespace Meissa
 
                 // change path later with the latest version of the API use GetExecutingAssemblyFolder
                 // when started with timeout 0, the process will be killed after the console is closed.
-                processProvider.StartProcessAndWaitToFinish("dotnet", $"{GetExecutingAssemblyFolder()}", " Meissa.API.dll", 0);
-                ////processProvider.StartProcessAndWaitToFinish($"{GetExecutingAssemblyFolder()}\\Meissa.API.exe", $"{GetExecutingAssemblyFolder()}", string.Empty, 0);
+                processProvider.StartProcessAndWaitToFinish("meissaserver", $"{GetExecutingAssemblyFolder()}", string.Empty, 0);
+                ////processProvider.StartProcessAndWaitToFinish($"{GetExecutingAssemblyFolder()}\\Meissa.Server.exe", $"{GetExecutingAssemblyFolder()}", string.Empty, 0);
                 Console.WriteLine("Meissa server successfully initialized.");
                 return 1;
             }
@@ -163,15 +161,15 @@ namespace Meissa
 
                     var veryfyStatusTask = taskProvider.StartNewLongRunningRepeating(
                             cancellationTokenSource,
-                            () => testAgentsService.VerifyActiveStatusAsync(options.TestAgentTag).Wait(),
+                            () => testAgentsService.VerifyActiveStatusAsync(options.TestAgentTag).Wait(cancellationTokenSource.Token),
                             15000);
 
                     Task.WaitAll(testsRunTask, veryfyStatusTask);
 
                     cancellationTokenSource.Cancel();
-                    testAgentStateSwitcher.SetTestAgentAsInactiveAsync(options.TestAgentTag).Wait();
+                    testAgentStateSwitcher.SetTestAgentAsInactiveAsync(options.TestAgentTag).Wait(cancellationTokenSource.Token);
                 }
-                catch (Exception ex) when (ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
+                catch (Exception ex) when (ex.InnerException != null && ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
                 {
                     Console.WriteLine($"A connection with the server {options.TestServerUrl} could not be established.");
                     return -1;
@@ -181,7 +179,7 @@ namespace Meissa
                     Console.WriteLine(e);
                     _logger.LogError(UnexpectedProblemOccurredMessage, e);
                     cancellationTokenSource.Cancel();
-                    testAgentStateSwitcher.SetTestAgentAsInactiveAsync(options.TestAgentTag).Wait();
+                    testAgentStateSwitcher.SetTestAgentAsInactiveAsync(options.TestAgentTag).Wait(cancellationTokenSource.Token);
                     return -1;
                 }
             }
@@ -477,8 +475,6 @@ namespace Meissa
                 new InjectionConstructor(testServerUrl.Host, testServerUrl.Port));
             _container.RegisterType<IServiceClient<TestAgentDto>, TestAgentServiceClient>(
                 new InjectionConstructor(testServerUrl.Host, testServerUrl.Port));
-            _container.RegisterType<ITestCaseRunsServiceClient, TestCaseRunsServiceClient>(
-                new InjectionConstructor(testServerUrl.Host, testServerUrl.Port));
             _container.RegisterType<IServiceClient<TestRunDto>, TestRunServiceClient>(
                 new InjectionConstructor(testServerUrl.Host, testServerUrl.Port));
             _container.RegisterType<IServiceClient<TestRunLogDto>, TestRunLogServiceClient>(
@@ -486,8 +482,6 @@ namespace Meissa
             _container.RegisterType<IServiceClient<TestRunCustomArgumentDto>, TestRunCustomArgumentServiceClient>(
                 new InjectionConstructor(testServerUrl.Host, testServerUrl.Port));
             _container.RegisterType<IServiceClient<TestCaseHistoryDto>, TestCaseHistoryServiceClient>(
-                new InjectionConstructor(testServerUrl.Host, testServerUrl.Port));
-            _container.RegisterType<IServiceClient<TestCaseHistoryEntryDto>, TestCaseHistoryEntryServiceClient>(
                 new InjectionConstructor(testServerUrl.Host, testServerUrl.Port));
             _container.RegisterType<IServiceClient<TestAgentRunDto>, TestAgentRunServiceClient>(
                 new InjectionConstructor(testServerUrl.Host, testServerUrl.Port));
@@ -521,7 +515,7 @@ namespace Meissa
             _container.RegisterType<ITestAgentRunProvider, TestAgentRunProvider>();
             _container.RegisterType<ITestRunProvider, TestRunProvider>();
             _container.RegisterType<IDistributeLogDumpCreator, DistributeLogDumpCreator>();
-            _container.RegisterType<ITestCasesHistoryService, TestCasesHistoryService>();
+            _container.RegisterSingleton<ITestCasesHistoryService, TestCasesHistoryService>();
             _container.RegisterType<ITestsTimesBasedDistributeService, TestsTimesBasedDistributeService>();
             _container.RegisterType<IPluginService, PluginService>();
             _container.RegisterType<ITestRunLogService, TestRunLogService>();

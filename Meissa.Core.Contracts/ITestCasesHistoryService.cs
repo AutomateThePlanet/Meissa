@@ -12,15 +12,14 @@
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Meissa.Core.Model;
 
 namespace Meissa.Core.Contracts
 {
     public interface ITestCasesHistoryService
     {
-        Task UpdateTestCaseExecutionHistoryAsync(List<TestCaseRun> testCaseRuns);
-        Task DeleteOlderTestCasesHistoryAsync();
-        Task<List<ExecutedTestCase>> GetExecutedTestCasesAsync(List<TestCase> testCasesToBeExecuted);
+        void UpdateTestCaseExecutionHistory(List<TestCaseRun> testCaseRuns);
+        void DeleteOlderTestCasesHistory();
+        List<ExecutedTestCase> GetExecutedTestCases(List<TestCase> testCasesToBeExecuted);
     }
 }

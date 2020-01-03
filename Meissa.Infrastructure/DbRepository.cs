@@ -35,20 +35,24 @@ namespace Meissa.Infrastructure
             _shouldRefreshEntities = shouldRefreshEntities;
         }
 
-        public void Dispose() => _context?.Dispose();
+        public void Dispose()
+        {
+            _context?.Dispose();
+            GC.SuppressFinalize(this);
+        }
 
         public async Task<TEntity> GetByIdAsync<TEntity>(int id)
         where TEntity : class
         {
             var entity = await _context.Set<TEntity>().FindAsync(id);
-            await RefreshEntityAsync(entity);
+            await RefreshEntityAsync(entity).ConfigureAwait(false);
             return entity;
         }
 
         public async Task<IQueryable<TEntity>> GetAllQueryWithRefreshAsync<TEntity>()
         where TEntity : class
         {
-            await RefreshAllAsync<TEntity>();
+            await RefreshAllAsync<TEntity>().ConfigureAwait(false);
             return _context.Set<TEntity>();
         }
 
@@ -62,7 +66,7 @@ namespace Meissa.Infrastructure
                 var entity = _context.Set<TEntity>().Find(id);
                 context.Set<TEntity>().Remove(entity);
             },
-            retryCount);
+            retryCount).ConfigureAwait(false);
 
         public void DeleteById<TEntity>(int id)
             where TEntity : class
@@ -77,12 +81,12 @@ namespace Meissa.Infrastructure
             {
                 context.Set<TEntity>().Remove(entityToBeRemoved);
             },
-            retryCount);
+            retryCount).ConfigureAwait(false);
 
         public async Task DeleteRangeWithSaveAsync<TEntity>(IEnumerable<TEntity> entitiesToBeDeleted, int retryCount = 3)
         where TEntity : class => await SaveChangesAsync(
             (context) => context.Set<TEntity>().RemoveRange(entitiesToBeDeleted),
-            retryCount);
+            retryCount).ConfigureAwait(false);
 
         public void DeleteRange<TEntity>(IEnumerable<TEntity> entitiesToBeDeleted)
             where TEntity : class
@@ -98,7 +102,7 @@ namespace Meissa.Infrastructure
                                          context.Set<TEntity>().Add(entityToBeInserted);
                                          return entityToBeInserted;
                                      },
-                                     retryCount);
+                                     retryCount).ConfigureAwait(false);
             return insertedProxy;
         }
 
@@ -113,10 +117,10 @@ namespace Meissa.Infrastructure
             context =>
             {
                 context.Set<TEntity>().Attach(entityToBeUpdated);
-                EntityEntry<TEntity> entry = context.Entry(entityToBeUpdated);
+                var entry = context.Entry(entityToBeUpdated);
                 entry.State = EntityState.Modified;
             },
-            retryCount);
+            retryCount).ConfigureAwait(false);
 
         public void Update<TEntity>(TEntity entityToBeUpdated)
             where TEntity : class
@@ -130,7 +134,7 @@ namespace Meissa.Infrastructure
         {
             ////_context.ChangeTracker.AutoDetectChangesEnabled = false;
             action(_context);
-            await SaveAsync(retryCount);
+            await SaveAsync(retryCount).ConfigureAwait(false);
         }
 
         private async Task<TEntity> SaveChangesAsync<TEntity>(Func<TContext, TEntity> function, int retryCount = 3)
@@ -138,7 +142,7 @@ namespace Meissa.Infrastructure
         {
             ////_context.ChangeTracker.AutoDetectChangesEnabled = false;
             var savedEntity = function(_context);
-            await SaveAsync(retryCount);
+            await SaveAsync(retryCount).ConfigureAwait(false);
             return savedEntity;
         }
 
@@ -151,7 +155,7 @@ namespace Meissa.Infrastructure
 
                 try
                 {
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync().ConfigureAwait(false);
                     DetachAllEntities();
                 }
                 catch (DbUpdateConcurrencyException ex)
@@ -167,7 +171,7 @@ namespace Meissa.Infrastructure
                     //// Update the values of the entity that failed to save from the store
                     if (ex.Entries != null && ex.Entries.Count > 0)
                     {
-                        await ex.Entries.Single().ReloadAsync();
+                        await ex.Entries.Single().ReloadAsync().ConfigureAwait(false);
                     }
                 }
                 catch (Exception)
@@ -189,7 +193,7 @@ namespace Meissa.Infrastructure
         {
             if (entityToBeRefreshed != null && _shouldRefreshEntities)
             {
-                await _context.Entry(entityToBeRefreshed).ReloadAsync();
+                await _context.Entry(entityToBeRefreshed).ReloadAsync().ConfigureAwait(false);
             }
         }
 
@@ -198,9 +202,9 @@ namespace Meissa.Infrastructure
         {
             if (_shouldRefreshEntities)
             {
-                foreach (EntityEntry<TEntity> entity in _context.ChangeTracker.Entries<TEntity>())
+                foreach (var entity in _context.ChangeTracker.Entries<TEntity>())
                 {
-                    await entity.ReloadAsync();
+                    await entity.ReloadAsync().ConfigureAwait(false);
                 }
             }
         }

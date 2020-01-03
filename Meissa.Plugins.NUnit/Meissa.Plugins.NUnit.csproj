@@ -6,19 +6,19 @@
       <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
-  <Import Project="..\SharedAssemblyInfo.targets" />
+    <Import Project="..\SharedAssemblyInfo.targets" />
 
   <PropertyGroup>
-    <CodeAnalysisRuleSet>$(SolutionDir)\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningsAsErrors />
+    <WarningsAsErrors/>
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="$(SolutionDir)\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,9 +27,6 @@
 
   <ItemGroup>
     <PackageReference Include="Mono.Cecil" Version="0.11.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="System.Composition" Version="1.4.0" />
   </ItemGroup>
 
@@ -71,10 +68,16 @@
     <None Update="nunit-native-runner\nunit3-console.exe.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="StyleCopeRules.ruleset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
+
+    <ItemGroup>
+        <None Update="..\StyleCopeRules.ruleset">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="..\stylecop.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
   <ItemGroup>
     <PackageReference Update="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
@@ -82,6 +85,4 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
-  
 </Project>

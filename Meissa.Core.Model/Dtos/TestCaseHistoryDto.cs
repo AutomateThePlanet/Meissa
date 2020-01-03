@@ -12,12 +12,13 @@
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
 using System;
+using System.Collections.Generic;
 
 namespace Meissa.Model
 {
     public class TestCaseHistoryDto
     {
-        public int TestCaseHistoryId { get; set; }
+        public List<TimeSpan> Durations { get; set; }
 
         public string FullName { get; set; }
 

@@ -12,8 +12,8 @@
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
 using System.Collections.Generic;
-using Meissa.API.Models;
 using Meissa.Core.Model;
+using Meissa.Server.Models;
 
 namespace Meissa.Plugins.Contracts
 {

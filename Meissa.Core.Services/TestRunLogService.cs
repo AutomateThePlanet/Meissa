@@ -14,9 +14,9 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
 using Meissa.Core.Model;
+using Meissa.Server.Models;
 
 namespace Meissa.Core.Services
 {
@@ -45,7 +45,7 @@ namespace Meissa.Core.Services
                 };
                 try
                 {
-                    await _testRunLogRepository.CreateAsync(testRunLog);
+                    await _testRunLogRepository.CreateAsync(testRunLog).ConfigureAwait(false);
                     _consoleProvider.WriteLine(message);
                 }
                 catch (Exception e)

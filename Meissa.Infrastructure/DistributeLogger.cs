@@ -13,8 +13,8 @@
 // <site>https://bellatrix.solutions/</site>
 using System;
 using System.Threading.Tasks;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
+using Meissa.Server.Models;
 
 namespace Meissa.Infrastructure
 {
@@ -34,7 +34,7 @@ namespace Meissa.Infrastructure
             {
                 foreach (var ex in aex.InnerExceptions)
                 {
-                    await LogErrorAsync(ex.GetType().Name, ex);
+                    await LogErrorAsync(ex.GetType().Name, ex).ConfigureAwait(false);
                 }
 
                 if (shouldRethrowException)
@@ -49,7 +49,7 @@ namespace Meissa.Infrastructure
                     exceptionMessage = ex.Message;
                 }
 
-                await LogErrorAsync(exceptionMessage, ex);
+                await LogErrorAsync(exceptionMessage, ex).ConfigureAwait(false);
                 if (shouldRethrowException)
                 {
                     throw;
@@ -65,7 +65,7 @@ namespace Meissa.Infrastructure
                              Date = DateTime.Now,
                              Exception = ex?.ToString(),
                          };
-            await _logRepository.CreateAsync(logDto);
+            await _logRepository.CreateAsync(logDto).ConfigureAwait(false);
         }
 
         public async Task LogInfoAsync(string message)
@@ -75,7 +75,7 @@ namespace Meissa.Infrastructure
                              Message = message,
                              Date = DateTime.Now,
                          };
-            await _logRepository.CreateAsync(logDto);
+            await _logRepository.CreateAsync(logDto).ConfigureAwait(false);
         }
     }
 }

@@ -12,13 +12,12 @@
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Meissa.Core.Model;
 
 namespace Meissa.Core.Contracts
 {
     public interface ITestsTimesBasedDistributeService
     {
-        Task<List<string>> GenerateDistributionListsAsync(int testAgentsCount, bool sameMachineByClass, List<TestCase> testCasesToBeDistributed);
+        List<string> GenerateDistributionLists(int testAgentsCount, bool sameMachineByClass, List<TestCase> testCasesToBeDistributed);
     }
 }

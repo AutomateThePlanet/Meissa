@@ -12,17 +12,15 @@
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
 
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 
 namespace Meissa.Model
 {
     public sealed class TestsRunsContext : DbContext
     {
         public TestsRunsContext()
-        {   
-        }    
+        {
+        }
 
         public TestsRunsContext(DbContextOptions<TestsRunsContext> options)
            : base(options)
@@ -35,29 +33,17 @@ namespace Meissa.Model
         public DbSet<TestRun> TestRuns { get; set; }
         public DbSet<TestRunLog> TestRunLogs { get; set; }
         public DbSet<Log> Logs { get; set; }
-        public DbSet<TestCaseHistory> TestCasesHistory { get; set; }
-        public DbSet<TestCaseHistoryEntry> TestCaseHistoryEntries { get; set; }
         public DbSet<TestRunOutput> TestRunOutputs { get; set; }
         public DbSet<TestRunCustomArgument> TestRunCustomArguments { get; set; }
         public DbSet<TestRunAvailability> TestRunAvailabilities { get; set; }
         public DbSet<TestAgentRunAvailability> TestAgentRunAvailabilities { get; set; }
 
-        ////protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        ////{
-        ////    var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = "meissa.db" };
-        ////    var connectionString = connectionStringBuilder.ToString();
-        ////    var connection = new SqliteConnection(connectionString);
-
-        ////    optionsBuilder.UseSqlite(connection);
-        ////}
-
-        ////public class TestsRunsContextDesignFactory : IDesignTimeDbContextFactory<TestsRunsContext>
-        ////{
-        ////    public TestsRunsContext CreateDbContext(string[] args)
-        ////    {
-        ////        var optionsBuilder = new DbContextOptionsBuilder<TestsRunsContext>().UseSqlite("Filename=meissa.db");
-        ////        return new TestsRunsContext(optionsBuilder.Options);
-        ////    }
-        ////}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseInMemoryDatabase("meissa");
+            }
+        }
     }
 }

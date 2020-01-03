@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="StyleCopeRules" Description="StyleCopeRules custom ruleset" ToolsVersion="15.0">
+<RuleSet Name="StyleCopeRules" Description="StyleCopeRules custom ruleset" ToolsVersion="16.0">
   <IncludeAll Action="Warning" />
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1000" Action="None" />
@@ -234,6 +234,7 @@
     <Rule Id="CA2242" Action="None" />
     <Rule Id="CA2243" Action="None" />
     <Rule Id="CA5122" Action="None" />
+    <Rule Id="SA0001" Action="None" />
   </Rules>
   <Rules AnalyzerId="Microsoft.Analyzers.NativeCodeAnalysis" RuleNamespace="Microsoft.Rules.Native">
     <Rule Id="C26100" Action="Warning" />
@@ -625,6 +626,7 @@
     <Rule Id="CS0626" Action="None" />
     <Rule Id="CS0628" Action="None" />
     <Rule Id="CS0642" Action="None" />
+    <Rule Id="CS0649" Action="None" />
     <Rule Id="CS0652" Action="None" />
     <Rule Id="CS0657" Action="None" />
     <Rule Id="CS0658" Action="None" />
@@ -778,6 +780,7 @@
     <Rule Id="SA1118" Action="None" />
     <Rule Id="SA1123" Action="None" />
     <Rule Id="SA1129" Action="None" />
+    <Rule Id="SA1133" Action="None" />
     <Rule Id="SA1200" Action="None" />
     <Rule Id="SA1201" Action="None" />
     <Rule Id="SA1202" Action="None" />
@@ -806,6 +809,5 @@
     <Rule Id="SA1652" Action="None" />
     <Rule Id="SX1101" Action="Warning" />
     <Rule Id="SX1309" Action="Warning" />
-    <Rule Id="SA0001" Action="None" />
   </Rules>
 </RuleSet>

@@ -302,3 +302,5 @@ __pycache__/
 /installers/Meissa.Windows64/content
 /installers/Meissa.MacOS64/content
 /installers/Meissa.Linux64/content
+/Meissa/nupkg
+/Meissa/executables/win-x64

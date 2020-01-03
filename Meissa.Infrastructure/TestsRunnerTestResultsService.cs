@@ -15,10 +15,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
 using Meissa.Core.Model;
 using Meissa.Plugins.Contracts;
+using Meissa.Server.Models;
 
 namespace Meissa.Infrastructure
 {
@@ -54,8 +54,8 @@ namespace Meissa.Infrastructure
             var testResultsDir = _pathProvider.GetDirectoryName(testResultsFilePath);
             EnsureResultsDirectoryExists(testResultsDir);
             DeleteAllFilesInResultsDirectory(testResultsDir);
-            await WriteTestAgentRunsResultsToFilesInResultsDirectoryAsync(testResultsFilePath, testRunId);
-            await WriteTestAgentRunsRetriedResultsToFilesInResultsDirectoryAsync(retriedResultsFilePath, testRunId);
+            await WriteTestAgentRunsResultsToFilesInResultsDirectoryAsync(testResultsFilePath, testRunId).ConfigureAwait(false);
+            await WriteTestAgentRunsRetriedResultsToFilesInResultsDirectoryAsync(retriedResultsFilePath, testRunId).ConfigureAwait(false);
         }
 
         public List<TestCase> GetAllPassesTests(string testTechnology, string testResultsFileContent)
@@ -86,8 +86,8 @@ namespace Meissa.Infrastructure
 
         private async Task WriteTestAgentRunsResultsToFilesInResultsDirectoryAsync(string testResultsFilePath, Guid testRunId)
         {
-            var testRun = await _testRunRepository.GetAsync(testRunId);
-            var testAgentRuns = (await _testAgentRunRepository.GetAllAsync()).Where(x => x.TestRunId == testRunId).ToList();
+            var testRun = await _testRunRepository.GetAsync(testRunId).ConfigureAwait(false);
+            var testAgentRuns = (await _testAgentRunRepository.GetAllAsync().ConfigureAwait(false)).Where(x => x.TestRunId == testRunId).ToList();
             var msTestTestRuns = _nativeTestsRunnerPluginService.GetTestResultsForTestRun(testAgentRuns);
             var mergedTestRunResults = _nativeTestsRunnerPluginService.MergeTestResults(msTestTestRuns);
 
@@ -105,8 +105,8 @@ namespace Meissa.Infrastructure
 
         private async Task WriteTestAgentRunsRetriedResultsToFilesInResultsDirectoryAsync(string testResultsFilePath, Guid testRunId)
         {
-            var testRun = await _testRunRepository.GetAsync(testRunId);
-            var testAgentRuns = (await _testAgentRunRepository.GetAllAsync()).Where(x => x.TestRunId == testRunId).ToList();
+            var testRun = await _testRunRepository.GetAsync(testRunId).ConfigureAwait(false);
+            var testAgentRuns = (await _testAgentRunRepository.GetAllAsync().ConfigureAwait(false)).Where(x => x.TestRunId == testRunId).ToList();
             var msTestTestRuns = _nativeTestsRunnerPluginService.GetRetriedTestResultsForTestRun(testAgentRuns);
             var mergedTestRunResults = _nativeTestsRunnerPluginService.MergeTestResults(msTestTestRuns);
 

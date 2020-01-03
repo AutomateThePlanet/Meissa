@@ -10,25 +10,26 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>meissa</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
+    <AssemblyName>meissa</AssemblyName>
   </PropertyGroup>
   
   <Import Project="..\SharedAssemblyInfo.targets" />
-  
+
   <PropertyGroup>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <PropertyGroup>
-    <CodeAnalysisRuleSet>$(SolutionDir)\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
     <Copyright>Bellatrix Ltd.</Copyright>
-    <Description>Meissa Distributed Test Runner- Bellatrix Test Automation Framework</Description>
+    <Description>MEISSA Distributed Test Runner- Bellatrix Test Automation Framework</Description>
     <Company>Automate The Planet Ltd.</Company>
     <Authors>Automate The Planet Ltd.</Authors>
     <Version>1.5.0</Version>
-    <PackageId>Meissa Distributed Test Runner</PackageId>
+    <PackageId>MEISSA</PackageId>
     <PackageProjectUrl>https://bellatrix.solutions/</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Product>Meissa Distributed Test Runner</Product>
+    <Product>MEISSA Distributed Test Runner</Product>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -50,9 +51,17 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <AdditionalFiles Include="$(SolutionDir)\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
-  
+  <ItemGroup>
+      <None Update="..\StyleCopeRules.ruleset">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="..\stylecop.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+  </ItemGroup>
+
   <ItemGroup>
     <None Include="..\AutomateThePlanet.licenseheader" Link="AutomateThePlanet.licenseheader" />
   </ItemGroup>
@@ -77,8 +86,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Meissa.API.Client\Meissa.API.Client.csproj" />
-    <ProjectReference Include="..\Meissa.API\Meissa.API.csproj" />
+    <ProjectReference Include="..\Meissa.Server.Client\Meissa.Server.Client.csproj" />
     <ProjectReference Include="..\Meissa.Core.Contracts\Meissa.Core.Contracts.csproj" />
     <ProjectReference Include="..\Meissa.Core.Model\Meissa.Core.Model.csproj" />
     <ProjectReference Include="..\Meissa.Core.Services\Meissa.Core.Services.csproj" />
@@ -98,16 +106,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="StyleCopeRules.ruleset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Update="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  
 </Project>

@@ -18,10 +18,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
 using Meissa.Core.Model;
 using Meissa.Plugins.Contracts;
+using Meissa.Server.Models;
 
 namespace Meissa.Infrastructure
 {
@@ -83,9 +83,9 @@ namespace Meissa.Infrastructure
         {
             _currentTestRunId = testRunId;
             _nativeTestsRunner = _pluginService.GetNativeTestRunnerService(testTechnology);
-            var testRun = await _testRunRepository.GetAsync(testRunId);
+            var testRun = await _testRunRepository.GetAsync(testRunId).ConfigureAwait(false);
             var distributedTestCases = _jsonSerializer.Deserialize<List<TestCase>>(distributedTestsList);
-            var testTestResults = await ExecuteTestsWithNativeRunnerAsync(workingDir, testsLibraryPath, assemblyName, runInParallel, testRun.MaxParallelProcessesCount, nativeArguments, testAgentRunTimeout, isTimeBasedBalance, sameMachineByClass, distributedTestCases, cancellationTokenSource);
+            var testTestResults = await ExecuteTestsWithNativeRunnerAsync(workingDir, testsLibraryPath, assemblyName, runInParallel, testRun.MaxParallelProcessesCount, nativeArguments, testAgentRunTimeout, isTimeBasedBalance, sameMachineByClass, distributedTestCases, cancellationTokenSource).ConfigureAwait(false);
 
             return testTestResults;
         }
@@ -109,7 +109,7 @@ namespace Meissa.Infrastructure
         {
             _currentTestRunId = testRunId;
             _nativeTestsRunner = _pluginService.GetNativeTestRunnerService(testTechnology);
-            var testRun = await _testRunRepository.GetAsync(testRunId);
+            var testRun = await _testRunRepository.GetAsync(testRunId).ConfigureAwait(false);
             var distributedTestCases = _jsonSerializer.Deserialize<List<TestCase>>(distributedTestsList);
             if (string.IsNullOrEmpty(originalRunTestResults))
             {
@@ -119,10 +119,10 @@ namespace Meissa.Infrastructure
             var originalTestRun = _nativeTestsRunner.DeserializeTestResults(originalRunTestResults);
             var failedTests = _testResultsService.GetAllNotPassedTests(testTechnology, originalRunTestResults);
             double failedTestsPercentage = _testResultsService.CalculatedFailedTestsPercentage(failedTests, distributedTestCases);
-            await _testRunLogService.CreateTestRunLogAsync($"failedTestsPercentage= {failedTestsPercentage} < threshold = {threshold}", testRunId);
+            await _testRunLogService.CreateTestRunLogAsync($"failedTestsPercentage= {failedTestsPercentage} < threshold = {threshold}", testRunId).ConfigureAwait(false);
             if (failedTests.Count > 0 && failedTestsPercentage < threshold)
             {
-                await _testRunLogService.CreateTestRunLogAsync($"The failed test % {failedTestsPercentage} < threshold % {threshold}. The failed tests will be retried {retriesCount} times.", testRunId);
+                await _testRunLogService.CreateTestRunLogAsync($"The failed test % {failedTestsPercentage} < threshold % {threshold}. The failed tests will be retried {retriesCount} times.", testRunId).ConfigureAwait(false);
                 for (int i = 0; i < retriesCount; i++)
                 {
                     if (cancellationTokenSource.Token.IsCancellationRequested)
@@ -130,12 +130,12 @@ namespace Meissa.Infrastructure
                         return null;
                     }
 
-                    await _testRunLogService.CreateTestRunLogAsync($"Start failed tests retry number {i + 1}.", testRunId);
+                    await _testRunLogService.CreateTestRunLogAsync($"Start failed tests retry number {i + 1}.", testRunId).ConfigureAwait(false);
                     string retriedTestTestResults;
                     if (failedTests.Count > 0)
                     {
-                        await _testRunLogService.CreateTestRunLogAsync($"{failedTests.Count} tests will be retried.", testRunId);
-                        retriedTestTestResults = await ExecuteTestsWithNativeRunnerAsync(workingDir, testsLibraryPath, assemblyName, runInParallel, testRun.MaxParallelProcessesCount, nativeArguments, testAgentRunTimeout, isTimeBasedBalance, sameMachineByClass, failedTests, cancellationTokenSource);
+                        await _testRunLogService.CreateTestRunLogAsync($"{failedTests.Count} tests will be retried.", testRunId).ConfigureAwait(false);
+                        retriedTestTestResults = await ExecuteTestsWithNativeRunnerAsync(workingDir, testsLibraryPath, assemblyName, runInParallel, testRun.MaxParallelProcessesCount, nativeArguments, testAgentRunTimeout, isTimeBasedBalance, sameMachineByClass, failedTests, cancellationTokenSource).ConfigureAwait(false);
 
                         var passedTests = _nativeTestsRunner.GetAllPassesTests(retriedTestTestResults);
                         _nativeTestsRunner.UpdatePassedTests(passedTests, originalTestRun);
@@ -161,7 +161,7 @@ namespace Meissa.Infrastructure
             }
             else
             {
-                await _testRunLogService.CreateTestRunLogAsync($"Percentage of failed tests {failedTestsPercentage} is over threshold {threshold}, will not retry tests.", testRunId);
+                await _testRunLogService.CreateTestRunLogAsync($"Percentage of failed tests {failedTestsPercentage} is over threshold {threshold}, will not retry tests.", testRunId).ConfigureAwait(false);
             }
 
             string retriedRunTestResults = _nativeTestsRunner.SerializeTestResults(originalTestRun);
@@ -370,7 +370,7 @@ namespace Meissa.Infrastructure
                     ////var startTime = _dateTimeProvider.GetCurrentTime();
                     ////_testRunLogService.CreateTestRunLogAsync($"START updating test case history- on machine {Environment.MachineName}", _currentTestRunId).Wait();
                     var testCaseRuns = _nativeTestsRunner.UpdateTestCasesHistory(mergedTestRun, assemblyName);
-                    await _testCasesHistoryService.UpdateTestCaseExecutionHistoryAsync(testCaseRuns);
+                    _testCasesHistoryService.UpdateTestCaseExecutionHistory(testCaseRuns);
 
                     // DEBUG:
                     ////var endTime = _dateTimeProvider.GetCurrentTime();
@@ -385,7 +385,6 @@ namespace Meissa.Infrastructure
                 {
                     _testRunLogService.CreateTestRunLogAsync($"There was a problem executing ExecutePostRunActions on {Environment.MachineName}. Exception: {ex}", _currentTestRunId).Wait();
                 }
-                
 
                 result = mergedTestRun;
             }

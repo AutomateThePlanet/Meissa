@@ -21,10 +21,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
-using Meissa.API.Models;
 using Meissa.Core.Model;
 using Meissa.Plugins.Contracts;
 using Meissa.Plugins.Protractor.Model;
+using Meissa.Server.Models;
 
 namespace Meissa.Plugins.Protractor
 {
@@ -43,7 +43,7 @@ framework: 'jasmine',
     }));
   },";
         private const string ItNamePattern = @"(?'before'.*)(?'itBegin'it\(')(?'itName'.*)(?'thirdPart'(',).*)";
-        private readonly string DeleteItemsFilePath = Path.Combine(Path.GetTempPath(), "protractorMeissaDeleteItemsPostExecute.txt");
+        private readonly string _deleteItemsFilePath = Path.Combine(Path.GetTempPath(), "protractorMeissaDeleteItemsPostExecute.txt");
 
         public string Name => "Protractor";
 
@@ -70,7 +70,7 @@ framework: 'jasmine',
             var newTempFolder = Path.Combine(tempFolderPath, Guid.NewGuid().ToString());
 
             // Write the path of the file that we will later delete.
-            File.AppendAllText(DeleteItemsFilePath, newTempFolder + Environment.NewLine);
+            File.AppendAllText(_deleteItemsFilePath, newTempFolder + Environment.NewLine);
 
             Directory.CreateDirectory(newTempFolder);
 
@@ -349,8 +349,7 @@ framework: 'jasmine',
                 }
                 else if (mergedTestSuites == null)
                 {
-                    mergedTestSuites = new List<Testsuite>();
-                    mergedTestSuites.Add(testSuite);
+                    mergedTestSuites = new List<Testsuite> { testSuite };
                 }
             }
 
@@ -365,8 +364,7 @@ framework: 'jasmine',
                     }
                     else if (currentSuiteMergedTestCases == null)
                     {
-                        currentSuiteMergedTestCases = new List<Testcase>();
-                        currentSuiteMergedTestCases.Add(currentTestCase);
+                        currentSuiteMergedTestCases = new List<Testcase> { currentTestCase };
                     }
                 }
 
@@ -400,11 +398,9 @@ framework: 'jasmine',
 
             using (var stringWriter = new StringWriter())
             {
-                using (var writer = XmlWriter.Create(stringWriter, settings))
-                {
-                    xmlSerializer.Serialize(writer, entityToBeSerialized);
-                    result = stringWriter.ToString();
-                }
+                using var writer = XmlWriter.Create(stringWriter, settings);
+                xmlSerializer.Serialize(writer, entityToBeSerialized);
+                result = stringWriter.ToString();
             }
 
             result = result.Replace("xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"", string.Empty);
@@ -524,9 +520,9 @@ framework: 'jasmine',
 
         public void ExecutePostRunActions()
         {
-            if (File.Exists(DeleteItemsFilePath))
+            if (File.Exists(_deleteItemsFilePath))
             {
-                var fileLines = File.ReadAllLines(DeleteItemsFilePath);
+                var fileLines = File.ReadAllLines(_deleteItemsFilePath);
                 foreach (var fileLine in fileLines)
                 {
                     if (Directory.Exists(fileLine))
@@ -545,11 +541,11 @@ framework: 'jasmine',
 
                 try
                 {
-                    File.Delete(DeleteItemsFilePath);
+                    File.Delete(_deleteItemsFilePath);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"There was a problem with deleting temp protractor file- {DeleteItemsFilePath}");
+                    Console.WriteLine($"There was a problem with deleting temp protractor file- {_deleteItemsFilePath}");
                     Console.WriteLine(ex);
                 }
             }

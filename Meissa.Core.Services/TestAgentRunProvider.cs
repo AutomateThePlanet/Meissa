@@ -18,10 +18,10 @@ using System.Linq;
 using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
 using Meissa.Core.Model;
 using Meissa.Model;
+using Meissa.Server.Models;
 
 namespace Meissa.Core.Services
 {
@@ -123,7 +123,7 @@ namespace Meissa.Core.Services
                         TestList = testLists[i],
                         TestRunId = testRunId,
                     };
-                    testAgentRun = await _testAgentRunRepository.CreateAsync(testAgentRun);
+                    testAgentRun = await _testAgentRunRepository.CreateAsync(testAgentRun).ConfigureAwait(false);
                     testAgentRuns.Add(testAgentRun);
                 }
             }
@@ -133,14 +133,14 @@ namespace Meissa.Core.Services
 
         public async Task RunTestsForCurrentAgentAsync(string testAgentTag, int testAgentRunTimeout)
         {
-            if (await IsAlligibleToStartTestAgentRunAsync(testAgentTag))
+            if (await IsAlligibleToStartTestAgentRunAsync(testAgentTag).ConfigureAwait(false))
             {
-                var newTestAgentRun = await GetFirstNewTestAgentRunForCurrentTestAgentAsync();
+                var newTestAgentRun = await GetFirstNewTestAgentRunForCurrentTestAgentAsync().ConfigureAwait(false);
 
                 if (newTestAgentRun != null)
                 {
-                    await _testRunLogService.CreateTestRunLogAsync($"Test agent with tag {testAgentTag} starts tests execution on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId);
-                    await _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(testAgentTag);
+                    await _testRunLogService.CreateTestRunLogAsync($"Test agent with tag {testAgentTag} starts tests execution on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId).ConfigureAwait(false);
+                    await _testAgentStateSwitcher.SetTestAgentAsRunningTestsAsync(testAgentTag).ConfigureAwait(false);
 
                     var cancellationTokenSource = new CancellationTokenSource();
                     var cancellationTokenSourceLastAvailable = new CancellationTokenSource();
@@ -194,15 +194,18 @@ namespace Meissa.Core.Services
 
                         if (_wasTestAgentRunCompleted)
                         {
-                            await _testRunLogService.CreateTestRunLogAsync($"Test agent with tag {testAgentTag} finished tests execution on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId);
-                            await _testRunLogService.CreateTestRunLogAsync($"Test agent with tag {testAgentTag} starts waiting for new jobs on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId);
+                            await _testRunLogService.CreateTestRunLogAsync($"Test agent with tag {testAgentTag} finished tests execution on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId).ConfigureAwait(false);
+                            await _testRunLogService.CreateTestRunLogAsync($"Test agent with tag {testAgentTag} starts waiting for new jobs on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId).ConfigureAwait(false);
                         }
                         else
                         {
                             SendTestAgentRunExceptionToRunner(newTestAgentRun, executeTestAgentRunTask);
 
                             // TODO: Move logic to be executed on Test Agent Run Abort- extension.
-                            await _testRunLogService.CreateTestRunLogAsync($"Test agent with tag {testAgentTag} starts waiting for new jobs on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId);
+                            await _testRunLogService
+                                .CreateTestRunLogAsync(
+                                    $"Test agent with tag {testAgentTag} starts waiting for new jobs on machine {_environmentService.MachineName}.",
+                                    newTestAgentRun.TestRunId).ConfigureAwait(false);
                             _consoleProvider.WriteLine($"Test agent run aborted.");
                             _consoleProvider.WriteLine($"Test agent with tag {testAgentTag} starts waiting for new jobs on machine {_environmentService.MachineName}.");
                             var cts = new CancellationTokenSource();
@@ -216,12 +219,12 @@ namespace Meissa.Core.Services
                                         }
                                     },
                                     10000);
-                            waitForTestRunToCompleteTask.Wait();
+                            waitForTestRunToCompleteTask.Wait(cts.Token);
                         }
                     }
                     finally
                     {
-                        await _testAgentStateSwitcher.SetTestAgentAsActiveAsync(testAgentTag);
+                        await _testAgentStateSwitcher.SetTestAgentAsActiveAsync(testAgentTag).ConfigureAwait(false);
                     }
                 }
             }
@@ -243,10 +246,10 @@ namespace Meissa.Core.Services
                         cancellationTokenSourceLastAvailable,
                         () =>
                         {
-                            UpdateTestRunnerLastAvailable(testRunId).Wait();
+                            UpdateTestRunnerLastAvailable(testRunId).Wait(cancellationTokenSourceLastAvailable.Token);
                         },
                         60000);
-                await _testRunRepository.GetAsync(testRunId);
+                await _testRunRepository.GetAsync(testRunId).ConfigureAwait(false);
                 do
                 {
                     if (loggingTask.IsFaulted)
@@ -258,9 +261,9 @@ namespace Meissa.Core.Services
 
                     foreach (var testAgentRunId in notFinishedTestAgentRunIds)
                     {
-                        var testAgentRun = await _testAgentRunRepository.GetAsync(testAgentRunId);
+                        var testAgentRun = await _testAgentRunRepository.GetAsync(testAgentRunId).ConfigureAwait(false);
 
-                        var testAgentRunAvailability = await _testAgentRunAvailabilityServiceClient.GetLastTestAgentRunAvailabilityForTestRun(testAgentRunId);
+                        var testAgentRunAvailability = await _testAgentRunAvailabilityServiceClient.GetLastTestAgentRunAvailabilityForTestRun(testAgentRunId).ConfigureAwait(false);
                         if (testAgentRunAvailability == null)
                         {
                             // DEBUG:
@@ -273,13 +276,13 @@ namespace Meissa.Core.Services
                         }
                         else if (testAgentRunAvailability != null && testAgentRunAvailability.LastAvailable < _dateTimeProvider.GetCurrentTime().AddSeconds(-120))
                         {
-                            var testAgent = await _testAgentRepository.GetAsync(testAgentRun.TestAgentId);
+                            var testAgent = await _testAgentRepository.GetAsync(testAgentRun.TestAgentId).ConfigureAwait(false);
                             _consoleProvider.WriteLine($"Abort Test Agent Run because test runner lost connection with test agent on machine: {testAgent.MachineName} {testAgentRunAvailability.LastAvailable} {_dateTimeProvider.GetCurrentTime().AddSeconds(-120)} current status {testAgentRun.Status}");
-                            await AbortAllTestAgentRunsInTestRunAsync(testRunId);
+                            await AbortAllTestAgentRunsInTestRunAsync(testRunId).ConfigureAwait(false);
                             loggerCancellationToken.Cancel();
                             cancellationTokenSourceLastAvailable.Cancel();
-                            loggingTask.Wait();
-                            updateTestRunnerLastAvailableTask.Wait();
+                            loggingTask.Wait(cancellationTokenSourceLastAvailable.Token);
+                            updateTestRunnerLastAvailableTask.Wait(cancellationTokenSourceLastAvailable.Token);
                             return;
                         }
                         else
@@ -305,8 +308,8 @@ namespace Meissa.Core.Services
                         ////_consoleProvider.WriteLine("WaitForTestAgentRunsToFinishAsync: notFinishedTestAgentRunIds.Count == 0");
                         cancellationTokenSourceLastAvailable.Cancel();
                         loggerCancellationToken.Cancel();
-                        loggingTask.Wait();
-                        updateTestRunnerLastAvailableTask.Wait();
+                        loggingTask.Wait(cancellationTokenSourceLastAvailable.Token);
+                        updateTestRunnerLastAvailableTask.Wait(cancellationTokenSourceLastAvailable.Token);
                         return;
                     }
 
@@ -316,8 +319,8 @@ namespace Meissa.Core.Services
                     {
                         cancellationTokenSourceLastAvailable.Cancel();
                         loggerCancellationToken.Cancel();
-                        loggingTask.Wait();
-                        updateTestRunnerLastAvailableTask.Wait();
+                        loggingTask.Wait(cancellationTokenSourceLastAvailable.Token);
+                        updateTestRunnerLastAvailableTask.Wait(cancellationTokenSourceLastAvailable.Token);
                         throw new TimeoutException("Test run timeout!");
                     }
                 }
@@ -325,7 +328,7 @@ namespace Meissa.Core.Services
             }
             catch (Exception ex)
             {
-                await _logger.LogErrorAsync(ex.Message, ex);
+                await _logger.LogErrorAsync(ex.Message, ex).ConfigureAwait(false);
                 throw;
             }
         }
@@ -342,24 +345,24 @@ namespace Meissa.Core.Services
             ////_consoleProvider.WriteLine();
             ////_consoleProvider.WriteLine($"UPDATE Test Run on machine {_environmentService.MachineName} {_dateTimeProvider.GetCurrentTime()}");
 
-            await _testRunAvailabilityServiceClient.CreateAsync(testRunAvailability);
+            await _testRunAvailabilityServiceClient.CreateAsync(testRunAvailability).ConfigureAwait(false);
         }
 
         public async Task AbortAllTestAgentRunsInProgressForCurrentTestAgentAsync(string agentTag)
         {
-            var testAgentRuns = await GetInProgressTestAgentRunsForCurrentTestAgentAsync(agentTag);
+            var testAgentRuns = await GetInProgressTestAgentRunsForCurrentTestAgentAsync(agentTag).ConfigureAwait(false);
             foreach (var testAgentRun in testAgentRuns)
             {
-                await AbortTestAgentRunAsync(testAgentRun);
+                await AbortTestAgentRunAsync(testAgentRun).ConfigureAwait(false);
             }
         }
 
         public async Task AbortAllTestAgentRunsInTestRunAsync(Guid testRunId)
         {
-            var inProgressTestAgentRuns = await GetInProgressTestAgentRunsForTestRunAsync(testRunId);
+            var inProgressTestAgentRuns = await GetInProgressTestAgentRunsForTestRunAsync(testRunId).ConfigureAwait(false);
             foreach (var currentTestAgentRun in inProgressTestAgentRuns)
             {
-                await AbortTestAgentRunAsync(currentTestAgentRun);
+                await AbortTestAgentRunAsync(currentTestAgentRun).ConfigureAwait(false);
 
                 // TODO: Test if this code is needed, I think it is safe to be removed since the restart logic is not longer present.
                 ////var testAgent = await _testAgentRepository.GetAsync(currentTestAgentRun.TestAgentId);
@@ -370,14 +373,14 @@ namespace Meissa.Core.Services
 
         public async Task<bool> AreThereAbortedTestAgentRunsAsync(Guid testRunId)
         {
-            var areThereAbortedRuns = (await _testAgentRunRepository.GetAllAsync()).Where(x => x.TestRunId == testRunId && x.Status == TestAgentRunStatus.Aborted);
+            var areThereAbortedRuns = (await _testAgentRunRepository.GetAllAsync().ConfigureAwait(false)).Where(x => x.TestRunId == testRunId && x.Status == TestAgentRunStatus.Aborted);
             foreach (var abortedRuns in areThereAbortedRuns)
             {
-                var testAgent = await _testAgentRepository.GetAsync(abortedRuns.TestAgentId);
+                var testAgent = await _testAgentRepository.GetAsync(abortedRuns.TestAgentId).ConfigureAwait(false);
                 _consoleProvider.WriteLine($"Test Agent Run Aborted on machine: {testAgent.MachineName}");
             }
 
-            return areThereAbortedRuns.Count() > 0;
+            return areThereAbortedRuns.Any();
         }
 
         private void SendTestAgentRunExceptionToRunner(TestAgentRunDto newTestAgentRun, Task executeTestAgentRunTask)
@@ -456,7 +459,7 @@ namespace Meissa.Core.Services
 
         private async Task CreateEnvironmentVariablesForCustomArgumentsAsync(Guid testRunId)
         {
-            var testRunCustomArguments = (await _testRunCustomArgumentRepository.GetAllAsync()).Where(x => x.TestRunId.Equals(testRunId));
+            var testRunCustomArguments = (await _testRunCustomArgumentRepository.GetAllAsync().ConfigureAwait(false)).Where(x => x.TestRunId.Equals(testRunId));
             if (testRunCustomArguments.Any())
             {
                 foreach (var testRunCustomArgument in testRunCustomArguments)
@@ -479,20 +482,20 @@ namespace Meissa.Core.Services
             testAgentRun.Status = TestAgentRunStatus.Aborted;
             testAgentRun.TestAgentOriginalRunResults = string.Empty;
             testAgentRun.TestAgentRetriedRunResults = string.Empty;
-            await _testAgentRunRepository.UpdateAsync(testAgentRun.TestAgentRunId, testAgentRun);
+            await _testAgentRunRepository.UpdateAsync(testAgentRun.TestAgentRunId, testAgentRun).ConfigureAwait(false);
         }
 
         private async Task<List<TestAgentRunDto>> GetInProgressTestAgentRunsForCurrentTestAgentAsync(string agentTag)
         {
-            var currentTestAgentId = await GetTestAgentIdForCurrentMachineAsync(agentTag);
-            var testAgentRuns = (await _testAgentRunRepository.GetAllAsync()).Where(x => x.TestAgentId == currentTestAgentId && x.Status == TestAgentRunStatus.InProgress).ToList();
+            var currentTestAgentId = await GetTestAgentIdForCurrentMachineAsync(agentTag).ConfigureAwait(false);
+            var testAgentRuns = (await _testAgentRunRepository.GetAllAsync().ConfigureAwait(false)).Where(x => x.TestAgentId == currentTestAgentId && x.Status == TestAgentRunStatus.InProgress).ToList();
 
             return testAgentRuns;
         }
 
         private async Task<List<TestAgentRunDto>> GetInProgressTestAgentRunsForTestRunAsync(Guid testRunId)
         {
-            var testAgentRuns = (await _testAgentRunRepository.GetAllAsync()).Where(x => x.TestRunId == testRunId && x.Status == TestAgentRunStatus.InProgress).ToList();
+            var testAgentRuns = (await _testAgentRunRepository.GetAllAsync().ConfigureAwait(false)).Where(x => x.TestRunId == testRunId && x.Status == TestAgentRunStatus.InProgress).ToList();
 
             return testAgentRuns;
         }
@@ -502,12 +505,12 @@ namespace Meissa.Core.Services
             _pluginService.ExecuteAllTestAgentPluginsPreTestRunLogic();
 
             testAgentRun.Status = TestAgentRunStatus.InProgress;
-            await CreateEnvironmentVariablesForCustomArgumentsAsync(testAgentRun.TestRunId);
-            await _testAgentRunRepository.UpdateAsync(testAgentRun.TestAgentRunId, testAgentRun);
-            var testRun = await _testRunRepository.GetAsync(testAgentRun.TestRunId);
+            await CreateEnvironmentVariablesForCustomArgumentsAsync(testAgentRun.TestRunId).ConfigureAwait(false);
+            await _testAgentRunRepository.UpdateAsync(testAgentRun.TestAgentRunId, testAgentRun).ConfigureAwait(false);
+            var testRun = await _testRunRepository.GetAsync(testAgentRun.TestRunId).ConfigureAwait(false);
             var tempExecutionFolder = _pathProvider.Combine(_pathProvider.GetTempFolderPath(), _guidService.NewGuid().ToString());
             var tempZipFileName = _pathProvider.GetTempFileName();
-            var testRunOutput = await _testRunOutputServiceClient.GetTestRunOutputByTestRunIdAsync(testRun.TestRunId);
+            var testRunOutput = await _testRunOutputServiceClient.GetTestRunOutputByTestRunIdAsync(testRun.TestRunId).ConfigureAwait(false);
             if (testRunOutput == null)
             {
                 // DEBUG:
@@ -535,8 +538,8 @@ namespace Meissa.Core.Services
                 testAgentRunTimeout,
                 testRun.IsTimeBasedBalance,
                 testRun.SameMachineByClass,
-                cancellationTokenSource);
-            string retriedTestResults = string.Empty;
+                cancellationTokenSource).ConfigureAwait(false);
+            var retriedTestResults = string.Empty;
             if (testRun.RetriesCount > 0)
             {
                 retriedTestResults = await _nativeTestsRunner.ExecuteTestsWithRetryAsync(
@@ -554,7 +557,7 @@ namespace Meissa.Core.Services
                     testRun.Threshold,
                     testRun.IsTimeBasedBalance,
                     testRun.SameMachineByClass,
-                    cancellationTokenSource);
+                    cancellationTokenSource).ConfigureAwait(false);
             }
 
             if (cancellationTokenSource.IsCancellationRequested)
@@ -562,7 +565,7 @@ namespace Meissa.Core.Services
                 return;
             }
 
-            await CompleteTestAgentRunAsync(testAgentRun.TestAgentRunId, testsResults, retriedTestResults);
+            await CompleteTestAgentRunAsync(testAgentRun.TestAgentRunId, testsResults, retriedTestResults).ConfigureAwait(false);
 
             _pluginService.ExecuteAllTestAgentPluginsPostTestRunLogic();
 
@@ -579,11 +582,11 @@ namespace Meissa.Core.Services
 
         private async Task CompleteTestAgentRunAsync(int testAgentRunId, string testResults, string retriedTestResults)
         {
-            var testAgentRun = await _testAgentRunRepository.GetAsync(testAgentRunId);
+            var testAgentRun = await _testAgentRunRepository.GetAsync(testAgentRunId).ConfigureAwait(false);
             testAgentRun.Status = TestAgentRunStatus.Completed;
             testAgentRun.TestAgentOriginalRunResults = testResults;
             testAgentRun.TestAgentRetriedRunResults = retriedTestResults;
-            await _testAgentRunRepository.UpdateAsync(testAgentRun.TestAgentRunId, testAgentRun);
+            await _testAgentRunRepository.UpdateAsync(testAgentRun.TestAgentRunId, testAgentRun).ConfigureAwait(false);
             _consoleProvider.WriteLine($"TEST AGENT RUN COMPLETED");
             _wasTestAgentRunCompleted = true;
         }
@@ -591,14 +594,21 @@ namespace Meissa.Core.Services
         private async Task<int> GetTestAgentIdForCurrentMachineAsync(string agentTag)
         {
             var currentTestAgentTag = agentTag;
-            var currentTestAgent = (await _testAgentRepository.GetAllAsync()).SingleOrDefault(x => x.MachineName == Environment.MachineName && x.AgentTag == currentTestAgentTag);
+            var currentTestAgent = (await _testAgentRepository.GetAllAsync().ConfigureAwait(false)).SingleOrDefault(x => x.MachineName == Environment.MachineName && x.AgentTag == currentTestAgentTag);
 
-            return currentTestAgent.TestAgentId;
+            if (currentTestAgent != null)
+            {
+                return currentTestAgent.TestAgentId;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         private async Task<TestAgentRunDto> GetFirstNewTestAgentRunForCurrentTestAgentAsync()
         {
-            var newTestAgentRuns = (await _testAgentRunRepository.GetAllAsync()).OrderBy(x => x.TestAgentRunId).FirstOrDefault(x => x.TestAgentId == _currentTestAgentId && x.Status == TestAgentRunStatus.New);
+            var newTestAgentRuns = (await _testAgentRunRepository.GetAllAsync().ConfigureAwait(false)).OrderBy(x => x.TestAgentRunId).FirstOrDefault(x => x.TestAgentId == _currentTestAgentId && x.Status == TestAgentRunStatus.New);
 
             return newTestAgentRuns;
         }
@@ -607,10 +617,10 @@ namespace Meissa.Core.Services
         {
             if (_currentTestAgentId == null)
             {
-                _currentTestAgentId = await GetTestAgentIdForCurrentMachineAsync(agentTag);
+                _currentTestAgentId = await GetTestAgentIdForCurrentMachineAsync(agentTag).ConfigureAwait(false);
             }
 
-            var testAgentRunsForCurrentAgent = (await _testAgentRunRepository.GetAllAsync()).Where(x => x.TestAgentId == _currentTestAgentId);
+            var testAgentRunsForCurrentAgent = (await _testAgentRunRepository.GetAllAsync().ConfigureAwait(false)).Where(x => x.TestAgentId == _currentTestAgentId);
             var result = !testAgentRunsForCurrentAgent.Any(x => x.Status == TestAgentRunStatus.InProgress) && testAgentRunsForCurrentAgent.Any(x => x.Status == TestAgentRunStatus.New);
 
             return result;
@@ -618,7 +628,7 @@ namespace Meissa.Core.Services
 
         private async Task<bool> IsTestRunCompleted(Guid testRunId)
         {
-            var testRun = await _testRunRepository.GetAsync(testRunId);
+            var testRun = await _testRunRepository.GetAsync(testRunId).ConfigureAwait(false);
 
             ////if (testRun == null)
             ////{

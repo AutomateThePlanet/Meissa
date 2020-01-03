@@ -80,13 +80,13 @@ namespace Meissa.Core.Services
 
             _pluginService.ExecuteAllTestRunnerPluginsPreTestRunLogic();
 
-            await _testRunsCleanerServiceClient.DeleteOldTestRunsDataAsync();
-            await _testCasesHistoryService.DeleteOlderTestCasesHistoryAsync();
+            await _testRunsCleanerServiceClient.DeleteOldTestRunsDataAsync().ConfigureAwait(false);
+            _testCasesHistoryService.DeleteOlderTestCasesHistory();
 
-            var activeTestAgents = await _testAgentService.GetAllActiveTestAgentsByTagAsync(testRunSettings.AgentTag);
-            await _testAgentService.SetAllActiveAgentsToVerifyTheirStatusAsync(testRunSettings.AgentTag);
+            var activeTestAgents = await _testAgentService.GetAllActiveTestAgentsByTagAsync(testRunSettings.AgentTag).ConfigureAwait(false);
+            await _testAgentService.SetAllActiveAgentsToVerifyTheirStatusAsync(testRunSettings.AgentTag).ConfigureAwait(false);
             _testAgentService.WaitAllActiveAgentsToVerifyTheirStatusAsync(activeTestAgents);
-            var availableTestAgents = await _testAgentService.GetAllActiveTestAgentsByTagAsync(testRunSettings.AgentTag);
+            var availableTestAgents = await _testAgentService.GetAllActiveTestAgentsByTagAsync(testRunSettings.AgentTag).ConfigureAwait(false);
             bool wasSuccessfulRun = false;
             if (availableTestAgents.Count > 0)
             {
@@ -95,20 +95,20 @@ namespace Meissa.Core.Services
                 _fileProvider.CreateZip(testRunSettings.OutputFilesLocation, tempFilePath);
                 var zipData = _fileProvider.ReadAllBytes(tempFilePath);
 
-                var testRunId = await _testRunProvider.CreateNewTestRunAsync(_pathProvider.GetFileName(testRunSettings.TestLibraryPath), zipData, testRunSettings.RetriesCount, testRunSettings.Threshold, testRunSettings.RunInParallel, testRunSettings.MaxParallelProcessesCount, testRunSettings.NativeArguments, testRunSettings.TestTechnology, testRunSettings.TimeBasedBalance, testRunSettings.SameMachineByClass, testRunSettings.CustomArguments);
+                var testRunId = await _testRunProvider.CreateNewTestRunAsync(_pathProvider.GetFileName(testRunSettings.TestLibraryPath), zipData, testRunSettings.RetriesCount, testRunSettings.Threshold, testRunSettings.RunInParallel, testRunSettings.MaxParallelProcessesCount, testRunSettings.NativeArguments, testRunSettings.TestTechnology, testRunSettings.TimeBasedBalance, testRunSettings.SameMachineByClass, testRunSettings.CustomArguments).ConfigureAwait(false);
                 _testCasesProvider = _pluginService.GetNativeTestsRunnerTestCasesPluginService(testRunSettings.TestTechnology);
                 var allTestCases = _testCasesProvider.ExtractAllTestCasesFromTestLibrary(testRunSettings.TestLibraryPath);
                 var filteredTestCases = _testCasesFilterService.FilterCases(allTestCases, testRunSettings.TestsFilter);
 
                 var distributedTestsLists = testRunSettings.TimeBasedBalance ?
-                    await _testsTimesBasedDistributeService.GenerateDistributionListsAsync(availableTestAgents.Count, testRunSettings.SameMachineByClass, filteredTestCases) :
+                    _testsTimesBasedDistributeService.GenerateDistributionLists(availableTestAgents.Count, testRunSettings.SameMachineByClass, filteredTestCases) :
                     _testCountsBasedDistributeService.GenerateDistributionLists(availableTestAgents.Count, testRunSettings.SameMachineByClass, filteredTestCases);
 
-                var testAgentRuns = await _testAgentRunProvider.CreateNewTestAgentRunsAsync(testRunId, availableTestAgents, distributedTestsLists);
+                var testAgentRuns = await _testAgentRunProvider.CreateNewTestAgentRunsAsync(testRunId, availableTestAgents, distributedTestsLists).ConfigureAwait(false);
                 try
                 {
                     // TODO: pass ExecutionFrequency from args console?
-                    await _testAgentRunProvider.WaitForTestAgentRunsToFinishAsync(testAgentRuns, testRunSettings.TestRunTimeout, ExecutionFrequency);
+                    await _testAgentRunProvider.WaitForTestAgentRunsToFinishAsync(testAgentRuns, testRunSettings.TestRunTimeout, ExecutionFrequency).ConfigureAwait(false);
 
                     // DEBUG:
                     ////_consoleProvider.WriteLine("AFTER WaitForTestAgentRunsToFinishAsync");
@@ -117,23 +117,23 @@ namespace Meissa.Core.Services
                 catch (TimeoutException)
                 {
                     _consoleProvider.WriteLine(string.Format(TestRunHasTimedOut, testRunSettings.TestRunTimeout));
-                    await _testAgentRunProvider.AbortAllTestAgentRunsInTestRunAsync(testRunId);
+                    await _testAgentRunProvider.AbortAllTestAgentRunsInTestRunAsync(testRunId).ConfigureAwait(false);
                 }
 
-                var areThereAbortedTestAgentRuns = await _testAgentRunProvider.AreThereAbortedTestAgentRunsAsync(testRunId);
+                var areThereAbortedTestAgentRuns = await _testAgentRunProvider.AreThereAbortedTestAgentRunsAsync(testRunId).ConfigureAwait(false);
                 if (!areThereAbortedTestAgentRuns)
                 {
                     // DEBUG:
-                    ////_consoleProvider.WriteLine("START COMPLEETING TEST RUN");
-                    await _testRunProvider.CompleteTestRunAsync(testRunId, TestRunStatus.Completed);
+                    ////_consoleProvider.WriteLine("START COMPLETING TEST RUN");
+                    await _testRunProvider.CompleteTestRunAsync(testRunId, TestRunStatus.Completed).ConfigureAwait(false);
                     wasSuccessfulRun = true;
 
                     // DEBUG:
                     _consoleProvider.WriteLine("TEST RUN COMPLETED");
-                    await _testResultsService.SaveTestResultsForCurrentRunAsync(testRunSettings.TestTechnology, testRunSettings.ResultsFilePath, testRunSettings.RetriedResultsFilePath, testRunId);
+                    await _testResultsService.SaveTestResultsForCurrentRunAsync(testRunSettings.TestTechnology, testRunSettings.ResultsFilePath, testRunSettings.RetriedResultsFilePath, testRunId).ConfigureAwait(false);
                     try
                     {
-                        await _testRunsCleanerServiceClient.DeleteOldTestRunDataByTestRunIdAsync(testRunId);
+                        await _testRunsCleanerServiceClient.DeleteOldTestRunDataByTestRunIdAsync(testRunId).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
@@ -143,7 +143,7 @@ namespace Meissa.Core.Services
                 else
                 {
                     _consoleProvider.WriteLine("Test Run Aborted!");
-                    await _testRunProvider.CompleteTestRunAsync(testRunId, TestRunStatus.Aborted);
+                    await _testRunProvider.CompleteTestRunAsync(testRunId, TestRunStatus.Aborted).ConfigureAwait(false);
                 }
             }
             else

@@ -11,44 +11,74 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore.Internal;
+
 namespace Meissa.Model
 {
     public static class TestRunsContextExtensions
     {
         public static void EnsureSeedDataForContext(this TestsRunsContext context)
         {
-            ////if (context.TestRuns.Any())
-            ////{
-            ////    return;
-            ////}
+            if (context.Logs.Any())
+            {
+                return;
+            }
 
-            ////var testRuns = new List<TestRun>()
-            ////{
-            ////   new TestRun()
-            ////   {
-            ////       Status = TestRunStatus.InProgress,
-            ////       TestAssemblyName = "Meissa.API",
-            ////       TestOutputFilesPackage = new byte[2]() {};
-            ////   },
-            ////   new TestRun()
-            ////    {
-            ////        Status = TestRunStatus.InProgress,
-            ////        TestAssemblyName = "Meissa.API1",
-            ////    },
-            ////   new TestRun()
-            ////    {
-            ////        Status = TestRunStatus.InProgress,
-            ////        TestAssemblyName = "Meissa.API2",
-            ////    },
-            ////   new TestRun()
-            ////    {
-            ////        Status = TestRunStatus.InProgress,
-            ////        TestAssemblyName = "Meissa.API23",
-            ////    },
-            ////};
+            var logs = new List<Log>()
+            {
+                new Log
+                {
+                    Date = DateTime.Now,
+                    Thread = "1",
+                    Level = "2",
+                    Logger = "COOL LOGGER",
+                    Message = "BELLATRIX FOR THE WIN!",
+                    Exception = "NO EXCEPTIONS HERE",
+                },
+                new Log
+                {
+                    Date = DateTime.Now,
+                    Thread = "1",
+                    Level = "2",
+                    Logger = "COOL LOGGER",
+                    Message = "BELLATRIX FOR THE WIN!",
+                    Exception = "NO EXCEPTIONS HERE",
+                },
+                new Log
+                {
+                    Date = DateTime.Now,
+                    Thread = "1",
+                    Level = "2",
+                    Logger = "COOL LOGGER",
+                    Message = "BELLATRIX FOR THE WIN!",
+                    Exception = "NO EXCEPTIONS HERE",
+                },
+                new Log
+                {
+                    Date = DateTime.Now,
+                    Thread = "1",
+                    Level = "2",
+                    Logger = "COOL LOGGER",
+                    Message = "BELLATRIX FOR THE WIN!",
+                    Exception = "NO EXCEPTIONS HERE",
+                },
+                new Log
+                {
+                    Date = DateTime.Now,
+                    Thread = "1",
+                    Level = "2",
+                    Logger = "COOL LOGGER",
+                    Message = "BELLATRIX FOR THE WIN!",
+                    Exception = "NO EXCEPTIONS HERE",
+                },
+            };
 
-            ////context.TestRuns.AddRange(testRuns);
-            ////context.SaveChanges();
+            context.Logs.AddRange(logs);
+            context.SaveChanges();
         }
     }
 }

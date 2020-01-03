@@ -13,7 +13,7 @@
 // <site>https://bellatrix.solutions/</site>
 using Meissa.Core.Model;
 
-namespace Meissa.API.Models
+namespace Meissa.Server.Models
 {
     public sealed class TestAgentDto
     {

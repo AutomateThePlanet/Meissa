@@ -16,9 +16,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
 using Meissa.Core.Model;
+using Meissa.Server.Models;
 
 namespace Meissa.Core.Services
 {
@@ -30,27 +30,30 @@ namespace Meissa.Core.Services
 
         public async Task<List<TestAgentDto>> GetAllActiveTestAgentsByTagAsync(string tag)
         {
-            var testAgents = (await _testAgentRepository.GetAllAsync()).Where(x => x.AgentTag.Contains(tag) && (x.Status == TestAgentStatus.Active || x.Status == TestAgentStatus.RunningTests));
+            var testAgents = (await _testAgentRepository.GetAllAsync().ConfigureAwait(false)).Where(x => x.AgentTag.Contains(tag) && (x.Status == TestAgentStatus.Active || x.Status == TestAgentStatus.RunningTests));
 
             return testAgents.ToList();
         }
 
         public async Task VerifyActiveStatusAsync(string agentTag)
         {
-            if (await IsTestAgentAskedToVerifyActiveStatusAsync(agentTag))
+            if (await IsTestAgentAskedToVerifyActiveStatusAsync(agentTag).ConfigureAwait(false))
             {
-                var testAgent = (await _testAgentRepository.GetAllAsync()).SingleOrDefault(x => x.MachineName == Environment.MachineName && x.AgentTag == agentTag);
-                testAgent.Status = TestAgentStatus.Active;
-                await _testAgentRepository.UpdateAsync(testAgent.TestAgentId, testAgent);
+                var testAgent = (await _testAgentRepository.GetAllAsync().ConfigureAwait(false)).SingleOrDefault(x => x.MachineName == Environment.MachineName && x.AgentTag == agentTag);
+                if (testAgent != null)
+                {
+                    testAgent.Status = TestAgentStatus.Active;
+                    await _testAgentRepository.UpdateAsync(testAgent.TestAgentId, testAgent).ConfigureAwait(false);
+                }
             }
         }
 
         public async Task SetAllActiveAgentsToVerifyTheirStatusAsync(string tag)
         {
-            var testAgents = await GetAllActiveTestAgentsByTagAsync(tag);
+            var testAgents = await GetAllActiveTestAgentsByTagAsync(tag).ConfigureAwait(false);
             if (testAgents.Count > 0)
             {
-                await UpdateAgentsStatusAsync(testAgents, TestAgentStatus.RequestActiveConfirmation);
+                await UpdateAgentsStatusAsync(testAgents, TestAgentStatus.RequestActiveConfirmation).ConfigureAwait(false);
             }
         }
 
@@ -76,14 +79,14 @@ namespace Meissa.Core.Services
 
         public async Task<bool> IsTestAgentActive(string agentTag)
         {
-            var isActive = (await _testAgentRepository.GetAllAsync()).Any(x => x.MachineName == Environment.MachineName && x.AgentTag == agentTag && x.Status == TestAgentStatus.Active);
+            var isActive = (await _testAgentRepository.GetAllAsync().ConfigureAwait(false)).Any(x => x.MachineName == Environment.MachineName && x.AgentTag == agentTag && x.Status == TestAgentStatus.Active);
 
             return isActive;
         }
 
         private async Task<bool> IsTestAgentAskedToVerifyActiveStatusAsync(string agentTag)
         {
-            var currentTestAgent = (await _testAgentRepository.GetAllAsync()).SingleOrDefault(x => x.MachineName == Environment.MachineName && x.AgentTag == agentTag && x.Status == TestAgentStatus.RequestActiveConfirmation);
+            var currentTestAgent = (await _testAgentRepository.GetAllAsync().ConfigureAwait(false)).SingleOrDefault(x => x.MachineName == Environment.MachineName && x.AgentTag == agentTag && x.Status == TestAgentStatus.RequestActiveConfirmation);
 
             return currentTestAgent != null;
         }
@@ -93,7 +96,7 @@ namespace Meissa.Core.Services
             foreach (var currentTestAgent in testAgents)
             {
                 currentTestAgent.Status = testAgentStatus;
-                await _testAgentRepository.UpdateAsync(currentTestAgent.TestAgentId, currentTestAgent);
+                await _testAgentRepository.UpdateAsync(currentTestAgent.TestAgentId, currentTestAgent).ConfigureAwait(false);
             }
         }
     }

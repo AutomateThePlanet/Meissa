@@ -20,10 +20,10 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using Meissa.API.Models;
 using Meissa.Core.Model;
 using Meissa.Core.Model.NUnit;
 using Meissa.Plugins.Contracts;
+using Meissa.Server.Models;
 
 namespace Meissa.Plugins.NUnit
 {
@@ -83,7 +83,7 @@ namespace Meissa.Plugins.NUnit
                 }
             }
 
-            return passedTestCases.Count();
+            return passedTestCases.Count;
         }
 
         public int GetAllNotPassesTestsCount(object testRunObj)
@@ -98,7 +98,7 @@ namespace Meissa.Plugins.NUnit
                 }
             }
 
-            return passedTestCases.Count();
+            return passedTestCases.Count;
         }
 
         public string MergeTestResults(object testResultsToBeMergedObj)
@@ -212,7 +212,7 @@ namespace Meissa.Plugins.NUnit
             var allTests = GetAllExecutedTestCases((testrun)testRun).ToArray();
             foreach (var currentTest in allTests)
             {
-                if (((testrunTestsuiteTestsuiteTestsuiteTestcase[])passedTests).Count(x => x.id.Equals(currentTest.id)) > 0)
+                if (((testrunTestsuiteTestsuiteTestsuiteTestcase[])passedTests).Any(x => x.id.Equals(currentTest.id)))
                 {
                     currentTest.result = "Passed";
                 }
@@ -434,11 +434,9 @@ namespace Meissa.Plugins.NUnit
 
             using (var stringWriter = new StringWriter())
             {
-                using (var writer = XmlWriter.Create(stringWriter, settings))
-                {
-                    xmlSerializer.Serialize(writer, entityToBeSerialized);
-                    result = stringWriter.ToString();
-                }
+                using var writer = XmlWriter.Create(stringWriter, settings);
+                xmlSerializer.Serialize(writer, entityToBeSerialized);
+                result = stringWriter.ToString();
             }
 
             result = result.Replace("xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"", string.Empty);

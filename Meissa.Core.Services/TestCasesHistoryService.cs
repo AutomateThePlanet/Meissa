@@ -11,36 +11,38 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Meissa.Core.Contracts;
 using Meissa.Core.Model;
 using Meissa.Model;
 
 namespace Meissa.Core.Services
 {
-    public class TestCasesHistoryService : ITestCasesHistoryService
+    public class TestCasesHistoryService : ITestCasesHistoryService, IDisposable
     {
-        private readonly IServiceClient<TestCaseHistoryDto> _testCaseHistoryRepository;
-        private readonly ITestCaseRunsServiceClient _testCaseRunsServiceClient;
+        private const string TestCasesHistoryFileName = "testCasesHistory.json";
+        private readonly IJsonSerializer _jsonSerializer;
+        private readonly IFileProvider _fileProvider;
+        private List<TestCaseHistoryDto> _testCaseHistoryCollection;
 
-        public TestCasesHistoryService(
-            IServiceClient<TestCaseHistoryDto> testCaseHistoryRepository, ITestCaseRunsServiceClient testCaseRunsServiceClient)
+        public TestCasesHistoryService(IJsonSerializer jsonSerializer, IFileProvider fileProvider)
         {
-            _testCaseHistoryRepository = testCaseHistoryRepository;
-            _testCaseRunsServiceClient = testCaseRunsServiceClient;
+            _jsonSerializer = jsonSerializer;
+            _fileProvider = fileProvider;
+            LoadTestCaseHistoryCollection();
         }
 
-        public async Task<List<ExecutedTestCase>> GetExecutedTestCasesAsync(List<TestCase> testCasesToBeExecuted)
+        public List<ExecutedTestCase> GetExecutedTestCases(List<TestCase> testCasesToBeExecuted)
         {
             var executedTestCases = new List<ExecutedTestCase>();
-            var testCasesHistory = await _testCaseHistoryRepository.GetAllAsync();
             foreach (var testCase in testCasesToBeExecuted)
             {
-                if (testCasesHistory.Any(x => x.FullName.Equals(testCase.FullName)))
+                if (_testCaseHistoryCollection.Any(x => x.FullName.Equals(testCase.FullName)))
                 {
-                    var currentHistoryTestCase = testCasesHistory.FirstOrDefault(x => x.FullName.Equals(testCase.FullName));
+                    var currentHistoryTestCase = _testCaseHistoryCollection.First(x => x.FullName.Equals(testCase.FullName));
                     executedTestCases.Add(new ExecutedTestCase(testCase, currentHistoryTestCase.AvgDuration));
                 }
                 else
@@ -52,11 +54,63 @@ namespace Meissa.Core.Services
             return executedTestCases;
         }
 
-        public async Task DeleteOlderTestCasesHistoryAsync() => await _testCaseRunsServiceClient.DeleteOlderTestCasesHistoryAsync();
-
-        public async Task UpdateTestCaseExecutionHistoryAsync(List<TestCaseRun> testCaseRuns)
+        public void DeleteOlderTestCasesHistory()
         {
-            await _testCaseRunsServiceClient.UpdateTestCaseExecutionHistoryAsync(testCaseRuns);
+            _testCaseHistoryCollection.RemoveAll(x => x.LastUpdatedTime < DateTime.Now.AddDays(-30));
+        }
+
+        public void UpdateTestCaseExecutionHistory(List<TestCaseRun> testCaseRuns)
+        {
+            var existingTestCasesHistory = _testCaseHistoryCollection.Where(x => testCaseRuns.Any(y => y.FullName.Equals(x.FullName))).ToList();
+            foreach (var testCaseRun in testCaseRuns)
+            {
+                if (existingTestCasesHistory.Any(x => x.FullName.Equals(testCaseRun.FullName)))
+                {
+                    var existingTestCaseHistory = existingTestCasesHistory.FirstOrDefault(x => x.FullName.Equals(testCaseRun.FullName));
+
+                    // Creates the new test case history entry for the current run.
+                    existingTestCaseHistory?.Durations.Add(testCaseRun.Duration);
+
+                    // Calculate the new average duration for the current tests based on the new entry.
+                    if (existingTestCaseHistory != null)
+                    {
+                        var newAverageDurationTicks = existingTestCaseHistory.Durations.Average(x => x.Ticks);
+                        var newAverageDuration = new TimeSpan(Convert.ToInt64(newAverageDurationTicks));
+                        existingTestCaseHistory.AvgDuration = newAverageDuration;
+                        existingTestCaseHistory.LastUpdatedTime = DateTime.Now;
+                    }
+                }
+                else
+                {
+                    // If no entries exist, we create the history test case and a new history entry.
+                    var testCaseHistoryDto = new TestCaseHistoryDto
+                    {
+                        FullName = testCaseRun.FullName,
+                        LastUpdatedTime = DateTime.Now,
+                        AvgDuration = testCaseRun.Duration,
+                        Durations = new List<TimeSpan> { testCaseRun.Duration },
+                    };
+
+                    _testCaseHistoryCollection.Add(testCaseHistoryDto);
+                }
+            }
+        }
+
+        private void LoadTestCaseHistoryCollection()
+        {
+            var testCaseHistoryFileContent = _fileProvider.ReadAllText(TestCasesHistoryFileName);
+            if (string.IsNullOrEmpty(testCaseHistoryFileContent))
+            {
+                _testCaseHistoryCollection =
+                    _jsonSerializer.Deserialize<List<TestCaseHistoryDto>>(testCaseHistoryFileContent);
+            }
+        }
+
+        public void Dispose()
+        {
+            var fileContent = _jsonSerializer.Serialize(_testCaseHistoryCollection);
+            _fileProvider.WriteAllText(TestCasesHistoryFileName, fileContent);
+            GC.SuppressFinalize(this);
         }
     }
 }

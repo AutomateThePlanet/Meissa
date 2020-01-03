@@ -34,11 +34,9 @@ namespace Meissa.Infrastructure
 
             using (var stringWriter = new StringWriter())
             {
-                using (var writer = XmlWriter.Create(stringWriter, settings))
-                {
-                    xmlSerializer.Serialize(writer, entityToBeSerialized);
-                    result = stringWriter.ToString();
-                }
+                using var writer = XmlWriter.Create(stringWriter, settings);
+                xmlSerializer.Serialize(writer, entityToBeSerialized);
+                result = stringWriter.ToString();
             }
 
             result = result.Replace("xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"", string.Empty);

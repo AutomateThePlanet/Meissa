@@ -5,29 +5,30 @@
       <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   
-  <Import Project="..\SharedAssemblyInfo.targets" />
+    <Import Project="..\SharedAssemblyInfo.targets" />
   
   <PropertyGroup>
-    <CodeAnalysisRuleSet>$(SolutionDir)\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="$(SolutionDir)\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\AutomateThePlanet.licenseheader" Link="AutomateThePlanet.licenseheader" />
   </ItemGroup>
-  
+    <ItemGroup>
+        <None Update="..\StyleCopeRules.ruleset">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="..\stylecop.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Meissa.Core.Model\Meissa.Core.Model.csproj" />
     <ProjectReference Include="..\Meissa.Plugins.Contracts\Meissa.Plugins.Contracts.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="StyleCopeRules.ruleset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -36,5 +37,4 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
 </Project>

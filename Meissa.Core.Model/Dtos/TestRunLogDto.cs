@@ -14,7 +14,7 @@
 using System;
 using Meissa.Core.Model;
 
-namespace Meissa.API.Models
+namespace Meissa.Server.Models
 {
     public class TestRunLogDto
     {
