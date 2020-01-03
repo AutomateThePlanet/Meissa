@@ -26,12 +26,16 @@ namespace Meissa.Core.Services
         private const string TestCasesHistoryFileName = "testCasesHistory.json";
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IFileProvider _fileProvider;
+        private readonly IPathProvider _pathProvider;
+        private readonly IDirectoryProvider _directoryProvider;
         private List<TestCaseHistoryDto> _testCaseHistoryCollection;
 
-        public TestCasesHistoryService(IJsonSerializer jsonSerializer, IFileProvider fileProvider)
+        public TestCasesHistoryService(IJsonSerializer jsonSerializer, IFileProvider fileProvider, IPathProvider pathProvider, IDirectoryProvider directoryProvider)
         {
             _jsonSerializer = jsonSerializer;
             _fileProvider = fileProvider;
+            _pathProvider = pathProvider;
+            _directoryProvider = directoryProvider;
             LoadTestCaseHistoryCollection();
         }
 
@@ -42,7 +46,8 @@ namespace Meissa.Core.Services
             {
                 if (_testCaseHistoryCollection.Any(x => x.FullName.Equals(testCase.FullName)))
                 {
-                    var currentHistoryTestCase = _testCaseHistoryCollection.First(x => x.FullName.Equals(testCase.FullName));
+                    var currentHistoryTestCase =
+                        _testCaseHistoryCollection.First(x => x.FullName.Equals(testCase.FullName));
                     executedTestCases.Add(new ExecutedTestCase(testCase, currentHistoryTestCase.AvgDuration));
                 }
                 else
@@ -61,12 +66,14 @@ namespace Meissa.Core.Services
 
         public void UpdateTestCaseExecutionHistory(List<TestCaseRun> testCaseRuns)
         {
-            var existingTestCasesHistory = _testCaseHistoryCollection.Where(x => testCaseRuns.Any(y => y.FullName.Equals(x.FullName))).ToList();
+            var existingTestCasesHistory = _testCaseHistoryCollection
+                .Where(x => testCaseRuns.Any(y => y.FullName.Equals(x.FullName))).ToList();
             foreach (var testCaseRun in testCaseRuns)
             {
                 if (existingTestCasesHistory.Any(x => x.FullName.Equals(testCaseRun.FullName)))
                 {
-                    var existingTestCaseHistory = existingTestCasesHistory.FirstOrDefault(x => x.FullName.Equals(testCaseRun.FullName));
+                    var existingTestCaseHistory =
+                        existingTestCasesHistory.FirstOrDefault(x => x.FullName.Equals(testCaseRun.FullName));
 
                     // Creates the new test case history entry for the current run.
                     existingTestCaseHistory?.Durations.Add(testCaseRun.Duration);
@@ -96,9 +103,16 @@ namespace Meissa.Core.Services
             }
         }
 
+        public void Dispose()
+        {
+            var fileContent = _jsonSerializer.Serialize(_testCaseHistoryCollection);
+            _fileProvider.WriteAllText(GetTestCasesHistoryFileNamePath(), fileContent);
+            GC.SuppressFinalize(this);
+        }
+
         private void LoadTestCaseHistoryCollection()
         {
-            var testCaseHistoryFileContent = _fileProvider.ReadAllText(TestCasesHistoryFileName);
+            var testCaseHistoryFileContent = _fileProvider.ReadAllText(GetTestCasesHistoryFileNamePath());
             if (string.IsNullOrEmpty(testCaseHistoryFileContent))
             {
                 _testCaseHistoryCollection =
@@ -106,11 +120,18 @@ namespace Meissa.Core.Services
             }
         }
 
-        public void Dispose()
+        private string GetTestCasesHistoryFileNamePath()
         {
-            var fileContent = _jsonSerializer.Serialize(_testCaseHistoryCollection);
-            _fileProvider.WriteAllText(TestCasesHistoryFileName, fileContent);
-            GC.SuppressFinalize(this);
+            var testCasesHistoryFileNamePath = _pathProvider.Combine(GetAppDataMeissaFolder(), TestCasesHistoryFileName);
+            return testCasesHistoryFileNamePath;
+        }
+
+        private string GetAppDataMeissaFolder()
+        {
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var meissaAppDataFolder = _pathProvider.Combine(appData, "MEISSA");
+            _directoryProvider.CreateDirectory(meissaAppDataFolder);
+            return meissaAppDataFolder;
         }
     }
 }
