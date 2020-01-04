@@ -80,8 +80,10 @@ namespace Meissa.Core.Services
 
                 return 0;
             }) / (double)testAgentsCount);
+
             _consoleProvider.WriteLine($"---> total seconds of all tests = {orderedByClassTestCases.Sum(x => x.AvgExecutionTime.Value.Milliseconds)}");
             _consoleProvider.WriteLine($"---> totalSecondsPerList = {totalSecondsPerList}");
+
             var distributedTestCases = new List<List<TestCase>>();
             if (totalSecondsPerList > 0)
             {
