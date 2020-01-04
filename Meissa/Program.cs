@@ -480,7 +480,11 @@ namespace Meissa
                 new InjectionConstructor(testServerUrl.Host, testServerUrl.Port));
             _container.RegisterType<IServiceClient<TestCaseHistoryDto>, TestCaseHistoryServiceClient>(
                 new InjectionConstructor(testServerUrl.Host, testServerUrl.Port));
+            _container.RegisterType<IServiceClient<TestCaseHistoryEntryDto>, TestCaseHistoryEntryServiceClient>(
+              new InjectionConstructor(testServerUrl.Host, testServerUrl.Port));
             _container.RegisterType<IServiceClient<TestAgentRunDto>, TestAgentRunServiceClient>(
+                new InjectionConstructor(testServerUrl.Host, testServerUrl.Port));
+            _container.RegisterType<ITestCaseRunsServiceClient, TestCaseRunsServiceClient>(
                 new InjectionConstructor(testServerUrl.Host, testServerUrl.Port));
             _container.RegisterType<IReflectionProvider, ReflectionProvider>();
             _container.RegisterType<IDirectoryProvider, DirectoryProvider>();

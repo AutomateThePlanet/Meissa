@@ -11,6 +11,10 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Meissa.Core.Contracts;
 using Meissa.Infrastructure;
 using Meissa.Model;
 using Meissa.Server.Models;
@@ -26,6 +30,9 @@ namespace Meissa.Server
 {
     public class Startup
     {
+        private static Task _updateTestCasesHistoryTask;
+        private static IServiceProvider _serviceProvider;
+
         public static IConfiguration Configuration { get; private set; }
 
         public Startup(IConfiguration configuration) => Configuration = configuration;
@@ -40,6 +47,19 @@ namespace Meissa.Server
 
             services.AddTransient<DbRepository<TestsRunsContext>, MeissaRepository>();
             services.AddTransient<MeissaRepository>();
+            services.AddTransient<TestCasesPersistsService>();
+
+            services.AddTransient<IReflectionProvider, ReflectionProvider>();
+            services.AddTransient<IDirectoryProvider, DirectoryProvider>();
+            services.AddTransient<IPathProvider, PathProvider>();
+            services.AddTransient<IDateTimeProvider, DateTimeProvider>();
+            services.AddTransient<IFileProvider, FileProvider>();
+            services.AddTransient<IGuidService, GuidService>();
+            services.AddTransient<IXmlSerializer, XmlSerializer>();
+            services.AddTransient<IJsonSerializer, JsonSerializer>();
+            services.AddTransient<IAssemblyProvider, AssemblyProvider>();
+            services.AddTransient<IDistributeLogger, EmptyDistributedLogger>();
+            services.AddTransient<ITaskProvider, TaskProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,6 +88,8 @@ namespace Meissa.Server
                 cfg.CreateMap<TestRunOutput, TestRunOutputDto>();
                 cfg.CreateMap<TestAgentRunAvailability, TestAgentRunAvailabilityDto>();
                 cfg.CreateMap<TestRunAvailability, TestRunAvailabilityDto>();
+                cfg.CreateMap<TestCaseHistoryEntry, TestCaseHistoryEntryDto>();
+                cfg.CreateMap<TestCaseHistory, TestCaseHistoryDto>();
 
                 cfg.CreateMap<TestRunDto, TestRun>();
                 cfg.CreateMap<TestAgentDto, TestAgent>();
@@ -78,6 +100,8 @@ namespace Meissa.Server
                 cfg.CreateMap<TestRunOutputDto, TestRunOutput>();
                 cfg.CreateMap<TestAgentRunAvailabilityDto, TestAgentRunAvailability>();
                 cfg.CreateMap<TestRunAvailabilityDto, TestRunAvailability>();
+                cfg.CreateMap<TestCaseHistoryEntryDto, TestCaseHistoryEntry>();
+                cfg.CreateMap<TestCaseHistoryDto, TestCaseHistory>();
             });
         }
     }

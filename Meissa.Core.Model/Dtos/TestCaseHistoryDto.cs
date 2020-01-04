@@ -18,6 +18,12 @@ namespace Meissa.Model
 {
     public class TestCaseHistoryDto
     {
+        public TestCaseHistoryDto()
+        {
+            Durations = new List<TimeSpan>();
+        }
+
+        public int TestCaseHistoryId { get; set; }
         public List<TimeSpan> Durations { get; set; }
 
         public string FullName { get; set; }

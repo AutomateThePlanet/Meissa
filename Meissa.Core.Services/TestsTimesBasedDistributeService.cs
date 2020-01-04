@@ -46,7 +46,7 @@ namespace Meissa.Core.Services
                 throw new ArgumentException("Test Agents Count Must be Greater Than 0.");
             }
 
-            var executedTestCases = _testCasesHistoryService.GetExecutedTestCases(testCasesToBeDistributed);
+            var executedTestCases = _testCasesHistoryService.GetExecutedTestCasesAsync(testCasesToBeDistributed).Result;
             var executedTestCasesWithTime = executedTestCases.Where(x => x.WasExecuted.Equals(true) && x.AvgExecutionTime != null);
             var executedTestCasesWithoutTime = executedTestCases.Where(x => x.WasExecuted.Equals(false) && x.AvgExecutionTime == null);
 

@@ -14,6 +14,7 @@
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using System.Threading.Tasks;
 using Meissa.Core.Contracts;
 
 namespace Meissa.Infrastructure
@@ -24,7 +25,10 @@ namespace Meissa.Infrastructure
 
         public void WriteAllText(string path, string contents) => File.WriteAllBytes(path, Encoding.UTF8.GetBytes(contents));
 
+        public async Task WriteAllTextAsync(string path, string contents) => await File.WriteAllBytesAsync(path, Encoding.UTF8.GetBytes(contents)).ConfigureAwait(false);
+
         public string ReadAllText(string path) => File.ReadAllText(path);
+        public async Task<string> ReadAllTextAsync(string path) => await File.ReadAllTextAsync(path).ConfigureAwait(false);
 
         public void Delete(string path) => File.Delete(path);
 

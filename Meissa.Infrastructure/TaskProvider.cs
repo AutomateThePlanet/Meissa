@@ -51,7 +51,6 @@ namespace Meissa.Infrastructure
                             {
                                 return;
                             }
-                            
 
                             if (cancellationTokenSource.Token.IsCancellationRequested)
                             {

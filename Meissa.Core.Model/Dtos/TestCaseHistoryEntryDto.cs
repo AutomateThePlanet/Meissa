@@ -1,4 +1,4 @@
-﻿// <copyright file="ITestCasesHistoryService.cs" company="Automate The Planet Ltd.">
+﻿// <copyright file="TestCaseHistoryEntryDto.cs" company="Automate The Planet Ltd.">
 // Copyright 2020 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -11,18 +11,16 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Meissa.Core.Model;
+using System;
 
-namespace Meissa.Core.Contracts
+namespace Meissa.Model
 {
-    public interface ITestCasesHistoryService
+    public class TestCaseHistoryEntryDto
     {
-        Task UpdateTestCaseExecutionHistoryAsync(List<TestCaseRun> testCaseRuns);
-        Task DeleteOlderTestCasesHistoryAsync();
-        Task<List<ExecutedTestCase>> GetExecutedTestCasesAsync(List<TestCase> testCasesToBeExecuted);
-        Task PersistsHistoryToFileAsync();
-        Task LoadTestCaseHistoryCollectionAsync();
+        public int TestCaseHistoryEntryId { get; set; }
+
+        public int TestCaseHistoryId { get; set; }
+
+        public TimeSpan AvgDuration { get; set; }
     }
 }

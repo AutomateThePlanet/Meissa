@@ -37,7 +37,6 @@ namespace Meissa.Core.Services
         private readonly ITestAgentsService _testAgentService;
         private readonly IPathProvider _pathProvider;
         private readonly ITestCasesFilterService _testCasesFilterService;
-        private readonly ITestCasesHistoryService _testCasesHistoryService;
         private readonly IPluginService _pluginService;
         private INativeTestsRunnerTestCasesPluginService _testCasesProvider;
 
@@ -53,7 +52,6 @@ namespace Meissa.Core.Services
             ITestAgentsService testAgentService,
             IPathProvider pathProvider,
             ITestCasesFilterService testCasesFilterService,
-            ITestCasesHistoryService testCasesHistoryService,
             IPluginService pluginService)
         {
             _fileProvider = fileProvider;
@@ -67,7 +65,6 @@ namespace Meissa.Core.Services
             _testAgentService = testAgentService;
             _pathProvider = pathProvider;
             _testCasesFilterService = testCasesFilterService;
-            _testCasesHistoryService = testCasesHistoryService;
             _pluginService = pluginService;
         }
 
@@ -81,7 +78,6 @@ namespace Meissa.Core.Services
             _pluginService.ExecuteAllTestRunnerPluginsPreTestRunLogic();
 
             await _testRunsCleanerServiceClient.DeleteOldTestRunsDataAsync().ConfigureAwait(false);
-            _testCasesHistoryService.DeleteOlderTestCasesHistory();
 
             var activeTestAgents = await _testAgentService.GetAllActiveTestAgentsByTagAsync(testRunSettings.AgentTag).ConfigureAwait(false);
             await _testAgentService.SetAllActiveAgentsToVerifyTheirStatusAsync(testRunSettings.AgentTag).ConfigureAwait(false);

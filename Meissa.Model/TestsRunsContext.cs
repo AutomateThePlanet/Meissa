@@ -37,6 +37,8 @@ namespace Meissa.Model
         public DbSet<TestRunCustomArgument> TestRunCustomArguments { get; set; }
         public DbSet<TestRunAvailability> TestRunAvailabilities { get; set; }
         public DbSet<TestAgentRunAvailability> TestAgentRunAvailabilities { get; set; }
+        public DbSet<TestCaseHistory> TestCasesHistory { get; set; }
+        public DbSet<TestCaseHistoryEntry> TestCaseHistoryEntries { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

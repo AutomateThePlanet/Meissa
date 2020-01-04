@@ -12,6 +12,8 @@
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
 
+using System.Threading.Tasks;
+
 namespace Meissa.Core.Contracts
 {
     public interface IFileProvider
@@ -21,6 +23,10 @@ namespace Meissa.Core.Contracts
         void WriteAllText(string path, string contents);
 
         string ReadAllText(string path);
+
+        Task WriteAllTextAsync(string path, string contents);
+
+        Task<string> ReadAllTextAsync(string path);
 
         void Delete(string path);
 

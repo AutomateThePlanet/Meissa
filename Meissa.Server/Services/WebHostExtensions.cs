@@ -1,4 +1,4 @@
-﻿// <copyright file="ITestCasesHistoryService.cs" company="Automate The Planet Ltd.">
+﻿// <copyright file="WebHostExtensions.cs" company="Automate The Planet Ltd.">
 // Copyright 2020 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -11,18 +11,23 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Meissa.Core.Model;
+using Meissa.Server.Services;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
-namespace Meissa.Core.Contracts
+namespace Meissa.Server
 {
-    public interface ITestCasesHistoryService
+    public static class WebHostExtensions
     {
-        Task UpdateTestCaseExecutionHistoryAsync(List<TestCaseRun> testCaseRuns);
-        Task DeleteOlderTestCasesHistoryAsync();
-        Task<List<ExecutedTestCase>> GetExecutedTestCasesAsync(List<TestCase> testCasesToBeExecuted);
-        Task PersistsHistoryToFileAsync();
-        Task LoadTestCaseHistoryCollectionAsync();
+        public static async Task LoadTestCaseHistory(this IHost webHost)
+        {
+            var testCasesPersistsService = (TestCasesPersistsService)webHost.Services.GetService(typeof(TestCasesPersistsService));
+            testCasesPersistsService.LoadTestCaseHistoryCollectionAsync();
+        }
     }
 }

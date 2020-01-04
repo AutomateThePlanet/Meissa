@@ -13,9 +13,12 @@
 // <site>https://bellatrix.solutions/</site>
 using System;
 using System.IO;
+using System.Threading.Tasks;
+using Meissa.Server.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -26,7 +29,9 @@ namespace Meissa.Server
         public static void Main(string[] args)
         {
             Console.WriteLine("MEISSA Server has been started and listens on http://localhost:5000/.");
-            CreateHostBuilder(args).Build().Run();
+            var webHost =  CreateHostBuilder(args).Build();
+            webHost.Run();
+            ////await webHost.LoadTestCaseHistory().ConfigureAwait(false);
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
@@ -53,6 +58,7 @@ namespace Meissa.Server
                             c.AddJsonFile("api-appsettings.json", optional: true, reloadOnChange: true)
                                 .AddJsonFile($"api-appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
                         })
+                       
                         .ConfigureLogging((hostingContext, logging) =>
                         {
                             logging.AddConfiguration(hostingContext.Configuration.GetSection("logging"));
@@ -61,6 +67,9 @@ namespace Meissa.Server
                             logging.SetMinimumLevel(LogLevel.Error);
                         })
                         .UseStartup<Startup>();
+                    }).ConfigureServices(services =>
+                    {
+                        services.AddHostedService<TimedHostedService>();
                     });
         }
     }

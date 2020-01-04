@@ -345,8 +345,7 @@ namespace Meissa.Infrastructure
                     // TODO: This is run on the agent. So, the info should be sent back to the runner or if we have the info there?
                     // Maybe we should return the tables and persists there.
                     var testCaseRuns = _nativeTestsRunner.UpdateTestCasesHistory(mergedTestRun, assemblyName);
-                    _testCasesHistoryService.UpdateTestCaseExecutionHistory(testCaseRuns);
-                    _testCasesHistoryService.Dispose();
+                    await _testCasesHistoryService.UpdateTestCaseExecutionHistoryAsync(testCaseRuns).ConfigureAwait(false);
                 }
 
                 try
