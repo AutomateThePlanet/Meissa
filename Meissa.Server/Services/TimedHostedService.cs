@@ -25,6 +25,7 @@ namespace Meissa.Server.Services
 {
     public class TimedHostedService : BackgroundService
     {
+        private const int TestCaseHistoryUpdatePeriodMiliSeconds = 60000;
         private readonly IServiceProvider _serviceScopeFactory;
         private bool areTestCasesLoaded;
 
@@ -49,7 +50,7 @@ namespace Meissa.Server.Services
                     await testCasesPersistsService.PersistsHistoryToFileAsync().ConfigureAwait(false);
                 }
 
-                await Task.Delay(5000, stoppingToken);
+                await Task.Delay(TestCaseHistoryUpdatePeriodMiliSeconds, stoppingToken);
             }
         }
     }
