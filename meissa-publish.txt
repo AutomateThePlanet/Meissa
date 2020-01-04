@@ -21,6 +21,7 @@ dotnet new -i Meissa.OSX
 dotnet tool update --global meissaserver
 
 TODO: copy plugins to MEISSA\Plugins
+TODO: test for specflow execution --> update models for NUnit and MSTest
 
 config -> custom folder to search for plugins?
 remove outputFiles location --> get current dll folder
