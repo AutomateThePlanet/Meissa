@@ -428,15 +428,11 @@ namespace Meissa.Core.Services
                 };
 
                 _testAgentRunAvailabilityServiceClient.CreateAsync(testAgentRunAvailability).Wait();
-                ////_testRunLogService.CreateTestRunLogAsync($"Update Test Agent Run on machine {_environmentService.MachineName} {_dateTimeProvider.GetCurrentTime()}", testAgentRun.TestRunId).Wait();
-                // DEBUG:
-                ////_consoleProvider.WriteLine();
-                ////_consoleProvider.WriteLine($"UPDATE Test Agent Run on machine {_environmentService.MachineName} {_dateTimeProvider.GetCurrentTime()}");
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 // DEBUG:
-                ////_consoleProvider.WriteLine($"THERE WAS AN EXCEPTION DURING UPDATING LAST AVAILABLE {e}");
+                _consoleProvider.WriteLine($"THERE WAS AN EXCEPTION DURING UPDATING LAST AVAILABLE {e}");
             }
         }
 
