@@ -25,9 +25,9 @@ namespace Meissa.Server.Services
 {
     public class TimedHostedService : BackgroundService
     {
-        private const int TestCaseHistoryUpdatePeriodMiliSeconds = 60000;
+        private const int TestCaseHistoryUpdatePeriodMilliseconds = 60000;
         private readonly IServiceProvider _serviceScopeFactory;
-        private bool areTestCasesLoaded;
+        private bool _areTestCasesLoaded;
 
         public TimedHostedService(IServiceProvider serviceScopeFactory)
         {
@@ -41,16 +41,16 @@ namespace Meissa.Server.Services
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var testCasesPersistsService = scope.ServiceProvider.GetRequiredService<TestCasesPersistsService>();
-                    if (!areTestCasesLoaded)
+                    if (!_areTestCasesLoaded)
                     {
                         await testCasesPersistsService.LoadTestCaseHistoryCollectionAsync().ConfigureAwait(false);
-                        areTestCasesLoaded = true;
+                        _areTestCasesLoaded = true;
                     }
 
                     await testCasesPersistsService.PersistsHistoryToFileAsync().ConfigureAwait(false);
                 }
 
-                await Task.Delay(TestCaseHistoryUpdatePeriodMiliSeconds, stoppingToken);
+                await Task.Delay(TestCaseHistoryUpdatePeriodMilliseconds, stoppingToken).ConfigureAwait(false);
             }
         }
     }

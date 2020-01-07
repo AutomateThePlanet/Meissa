@@ -30,9 +30,6 @@ namespace Meissa.Server
 {
     public class Startup
     {
-        private static Task _updateTestCasesHistoryTask;
-        private static IServiceProvider _serviceProvider;
-
         public static IConfiguration Configuration { get; private set; }
 
         public Startup(IConfiguration configuration) => Configuration = configuration;

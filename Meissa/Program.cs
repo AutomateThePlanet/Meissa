@@ -35,7 +35,7 @@ using Unity.Injection;
 
 namespace Meissa
 {
-    public class Program
+    public static class Program
     {
         private const string UnexpectedProblemOccurredMessage = @"Unexpected problem occurred.";
         private const string TestServerSettingsFileName = @"testExecutionServerSettings";

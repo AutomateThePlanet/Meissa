@@ -17,6 +17,10 @@ namespace Meissa.Core.Model
 {
     public class TestCaseRun
     {
+        public TestCaseRun()
+        {
+        }
+
         public TestCaseRun(string fullName, TimeSpan duration)
         {
             FullName = fullName;

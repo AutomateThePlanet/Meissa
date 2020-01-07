@@ -64,7 +64,6 @@ namespace Meissa.Server.Services
                     }
                 }
 
-
                 var fileContent = _jsonSerializer.Serialize(testCaseHistoryCollection);
                 await _fileProvider.WriteAllTextAsync(GetTestCasesHistoryFileNamePath(), fileContent).ConfigureAwait(false);
             }

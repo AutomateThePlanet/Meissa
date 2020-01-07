@@ -16,20 +16,11 @@
   <Import Project="..\SharedAssemblyInfo.targets" />
 
   <PropertyGroup>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+      <CodeAnalysisRuleSet>..\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <PropertyGroup>
-    <CodeAnalysisRuleSet>..\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
-    <Copyright>Bellatrix Ltd.</Copyright>
-    <Description>MEISSA Distributed Test Runner- Bellatrix Test Automation Framework</Description>
-    <Company>Automate The Planet Ltd.</Company>
-    <Authors>Automate The Planet Ltd.</Authors>
-    <Version>1.5.0</Version>
-    <PackageId>MEISSA</PackageId>
-    <PackageProjectUrl>https://bellatrix.solutions/</PackageProjectUrl>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Product>MEISSA Distributed Test Runner</Product>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <PropertyGroup>

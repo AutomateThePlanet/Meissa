@@ -150,7 +150,7 @@ namespace Meissa.Core.Services
                             {
                                 UpdateTestAgentLastAvailable(newTestAgentRun.TestAgentRunId);
                             },
-                            60000);
+                            1000);
 
                     var executeTestAgentRunTask = _taskProvider.StartNewLongRunning(
                            (c) =>
@@ -165,17 +165,12 @@ namespace Meissa.Core.Services
                            {
                                if (executeTestAgentRunTask.IsCompleted)
                                {
-                                   // DEBUG:
-                                   ////_testRunLogService.CreateTestRunLogAsync($"executeTestAgentRunTask successfully completed on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId);
                                    cancellationTokenSource.Cancel();
                                    return;
                                }
 
                                if (executeTestAgentRunTask.IsFaulted)
                                {
-                                   // DEBUG:
-                                   ////_testRunLogService.CreateTestRunLogAsync($"executeTestAgentRunTask FAULTED on machine {_environmentService.MachineName}.", newTestAgentRun.TestRunId);
-                                   ////_testRunLogService.CreateTestRunLogAsync($"executeTestAgentRunTask FAULTED on machine {_environmentService.MachineName}. Exception: {executeTestAgentRunTask.Exception}", newTestAgentRun.TestRunId);
                                    cancellationTokenSource.Cancel();
                                    return;
                                }
@@ -184,9 +179,9 @@ namespace Meissa.Core.Services
                            },
                            30000);
 
-                    checkTestRunnerLastAvailableTask.Wait();
+                    checkTestRunnerLastAvailableTask.Wait(cancellationTokenSourceLastAvailable.Token);
                     cancellationTokenSourceLastAvailable.Cancel();
-                    testAgentUpdateAvailabilityTask.Wait();
+                    testAgentUpdateAvailabilityTask.Wait(cancellationTokenSourceLastAvailable.Token);
                     try
                     {
                         // DEBUG: Turn-off if debugging
@@ -218,7 +213,7 @@ namespace Meissa.Core.Services
                                             cts.Cancel();
                                         }
                                     },
-                                    10000);
+                                    1000);
                             waitForTestRunToCompleteTask.Wait(cts.Token);
                         }
                     }
@@ -323,10 +318,6 @@ namespace Meissa.Core.Services
                 TestRunId = testRunId,
                 LastAvailable = _dateTimeProvider.GetCurrentTime(),
             };
-
-            // DEBUG:
-            ////_consoleProvider.WriteLine();
-            ////_consoleProvider.WriteLine($"UPDATE Test Run on machine {_environmentService.MachineName} {_dateTimeProvider.GetCurrentTime()}");
 
             await _testRunAvailabilityServiceClient.CreateAsync(testRunAvailability).ConfigureAwait(false);
         }
@@ -492,8 +483,6 @@ namespace Meissa.Core.Services
             var testRunOutput = await _testRunOutputServiceClient.GetTestRunOutputByTestRunIdAsync(testRun.TestRunId).ConfigureAwait(false);
             if (testRunOutput == null)
             {
-                // DEBUG:
-                ////_testRunLogService.CreateTestRunLogAsync($"The test run output cannot be null on machine {_environmentService.MachineName}", testAgentRun.TestRunId).Wait();
                 throw new ArgumentException("The test run output cannot be null.");
             }
 

@@ -17,11 +17,9 @@ namespace Meissa.Core.Model
 {
     public class TestCase
     {
-        public string FullName { get; set; }
-
-        public string ClassName { get; set; }
-
-        public List<string> Categories { get; set; }
+        public TestCase()
+        {
+        }
 
         public TestCase(string fullName, string className)
         {
@@ -29,8 +27,10 @@ namespace Meissa.Core.Model
             ClassName = className;
         }
 
-        public TestCase()
-        {
-        }
+        public string FullName { get; set; }
+
+        public string ClassName { get; set; }
+
+        public List<string> Categories { get; set; }
     }
 }

@@ -29,9 +29,8 @@ namespace Meissa.Server
         public static void Main(string[] args)
         {
             Console.WriteLine("MEISSA Server has been started and listens on http://localhost:5000/.");
-            var webHost =  CreateHostBuilder(args).Build();
+            var webHost = CreateHostBuilder(args).Build();
             webHost.Run();
-            ////await webHost.LoadTestCaseHistory().ConfigureAwait(false);
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
@@ -58,7 +57,6 @@ namespace Meissa.Server
                             c.AddJsonFile("api-appsettings.json", optional: true, reloadOnChange: true)
                                 .AddJsonFile($"api-appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
                         })
-                       
                         .ConfigureLogging((hostingContext, logging) =>
                         {
                             logging.AddConfiguration(hostingContext.Configuration.GetSection("logging"));

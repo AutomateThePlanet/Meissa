@@ -62,18 +62,18 @@ namespace Meissa.Core.Services
             if (activeTestAgents.Count > 0)
             {
                 SpinWait.SpinUntil(() =>
+                {
+                    var testAgents = GetAllActiveTestAgentsByTagAsync(activeTestAgents.FirstOrDefault()?.AgentTag).Result;
+                    if (testAgents.Count(x => activeTestAgents.Any(y => y.TestAgentId.Equals(x.TestAgentId))) == activeTestAgents.Count)
                     {
-                        var testAgents = GetAllActiveTestAgentsByTagAsync(activeTestAgents.FirstOrDefault()?.AgentTag).Result;
-                        if (testAgents.Count(x => activeTestAgents.Any(y => y.TestAgentId.Equals(x.TestAgentId))) == activeTestAgents.Count)
-                        {
-                            return true;
-                        }
+                        return true;
+                    }
 
-                        Thread.Sleep(200);
+                    Thread.Sleep(200);
 
-                        return false;
-                    },
-                    TimeSpan.FromSeconds(30));
+                    return false;
+                },
+                TimeSpan.FromSeconds(30));
             }
         }
 
