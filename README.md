@@ -54,7 +54,7 @@ Keeps the clean state of agents and fast test run abortion.
 
 How Do We Use It?
 -------------------
-1. **Start Meissa server**
+1. **Start MEISSA server**
 ```
 meissaserver
 ```
