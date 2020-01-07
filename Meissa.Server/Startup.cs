@@ -12,6 +12,8 @@
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
 using System;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Meissa.Core.Contracts;
@@ -25,6 +27,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
 
 namespace Meissa.Server
 {
@@ -38,8 +41,12 @@ namespace Meissa.Server
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(a => a.EnableEndpointRouting = false)
-                .AddMvcOptions(o => o.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter()));
+            services.AddMvc(a => a.EnableEndpointRouting = false).AddNewtonsoftJson();
+            ////.AddJsonOptions(o =>
+            ////{
+            ////    o.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+            ////    o.JsonSerializerOptions.Converters.Add((JsonConverter)new TimeSpanConverter());
+            ////});
             services.AddDbContext<TestsRunsContext>();
 
             services.AddTransient<DbRepository<TestsRunsContext>, MeissaRepository>();

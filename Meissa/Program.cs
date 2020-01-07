@@ -153,19 +153,19 @@ namespace Meissa
                             cancellationTokenSource,
                             () =>
                             {
-                                testAgentRunProvider.RunTestsForCurrentAgentAsync(options.TestAgentTag, options.TestAgentRunTimeout).Wait(cancellationTokenSource.Token);
+                                testAgentRunProvider.RunTestsForCurrentAgentAsync(options.TestAgentTag, options.TestAgentRunTimeout).Wait();
                             },
                             1000);
 
                     var verifyStatusTask = taskProvider.StartNewLongRunningRepeating(
                             cancellationTokenSource,
-                            () => testAgentsService.VerifyActiveStatusAsync(options.TestAgentTag).Wait(cancellationTokenSource.Token),
+                            () => testAgentsService.VerifyActiveStatusAsync(options.TestAgentTag).Wait(),
                             1000);
 
                     Task.WaitAll(testsRunTask, verifyStatusTask);
 
                     cancellationTokenSource.Cancel();
-                    testAgentStateSwitcher.SetTestAgentAsInactiveAsync(options.TestAgentTag).Wait(cancellationTokenSource.Token);
+                    testAgentStateSwitcher.SetTestAgentAsInactiveAsync(options.TestAgentTag).Wait();
                 }
                 catch (Exception ex) when (ex.InnerException?.InnerException != null && ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
                 {
@@ -177,7 +177,7 @@ namespace Meissa
                     Console.WriteLine(e);
                     _logger.LogError(UnexpectedProblemOccurredMessage, e);
                     cancellationTokenSource.Cancel();
-                    testAgentStateSwitcher.SetTestAgentAsInactiveAsync(options.TestAgentTag).Wait(cancellationTokenSource.Token);
+                    testAgentStateSwitcher.SetTestAgentAsInactiveAsync(options.TestAgentTag).Wait();
                     return -1;
                 }
             }

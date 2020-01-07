@@ -20,7 +20,6 @@ using Meissa.Model;
 using Meissa.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Meissa.Server.Controllers
@@ -71,7 +70,7 @@ namespace Meissa.Server.Controllers
         {
             try
             {
-                var existingTestCasesHistory = _meissaRepository.GetAllQuery<TestCaseHistory>().Where(x => testCaseRuns.Any(y => y.FullName.Equals(x.FullName))).ToList();
+                var existingTestCasesHistory = _meissaRepository.GetAllQuery<TestCaseHistory>().AsEnumerable().Where(x => testCaseRuns.Any(y => y.FullName.Equals(x.FullName))).ToList();
                 var testCaseHistoryEntries = _meissaRepository.GetAllQuery<TestCaseHistoryEntry>();
                 foreach (var testCaseRun in testCaseRuns)
                 {
@@ -131,7 +130,7 @@ namespace Meissa.Server.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogCritical("Exception while updating test cases execution history.", ex);
+                _logger.LogCritical($"Exception while updating test cases execution history. {ex.Message} {ex.InnerException?.StackTrace} {ex.InnerException?.Message}", ex);
             }
 
             return Ok();

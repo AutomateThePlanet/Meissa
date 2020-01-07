@@ -299,8 +299,8 @@ namespace Meissa.Infrastructure
                                  }
                              }
                          },
-                         5000);
-            checkCancellationRequestsTask.Wait(innerCancellationTokenSource.Token);
+                         1000);
+            checkCancellationRequestsTask.Wait();
 
             string result = null;
             if (!outerCancellationTokenSource.Token.IsCancellationRequested)
@@ -338,8 +338,6 @@ namespace Meissa.Infrastructure
                 var mergedTestRun = _nativeTestsRunner.MergeTestResults(testRunsToBeMerged);
                 if (isTimeBasedBalance)
                 {
-                    // TODO: This is run on the agent. So, the info should be sent back to the runner or if we have the info there?
-                    // Maybe we should return the tables and persists there.
                     var testCaseRuns = _nativeTestsRunner.UpdateTestCasesHistory(mergedTestRun, assemblyName);
                     await _testCasesHistoryService.UpdateTestCaseExecutionHistoryAsync(testCaseRuns).ConfigureAwait(false);
                 }

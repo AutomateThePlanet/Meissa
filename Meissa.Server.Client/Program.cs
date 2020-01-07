@@ -24,7 +24,7 @@ namespace Meissa.Server.Client
         {
             Console.WriteLine("Enter controller IP: ");
             string url = Console.ReadLine();
-            var client1 = new TestRunServiceClient(url, 5000);
+            var client1 = new TestRunServiceClient(url, 1000);
 
             ////var specificRun = client1.Get(new Guid("c413e3c6-2ef7-4946-f4ee-08d51f8e4f15"));
             ////specificRun.ResultsOutputLocation = $"{specificRun.ResultsOutputLocation}Updated";

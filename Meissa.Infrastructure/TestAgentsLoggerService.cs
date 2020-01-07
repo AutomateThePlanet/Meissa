@@ -23,7 +23,7 @@ namespace Meissa.Infrastructure
 {
     public class TestAgentsLoggerService : ITestAgentsLoggerService
     {
-        private const int ExecutionFrequency = 5000;
+        private const int ExecutionFrequency = 1000;
         private readonly IServiceClient<TestRunLogDto> _testRunLogRepository;
         private readonly ITaskProvider _taskProvider;
         private readonly IConsoleProvider _consoleProvider;

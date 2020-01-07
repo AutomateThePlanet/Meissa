@@ -116,8 +116,6 @@ namespace Meissa.Core.Services
             testRun.Status = testRunStatus;
             testRun.DateFinished = _dateTimeProvider.GetCurrentTime();
 
-            // DEBUG: Before COMPLETING RUN
-            ////Console.WriteLine("Before COMPLETING RUN");
             await _testRunServiceClient.UpdateAsync(testRun.TestRunId, testRun).ConfigureAwait(false);
             await _testRunOutputServiceClient.DeleteTestRunOutputByTestRunIdAsync(testRun.TestRunId).ConfigureAwait(false);
         }

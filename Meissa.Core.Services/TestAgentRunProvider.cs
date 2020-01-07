@@ -133,7 +133,7 @@ namespace Meissa.Core.Services
 
         public async Task RunTestsForCurrentAgentAsync(string testAgentTag, int testAgentRunTimeout)
         {
-            if (await IsAlligibleToStartTestAgentRunAsync(testAgentTag).ConfigureAwait(false))
+            if (await IsEligibleToStartTestAgentRunAsync(testAgentTag).ConfigureAwait(false))
             {
                 var newTestAgentRun = await GetFirstNewTestAgentRunForCurrentTestAgentAsync().ConfigureAwait(false);
 
@@ -177,11 +177,11 @@ namespace Meissa.Core.Services
 
                                CheckTestRunnerStatus(newTestAgentRun.TestAgentRunId, cancellationTokenSource);
                            },
-                           30000);
+                           1000);
 
-                    checkTestRunnerLastAvailableTask.Wait(cancellationTokenSourceLastAvailable.Token);
+                    checkTestRunnerLastAvailableTask.Wait();
                     cancellationTokenSourceLastAvailable.Cancel();
-                    testAgentUpdateAvailabilityTask.Wait(cancellationTokenSourceLastAvailable.Token);
+                    testAgentUpdateAvailabilityTask.Wait();
                     try
                     {
                         // DEBUG: Turn-off if debugging
@@ -214,7 +214,7 @@ namespace Meissa.Core.Services
                                         }
                                     },
                                     1000);
-                            waitForTestRunToCompleteTask.Wait(cts.Token);
+                            waitForTestRunToCompleteTask.Wait();
                         }
                     }
                     finally
@@ -241,7 +241,7 @@ namespace Meissa.Core.Services
                         cancellationTokenSourceLastAvailable,
                         () =>
                         {
-                            UpdateTestRunnerLastAvailable(testRunId).Wait(cancellationTokenSourceLastAvailable.Token);
+                            UpdateTestRunnerLastAvailable(testRunId).Wait();
                         },
                         1000);
                 await _testRunRepository.GetAsync(testRunId).ConfigureAwait(false);
@@ -272,7 +272,7 @@ namespace Meissa.Core.Services
                             loggerCancellationToken.Cancel();
                             cancellationTokenSourceLastAvailable.Cancel();
                             loggingTask.Wait(cancellationTokenSourceLastAvailable.Token);
-                            updateTestRunnerLastAvailableTask.Wait(cancellationTokenSourceLastAvailable.Token);
+                            updateTestRunnerLastAvailableTask.Wait();
                             return;
                         }
                     }
@@ -286,8 +286,8 @@ namespace Meissa.Core.Services
                     {
                         cancellationTokenSourceLastAvailable.Cancel();
                         loggerCancellationToken.Cancel();
-                        loggingTask.Wait(cancellationTokenSourceLastAvailable.Token);
-                        updateTestRunnerLastAvailableTask.Wait(cancellationTokenSourceLastAvailable.Token);
+                        loggingTask.Wait();
+                        updateTestRunnerLastAvailableTask.Wait();
                         return;
                     }
 
@@ -298,7 +298,7 @@ namespace Meissa.Core.Services
                         cancellationTokenSourceLastAvailable.Cancel();
                         loggerCancellationToken.Cancel();
                         loggingTask.Wait(cancellationTokenSourceLastAvailable.Token);
-                        updateTestRunnerLastAvailableTask.Wait(cancellationTokenSourceLastAvailable.Token);
+                        updateTestRunnerLastAvailableTask.Wait();
                         throw new TimeoutException("Test run timeout!");
                     }
                 }
@@ -581,7 +581,7 @@ namespace Meissa.Core.Services
             return newTestAgentRuns;
         }
 
-        private async Task<bool> IsAlligibleToStartTestAgentRunAsync(string agentTag)
+        private async Task<bool> IsEligibleToStartTestAgentRunAsync(string agentTag)
         {
             if (_currentTestAgentId == null)
             {
@@ -597,6 +597,11 @@ namespace Meissa.Core.Services
         private async Task<bool> IsTestRunCompleted(Guid testRunId)
         {
             var testRun = await _testRunRepository.GetAsync(testRunId).ConfigureAwait(false);
+
+            if (testRun == null)
+            {
+                return true;
+            }
 
             if (testRun.Status.Equals(TestRunStatus.InProgress) || testRun.Status.Equals(TestRunStatus.Aborted))
             {

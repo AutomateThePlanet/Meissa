@@ -25,7 +25,7 @@ namespace Meissa.Core.Services
         private const string TestRunHasTimedOut = "### The test run timeout. It ran for over {0} minutes. ###";
         private const string TestAgentRunsHasFinished = "### All Test Agent Runs Finished! ###";
         private const string NoTestAgentsAreAvailable = "### No test agents where available for the provided tag! ###";
-        private const int ExecutionFrequency = 5000;
+        private const int ExecutionFrequency = 1000;
         private readonly IFileProvider _fileProvider;
         private readonly ITestRunProvider _testRunProvider;
         private readonly ITestRunsCleanerServiceClient _testRunsCleanerServiceClient;
