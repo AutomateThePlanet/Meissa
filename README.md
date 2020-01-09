@@ -65,7 +65,7 @@ By the way in order to run MEISSA you don’t even need to install .NET Core sin
 
 2. **Start MEISSA test agent**
 ```
-meissa testAgent --testAgentTag="APIAgent" --testServerUrl="http://IPServerMachine:5000"
+meissa testAgent --agentTag="APIAgent" --serverUrl="http://IPServerMachine:89"
 ```
 
 Usually, you have one test agent per machine. So, more machines you have, faster your tests will be executed.
@@ -74,7 +74,7 @@ Usually, you have one test agent per machine. So, more machines you have, faster
 ```
 meissa runner --resultsFilePath="pathToResults\result.trx" 
 --agentTag="APIAgent" --testTechnology="MSTest" 
---testLibraryPath="pathToBuildedFiles\SampleTestProj.dll"
+--testLibraryPath="pathToBuildedFiles\SampleTestProj.dll" --serverUrl="http://IPServerMachine:89"
 ```
 
 Usually, you start the runner from CI job. The typical workflow will be. Download the tests source code. Build it. Execute tests with MEISSA. Publish the results produced by MEISSA.
@@ -110,6 +110,11 @@ Instructs MEISSA to balance the tests not based on the count but rather than on 
 ```
 
 Instructs MEISSA to execute in parallel the tests on each agent. You can even specify how many processes to be spawn. This is most useful for unit, API or headless UI tests.
+```
+--sameMachineByClass
+```
+
+The tests from a single class will be executed on the same machine.
 
 
 Getting Started
