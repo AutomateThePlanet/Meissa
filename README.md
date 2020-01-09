@@ -147,4 +147,4 @@ Get Involved
 - Help us write more test runners
 - Add more unit tests
 - Optimize the performance
-- If you have any questions or suggestions you can post them to our **[forum](http://docs.meissarunner.com/getting-started/)**.
+- If you have any questions or suggestions you can post them to our **[forum](https://bellatrix.solutions/forums/forums/test/meissa-test-runner/)**.
