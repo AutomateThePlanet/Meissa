@@ -42,11 +42,6 @@ namespace Meissa.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc(a => a.EnableEndpointRouting = false).AddNewtonsoftJson();
-            ////.AddJsonOptions(o =>
-            ////{
-            ////    o.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-            ////    o.JsonSerializerOptions.Converters.Add((JsonConverter)new TimeSpanConverter());
-            ////});
             services.AddDbContext<TestsRunsContext>();
 
             services.AddTransient<DbRepository<TestsRunsContext>, MeissaRepository>();

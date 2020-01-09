@@ -13,7 +13,6 @@
 // <site>https://bellatrix.solutions/</site>
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using Meissa.Server.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -28,7 +27,7 @@ namespace Meissa.Server
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("MEISSA Server has been started and listens on http://localhost:5000/.");
+            Console.WriteLine("MEISSA Server has been started and listens on http://localhost:89/.");
             var webHost = CreateHostBuilder(args).Build();
             webHost.Run();
         }
@@ -40,14 +39,14 @@ namespace Meissa.Server
                     {
                         webBuilder.ConfigureKestrel(serverOptions =>
                         {
-                            serverOptions.Limits.MaxConcurrentConnections = 10000;
-                            serverOptions.Limits.MaxConcurrentUpgradedConnections = 1000;
-                            serverOptions.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(30);
-                            serverOptions.Limits.MaxRequestBodySize = 500000 * 1024;
+                            serverOptions.Limits.MaxConcurrentConnections = null;
+                            serverOptions.Limits.MaxConcurrentUpgradedConnections = null;
+                            //serverOptions.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(60);
+                            serverOptions.Limits.MaxRequestBodySize = null;
                             serverOptions.Limits.MinRequestBodyDataRate =
-                                new MinDataRate(bytesPerSecond: 100, gracePeriod: TimeSpan.FromSeconds(30));
+                                new MinDataRate(bytesPerSecond: 100, gracePeriod: TimeSpan.FromSeconds(60));
                             serverOptions.Limits.MinResponseDataRate =
-                                new MinDataRate(bytesPerSecond: 100, gracePeriod: TimeSpan.FromSeconds(30));
+                                new MinDataRate(bytesPerSecond: 100, gracePeriod: TimeSpan.FromSeconds(60));
                         })
                         .UseContentRoot(Directory.GetCurrentDirectory())
                         .UseIISIntegration()
@@ -63,8 +62,10 @@ namespace Meissa.Server
                             logging.AddConsole();
                             logging.AddDebug();
                             logging.SetMinimumLevel(LogLevel.Error);
-                        })
-                        .UseStartup<Startup>();
+                        }) 
+                        .UseUrls("http://0.0.0.0:89")
+                        .UseStartup<Startup>()
+                       ;
                     }).ConfigureServices(services =>
                     {
                         services.AddHostedService<TimedHostedService>();

@@ -33,21 +33,28 @@ namespace Meissa.Core.Services
             }
 
             var orderedByClassTestCases = testCasesToBeDistributed.OrderBy(x => x.ClassName).ToList();
-            int numberOfTestsPerList = (int)Math.Ceiling(orderedByClassTestCases.Count / (double)testAgentsCount);
+            var numberOfTestsPerList = (int)Math.Ceiling(orderedByClassTestCases.Count / (double)testAgentsCount);
 
-            List<List<TestCase>> distributedTestCases = new List<List<TestCase>>();
+            var distributedTestCases = new List<List<TestCase>>();
             if (numberOfTestsPerList > 0)
             {
-                int distributedIndex = 0;
-                int tempDistributedTestsCount = numberOfTestsPerList;
+                var distributedIndex = 0;
+                var tempDistributedTestsCount = numberOfTestsPerList;
                 string previousClass = null;
-                for (int i = 0; i < orderedByClassTestCases.Count; i++)
+                bool isListReset = false;
+                for (var i = 0; i < orderedByClassTestCases.Count; i++)
                 {
                     bool shouldResetTestsPerList = ShouldResetTestsPerList(sameMachineByClass, orderedByClassTestCases[i].ClassName, previousClass);
-                    if (tempDistributedTestsCount <= 0 && shouldResetTestsPerList)
+                    if (!isListReset && shouldResetTestsPerList)
+                    {
+                        isListReset = true;
+                    }
+
+                    if (tempDistributedTestsCount <= 0 && isListReset)
                     {
                         tempDistributedTestsCount = numberOfTestsPerList;
                         distributedIndex++;
+                        isListReset = false;
                     }
 
                     if (tempDistributedTestsCount == numberOfTestsPerList)
@@ -70,7 +77,7 @@ namespace Meissa.Core.Services
         }
 
         private static bool ShouldResetTestsPerList(bool sameMachineByClass, string currentClass, string previousClass)
-            => sameMachineByClass ? previousClass != currentClass : true;
+            => !sameMachineByClass || previousClass != currentClass;
 
         public List<string> GenerateDistributionLists(int testAgentsCount, bool sameMachineByClass, List<TestCase> testCasesToBeDistributed)
         {
@@ -79,7 +86,7 @@ namespace Meissa.Core.Services
                 throw new ArgumentException("Test Agents Count Must be Greater Than 0.");
             }
 
-            List<List<TestCase>> distributedTestCases = GenerateDistributionTestCasesLists(testAgentsCount, sameMachineByClass, testCasesToBeDistributed);
+            var distributedTestCases = GenerateDistributionTestCasesLists(testAgentsCount, sameMachineByClass, testCasesToBeDistributed);
 
             var distributedTestsLists = new List<string>();
             foreach (var currentList in distributedTestCases)

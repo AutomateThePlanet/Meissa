@@ -89,8 +89,8 @@ namespace Meissa.Core.Services
                 var customArgumentPairString = customArgumentPair.Split('=');
                 if (customArgumentPairString.Length == 2)
                 {
-                    string key = customArgumentPairString[0];
-                    string value = customArgumentPairString[1];
+                    var key = customArgumentPairString[0];
+                    var value = customArgumentPairString[1];
                     if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
                     {
                         var testRunCustomArgumentDto = new TestRunCustomArgumentDto

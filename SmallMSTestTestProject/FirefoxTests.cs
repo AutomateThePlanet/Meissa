@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -15,12 +16,14 @@ namespace SmallMSTestTestProject
         [TestMethod]
         public void FirefoxTest2()
         {
+            Console.WriteLine("EXECUTEs FirefoxTest2");
             Thread.Sleep(1000);
         }
 
         [TestMethod]
         public void FirefoxTestt3()
         {
+            Console.WriteLine("EXECUTEs FirefoxTestt3");
             Thread.Sleep(1000);
         }
 

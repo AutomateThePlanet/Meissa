@@ -150,7 +150,7 @@ namespace Meissa.Core.Services
                             {
                                 UpdateTestAgentLastAvailable(newTestAgentRun.TestAgentRunId);
                             },
-                            1000);
+                            2000);
 
                     var executeTestAgentRunTask = _taskProvider.StartNewLongRunning(
                            (c) =>
@@ -177,7 +177,7 @@ namespace Meissa.Core.Services
 
                                CheckTestRunnerStatus(newTestAgentRun.TestAgentRunId, cancellationTokenSource);
                            },
-                           1000);
+                           2000);
 
                     checkTestRunnerLastAvailableTask.Wait();
                     cancellationTokenSourceLastAvailable.Cancel();
@@ -213,7 +213,7 @@ namespace Meissa.Core.Services
                                             cts.Cancel();
                                         }
                                     },
-                                    1000);
+                                    2000);
                             waitForTestRunToCompleteTask.Wait();
                         }
                     }
@@ -243,7 +243,7 @@ namespace Meissa.Core.Services
                         {
                             UpdateTestRunnerLastAvailable(testRunId).Wait();
                         },
-                        1000);
+                        2000);
                 await _testRunRepository.GetAsync(testRunId).ConfigureAwait(false);
                 do
                 {
@@ -271,7 +271,7 @@ namespace Meissa.Core.Services
                             await AbortAllTestAgentRunsInTestRunAsync(testRunId).ConfigureAwait(false);
                             loggerCancellationToken.Cancel();
                             cancellationTokenSourceLastAvailable.Cancel();
-                            loggingTask.Wait(cancellationTokenSourceLastAvailable.Token);
+                            loggingTask.Wait();
                             updateTestRunnerLastAvailableTask.Wait();
                             return;
                         }
@@ -297,7 +297,7 @@ namespace Meissa.Core.Services
                     {
                         cancellationTokenSourceLastAvailable.Cancel();
                         loggerCancellationToken.Cancel();
-                        loggingTask.Wait(cancellationTokenSourceLastAvailable.Token);
+                        loggingTask.Wait();
                         updateTestRunnerLastAvailableTask.Wait();
                         throw new TimeoutException("Test run timeout!");
                     }

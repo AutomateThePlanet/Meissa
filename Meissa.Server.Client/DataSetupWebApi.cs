@@ -48,17 +48,22 @@ namespace Meissa.Server.Client
 
             string jsonToBeCreated = JsonConvert.SerializeObject(entityToBeCreated);
             var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
-            var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
+            var response = await HttpClientService.Client.SendAsyncWithRetry(
+                () => new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
+                    Content = httpContent,
+                },
+                5,
+                2000).ConfigureAwait(false);
+            if (response != null)
             {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
-                Content = httpContent,
-            },
-            5,
-            2000).ConfigureAwait(false);
-            var entity = await DeserializeResponse<TEntityDto>(response).ConfigureAwait(false);
+                var entity = await DeserializeResponse<TEntityDto>(response).ConfigureAwait(false);
+                return entity;
+            }
 
-            return entity;
+            return null;
         }
 
         public async Task UpdateAsync<TSearchCriteria>(TSearchCriteria id, TEntityDto entityToBeUpdated)
@@ -117,9 +122,13 @@ namespace Meissa.Server.Client
             },
             5,
             2000).ConfigureAwait(false);
-            var entity = await DeserializeResponse<TEntityDto>(response).ConfigureAwait(false);
+            if (response != null)
+            {
+                var entity = await DeserializeResponse<TEntityDto>(response).ConfigureAwait(false);
+                return entity;
+            }
 
-            return entity;
+            return null;
         }
 
         public async Task<IQueryable<TEntityDto>> GetAllAsync()

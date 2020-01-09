@@ -59,7 +59,10 @@ namespace Meissa.Core.Services
                 if (testCasesHistory.Any(x => x.FullName.Equals(testCase.FullName)))
                 {
                     var currentHistoryTestCase = testCasesHistory.FirstOrDefault(x => x.FullName.Equals(testCase.FullName));
-                    executedTestCases.Add(new ExecutedTestCase(testCase, currentHistoryTestCase.AvgDuration));
+                    if (currentHistoryTestCase != null)
+                    {
+                        executedTestCases.Add(new ExecutedTestCase(testCase, currentHistoryTestCase.AvgDuration));
+                    }
                 }
                 else
                 {

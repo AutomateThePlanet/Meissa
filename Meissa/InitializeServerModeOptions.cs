@@ -18,7 +18,5 @@ namespace Meissa
     [Verb("initServer", HelpText = "Set up Meissa test execution server that will be used by all test runners and agents for communication and storing data.")]
     public class InitializeServerModeOptions
     {
-        ////[Option('p', "port", Required = true, HelpText = "The port on which the server will be exposed.")]
-        ////public int TestServerPort { get; set; }
     }
 }

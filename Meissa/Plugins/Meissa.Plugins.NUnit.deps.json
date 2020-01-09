@@ -6,9 +6,9 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "Meissa.Plugins.NUnit/1.5.0.0": {
+      "Meissa.Plugins.NUnit/1.6.5.0": {
         "dependencies": {
-          "Meissa.Plugins.Contracts": "1.5.0",
+          "Meissa.Plugins.Contracts": "1.6.5",
           "Microsoft.CodeAnalysis.FxCopAnalyzers": "2.9.8",
           "Mono.Cecil": "0.11.1",
           "StyleCop.Analyzers": "1.1.118",
@@ -124,7 +124,7 @@
           "Microsoft.NETCore.Targets": "1.1.0"
         }
       },
-      "Meissa.Core.Model/1.5.0": {
+      "Meissa.Core.Model/1.6.5": {
         "dependencies": {
           "System.ComponentModel": "4.3.0"
         },
@@ -132,9 +132,9 @@
           "Meissa.Core.Model.dll": {}
         }
       },
-      "Meissa.Plugins.Contracts/1.5.0": {
+      "Meissa.Plugins.Contracts/1.6.5": {
         "dependencies": {
-          "Meissa.Core.Model": "1.5.0"
+          "Meissa.Core.Model": "1.6.5"
         },
         "runtime": {
           "Meissa.Plugins.Contracts.dll": {}
@@ -143,7 +143,7 @@
     }
   },
   "libraries": {
-    "Meissa.Plugins.NUnit/1.5.0.0": {
+    "Meissa.Plugins.NUnit/1.6.5.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -267,12 +267,12 @@
       "path": "system.runtime/4.3.0",
       "hashPath": "system.runtime.4.3.0.nupkg.sha512"
     },
-    "Meissa.Core.Model/1.5.0": {
+    "Meissa.Core.Model/1.6.5": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "Meissa.Plugins.Contracts/1.5.0": {
+    "Meissa.Plugins.Contracts/1.6.5": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

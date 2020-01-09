@@ -35,8 +35,8 @@ namespace Meissa
         [Option('n', "nativeRunnerArguments", HelpText = "The native runner arguments that we use in addition to Meissa arguments. (e.g. MSTest /nologo argument).")]
         public string NativeArguments { get; set; }
 
-        [Option('u', "testServerUrl", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
-        public string TestServerUrl { get; set; }
+        [Option('u', "serverUrl", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
+        public string serverUrl { get; set; }
 
         [Option('t', "testRunTimeout", HelpText = "The time in minutes after which the test run will be stopped.")]
         public int TestRunTimeout { get; set; } = 300;

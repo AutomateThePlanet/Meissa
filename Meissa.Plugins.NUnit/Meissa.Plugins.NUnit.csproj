@@ -14,7 +14,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningsAsErrors/>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,42 +32,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Meissa.Plugins.Contracts\Meissa.Plugins.Contracts.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="nunit-native-runner\Mono.Cecil.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="nunit-native-runner\nunit-agent-x86.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="nunit-native-runner\nunit-agent-x86.exe.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="nunit-native-runner\nunit-agent.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="nunit-native-runner\nunit-agent.exe.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="nunit-native-runner\nunit.engine.api.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="nunit-native-runner\nunit.engine.api.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="nunit-native-runner\nunit.engine.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="nunit-native-runner\nunit.nuget.addins">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="nunit-native-runner\nunit3-console.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="nunit-native-runner\nunit3-console.exe.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
     <ItemGroup>

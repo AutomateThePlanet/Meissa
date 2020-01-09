@@ -76,8 +76,14 @@ namespace Meissa.Core.Services
             }
 
             _pluginService.ExecuteAllTestRunnerPluginsPreTestRunLogic();
-
+            _testCasesProvider = _pluginService.GetNativeTestsRunnerTestCasesPluginService(testRunSettings.TestTechnology);
             await _testRunsCleanerServiceClient.DeleteOldTestRunsDataAsync().ConfigureAwait(false);
+            var allTestCases = _testCasesProvider.ExtractAllTestCasesFromTestLibrary(testRunSettings.TestLibraryPath);
+            if (allTestCases.Count == 0)
+            {
+                _consoleProvider.WriteLine("No tests detected. Maybe you have used a wrong test technology switch?");
+                return false;
+            }
 
             var activeTestAgents = await _testAgentService.GetAllActiveTestAgentsByTagAsync(testRunSettings.AgentTag).ConfigureAwait(false);
             await _testAgentService.SetAllActiveAgentsToVerifyTheirStatusAsync(testRunSettings.AgentTag).ConfigureAwait(false);
@@ -91,11 +97,19 @@ namespace Meissa.Core.Services
                 _fileProvider.CreateZip(testRunSettings.GetOutputFilesLocation(), tempFilePath);
                 var zipData = _fileProvider.ReadAllBytes(tempFilePath);
 
-                var testRunId = await _testRunProvider.CreateNewTestRunAsync(_pathProvider.GetFileName(testRunSettings.TestLibraryPath), zipData, testRunSettings.RetriesCount, testRunSettings.Threshold, testRunSettings.RunInParallel, testRunSettings.MaxParallelProcessesCount, testRunSettings.NativeArguments, testRunSettings.TestTechnology, testRunSettings.TimeBasedBalance, testRunSettings.SameMachineByClass, testRunSettings.CustomArguments).ConfigureAwait(false);
-                _testCasesProvider = _pluginService.GetNativeTestsRunnerTestCasesPluginService(testRunSettings.TestTechnology);
-                var allTestCases = _testCasesProvider.ExtractAllTestCasesFromTestLibrary(testRunSettings.TestLibraryPath);
+                var testRunId = await _testRunProvider.CreateNewTestRunAsync(
+                    _pathProvider.GetFileName(testRunSettings.TestLibraryPath),
+                    zipData,
+                    testRunSettings.RetriesCount,
+                    testRunSettings.Threshold,
+                    testRunSettings.RunInParallel,
+                    testRunSettings.MaxParallelProcessesCount,
+                    testRunSettings.NativeArguments,
+                    testRunSettings.TestTechnology,
+                    testRunSettings.TimeBasedBalance,
+                    testRunSettings.SameMachineByClass,
+                    testRunSettings.CustomArguments).ConfigureAwait(false);
                 var filteredTestCases = _testCasesFilterService.FilterCases(allTestCases, testRunSettings.TestsFilter);
-
                 var distributedTestsLists = testRunSettings.TimeBasedBalance ?
                     _testsTimesBasedDistributeService.GenerateDistributionLists(availableTestAgents.Count, testRunSettings.SameMachineByClass, filteredTestCases) :
                     _testCountsBasedDistributeService.GenerateDistributionLists(availableTestAgents.Count, testRunSettings.SameMachineByClass, filteredTestCases);

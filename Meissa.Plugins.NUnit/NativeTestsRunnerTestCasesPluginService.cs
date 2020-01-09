@@ -24,9 +24,9 @@ namespace Meissa.Plugins.NUnit
     [Export(typeof(INativeTestsRunnerTestCasesPluginService))]
     public class NativeTestsRunnerTestCasesPluginService : INativeTestsRunnerTestCasesPluginService
     {
-        private const string NunitCategoryAttributeName = "NUnit.Framework.CategoryAttribute";
-        private const string NunitTestFixtureAttributeName = "NUnit.Framework.TestFixtureAttribute";
-        private const string NunitTestAttributeName = "NUnit.Framework.TestAttribute";
+        private const string NUnitCategoryAttributeName = "NUnit.Framework.CategoryAttribute";
+        private const string NUnitTestFixtureAttributeName = "NUnit.Framework.TestFixtureAttribute";
+        private const string NUnitTestAttributeName = "NUnit.Framework.TestAttribute";
 
         public string Name => "NUnit";
 
@@ -37,13 +37,13 @@ namespace Meissa.Plugins.NUnit
 
             foreach (var currentType in module.GetTypes())
             {
-                if (currentType.CustomAttributes.Any(x => x.AttributeType.FullName.ToString().Contains(NunitTestFixtureAttributeName)))
+                if (currentType.CustomAttributes.Any(x => x.AttributeType.FullName.ToString().Contains(NUnitTestFixtureAttributeName)))
                 {
                     foreach (var currentMethod in currentType.GetMethods())
                     {
-                        if (currentMethod.CustomAttributes.Any(x => x.AttributeType.FullName.ToString().Equals(NunitTestAttributeName)))
+                        if (currentMethod.CustomAttributes.Any(x => x.AttributeType.FullName.ToString().Equals(NUnitTestAttributeName)))
                         {
-                            // This is a Nunit test - add it to the current test class list of tests.
+                            // This is a NUnit test - add it to the current test class list of tests.
                             var currentTestCase = CreateTestCase(currentMethod);
                             testCases.Add(currentTestCase);
                         }
@@ -58,10 +58,10 @@ namespace Meissa.Plugins.NUnit
         {
             var testCase = new TestCase
             {
-                FullName = string.Concat(testMethod?.DeclaringType?.FullName, ".", testMethod.Name),
-                ClassName = testMethod.DeclaringType.FullName,
+                FullName = string.Concat(testMethod?.DeclaringType?.FullName, ".", testMethod?.Name),
+                ClassName = testMethod?.DeclaringType?.FullName,
             };
-            var testCaseCategoryAttributes = testMethod.CustomAttributes.Where(x => x.AttributeType.FullName.ToString().Contains(NunitCategoryAttributeName));
+            var testCaseCategoryAttributes = testMethod?.CustomAttributes.Where(x => x.AttributeType.FullName.ToString().Contains(NUnitCategoryAttributeName));
             testCase.Categories = GetCategoryNamesFromAttributes(testCaseCategoryAttributes);
 
             return testCase;

@@ -21,7 +21,7 @@ namespace Meissa
         [Option('p', "path", HelpText = "Specifies the dump file's location.")]
         public string DumpPath { get; set; }
 
-        [Option('u', "testServerUrl", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
-        public string TestServerUrl { get; set; }
+        [Option('u', "serverUrl", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
+        public string serverUrl { get; set; }
     }
 }

@@ -45,6 +45,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meissa.Server", "Meissa.Ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meissa.Server.Client", "Meissa.Server.Client\Meissa.Server.Client.csproj", "{DFE01800-2D51-46D8-A3CB-C4787CE54121}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateLoadTestProjects", "GenerateLoadTestProjects\GenerateLoadTestProjects.csproj", "{FAA38984-3035-45AD-97C8-AD0D3D658F01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,10 @@ Global
 		{DFE01800-2D51-46D8-A3CB-C4787CE54121}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFE01800-2D51-46D8-A3CB-C4787CE54121}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFE01800-2D51-46D8-A3CB-C4787CE54121}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAA38984-3035-45AD-97C8-AD0D3D658F01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAA38984-3035-45AD-97C8-AD0D3D658F01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAA38984-3035-45AD-97C8-AD0D3D658F01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAA38984-3035-45AD-97C8-AD0D3D658F01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

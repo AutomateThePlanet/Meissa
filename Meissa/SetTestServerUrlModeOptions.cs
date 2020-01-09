@@ -18,7 +18,7 @@ namespace Meissa
     [Verb("setServerUrl", HelpText = "Sets test execution server URL so that you are not prompt for the URL every time.")]
     public class SetTestServerUrlModeOptions
     {
-        [Option('u', "testServerUrl", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
-        public string TestServerUrl { get; set; }
+        [Option('u', "serverUrl", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
+        public string ServerUrl { get; set; }
     }
 }

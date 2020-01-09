@@ -148,8 +148,8 @@ namespace Meissa.Plugins.MSTest
 
             foreach (var currentTest in testRun.Results)
             {
-                var currentTestFullName = msTestTestCases.FirstOrDefault(x => x.Id.Equals(currentTest.testId));
-                if (passedTestCases.Any(x => x.FullName.Equals(currentTestFullName)))
+                var currentTestFullName = msTestTestCases.FirstOrDefault(x => x.Id.ToString().Equals(currentTest.testId));
+                if (passedTestCases.Any(x => x.FullName.Equals(currentTestFullName?.FullName)))
                 {
                     currentTest.outcome = "Passed";
                 }
@@ -158,17 +158,10 @@ namespace Meissa.Plugins.MSTest
 
         public void UpdateResultsSummary(object testRunObj)
         {
-            TestRun testRun = (TestRun)testRunObj;
+            var testRun = (TestRun)testRunObj;
             testRun.ResultSummary.Counters.failed = (byte)testRun.Results.Count(x => x.outcome.Equals("Failed"));
             testRun.ResultSummary.Counters.passed = (byte)testRun.Results.Count(x => x.outcome.Equals("Passed"));
-            if (testRun.ResultSummary.Counters.passed != testRun.Results.Length)
-            {
-                testRun.ResultSummary.outcome = "Failed";
-            }
-            else
-            {
-                testRun.ResultSummary.outcome = "Passed";
-            }
+            testRun.ResultSummary.outcome = testRun.ResultSummary.Counters.passed != testRun.Results.Length ? "Failed" : "Passed";
         }
 
         public List<TestCaseRun> UpdateTestCasesHistory(object testRunContent, string libraryName)
@@ -247,7 +240,7 @@ namespace Meissa.Plugins.MSTest
 
         public List<TestCase> GetAllNotPassedTests(string testResultsFileContent)
         {
-            TestRun testRun = Deserialize<TestRun>(testResultsFileContent);
+            var testRun = Deserialize<TestRun>(testResultsFileContent);
             var notPassedUnitTestResults = testRun.Results.Where(x => !x.outcome.Equals("Passed")).ToList();
             var notPassedTestCases = ConvertUnitTestsResultsToTestCases(notPassedUnitTestResults, testRun);
             return notPassedTestCases;

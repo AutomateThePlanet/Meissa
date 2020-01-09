@@ -21,7 +21,7 @@ namespace Meissa
         [Option('t', "agentTag", Required = true, HelpText = "The status of the test agents with this tag will be displayed.")]
         public string AgentTag { get; set; }
 
-        [Option('u', "testServerUrl", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
-        public string TestServerUrl { get; set; }
+        [Option('u', "serverUrl", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
+        public string ServerUrl { get; set; }
     }
 }

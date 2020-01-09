@@ -89,10 +89,10 @@ namespace Meissa
                         (RunnerModeOptions opts) => ExecuteTestRun(opts),
                         (InitializeServerModeOptions opts) => InitializeServer(),
                         (TestAgentModeOptions opts) => ExecuteTestAgentRun(opts),
-                        (DumpModeOptions opts) => CreateDumpByFilePath(opts.DumpPath, opts.TestServerUrl),
-                        (StatusModeOptions opts) => PrintAgentsStatus(opts.AgentTag, opts.TestServerUrl),
-                        (DeleteModeOptions opts) => DeleteAllDumps(opts.TestServerUrl),
-                        (SetTestServerUrlModeOptions opts) => SetTestExecutionServerUrl(opts.TestServerUrl),
+                        (DumpModeOptions opts) => CreateDumpByFilePath(opts.DumpPath, opts.serverUrl),
+                        (StatusModeOptions opts) => PrintAgentsStatus(opts.AgentTag, opts.ServerUrl),
+                        (DeleteModeOptions opts) => DeleteAllDumps(opts.ServerUrl),
+                        (SetTestServerUrlModeOptions opts) => SetTestExecutionServerUrl(opts.ServerUrl),
                         errs => -1);
             }
             catch (Exception ex)
@@ -126,7 +126,7 @@ namespace Meissa
         {
             try
             {
-                var serverUri = options.TestServerUrl != null ? new Uri(options.TestServerUrl) : LoadSavedTestExecutionServerUrl();
+                var serverUri = options.ServerUrl != null ? new Uri(options.ServerUrl) : LoadSavedTestExecutionServerUrl();
                 if (serverUri == null)
                 {
                     Console.WriteLine("You need to specify a test server URL.");
@@ -138,7 +138,7 @@ namespace Meissa
                 var taskProvider = _container.Resolve<ITaskProvider>();
                 var testAgentRunProvider = _container.Resolve<ITestAgentRunProvider>();
                 var testAgentsService = _container.Resolve<ITestAgentsService>();
-                testAgentStateSwitcher.SetTestAgentAsActiveAsync(options.TestAgentTag).Wait();
+                testAgentStateSwitcher.SetTestAgentAsActiveAsync(options.AgentTag).Wait();
 
                 var cancellationTokenSource = new CancellationTokenSource();
                 if (options.Restarted)
@@ -153,23 +153,23 @@ namespace Meissa
                             cancellationTokenSource,
                             () =>
                             {
-                                testAgentRunProvider.RunTestsForCurrentAgentAsync(options.TestAgentTag, options.TestAgentRunTimeout).Wait();
+                                testAgentRunProvider.RunTestsForCurrentAgentAsync(options.AgentTag, options.TestAgentRunTimeout).Wait();
                             },
-                            1000);
+                            2000);
 
                     var verifyStatusTask = taskProvider.StartNewLongRunningRepeating(
                             cancellationTokenSource,
-                            () => testAgentsService.VerifyActiveStatusAsync(options.TestAgentTag).Wait(),
-                            1000);
+                            () => testAgentsService.VerifyActiveStatusAsync(options.AgentTag).Wait(),
+                            2000);
 
                     Task.WaitAll(testsRunTask, verifyStatusTask);
 
                     cancellationTokenSource.Cancel();
-                    testAgentStateSwitcher.SetTestAgentAsInactiveAsync(options.TestAgentTag).Wait();
+                    testAgentStateSwitcher.SetTestAgentAsInactiveAsync(options.AgentTag).Wait();
                 }
                 catch (Exception ex) when (ex.InnerException?.InnerException != null && ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
                 {
-                    Console.WriteLine($"A connection with the server {options.TestServerUrl} could not be established.");
+                    Console.WriteLine($"A connection with the server {options.ServerUrl} could not be established.");
                     return -1;
                 }
                 catch (Exception e)
@@ -177,7 +177,7 @@ namespace Meissa
                     Console.WriteLine(e);
                     _logger.LogError(UnexpectedProblemOccurredMessage, e);
                     cancellationTokenSource.Cancel();
-                    testAgentStateSwitcher.SetTestAgentAsInactiveAsync(options.TestAgentTag).Wait();
+                    testAgentStateSwitcher.SetTestAgentAsInactiveAsync(options.AgentTag).Wait();
                     return -1;
                 }
             }
@@ -192,7 +192,7 @@ namespace Meissa
 
         private static int ExecuteTestRun(RunnerModeOptions runnerModeOptions)
         {
-            var serverUri = runnerModeOptions.TestServerUrl != null ? new Uri(runnerModeOptions.TestServerUrl) : LoadSavedTestExecutionServerUrl();
+            var serverUri = runnerModeOptions.serverUrl != null ? new Uri(runnerModeOptions.serverUrl) : LoadSavedTestExecutionServerUrl();
             if (serverUri == null)
             {
                 Console.WriteLine("You need to specify a test server URL.");
@@ -237,7 +237,7 @@ namespace Meissa
             }
             catch (Exception ex) when (ex.InnerException?.InnerException != null && ex.InnerException.InnerException.Message.Contains("A connection with the server could not be established"))
             {
-                Console.WriteLine($"A connection with the server {runnerModeOptions.TestServerUrl} could not be established.");
+                Console.WriteLine($"A connection with the server {runnerModeOptions.serverUrl} could not be established.");
                 Environment.Exit(-1);
             }
             catch (Exception e)
