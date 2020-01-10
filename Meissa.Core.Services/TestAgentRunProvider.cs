@@ -150,7 +150,7 @@ namespace Meissa.Core.Services
                             {
                                 UpdateTestAgentLastAvailable(newTestAgentRun.TestAgentRunId);
                             },
-                            2000);
+                            15000);
 
                     var executeTestAgentRunTask = _taskProvider.StartNewLongRunning(
                            (c) =>
@@ -177,7 +177,7 @@ namespace Meissa.Core.Services
 
                                CheckTestRunnerStatus(newTestAgentRun.TestAgentRunId, cancellationTokenSource);
                            },
-                           2000);
+                           15000);
 
                     checkTestRunnerLastAvailableTask.Wait();
                     cancellationTokenSourceLastAvailable.Cancel();
@@ -213,7 +213,7 @@ namespace Meissa.Core.Services
                                             cts.Cancel();
                                         }
                                     },
-                                    2000);
+                                    5000);
                             waitForTestRunToCompleteTask.Wait();
                         }
                     }
@@ -243,7 +243,7 @@ namespace Meissa.Core.Services
                         {
                             UpdateTestRunnerLastAvailable(testRunId).Wait();
                         },
-                        2000);
+                        15000);
                 await _testRunRepository.GetAsync(testRunId).ConfigureAwait(false);
                 do
                 {
@@ -337,11 +337,6 @@ namespace Meissa.Core.Services
             foreach (var currentTestAgentRun in inProgressTestAgentRuns)
             {
                 await AbortTestAgentRunAsync(currentTestAgentRun).ConfigureAwait(false);
-
-                // TODO: Test if this code is needed, I think it is safe to be removed since the restart logic is not longer present.
-                ////var testAgent = await _testAgentRepository.GetAsync(currentTestAgentRun.TestAgentId);
-                ////testAgent.Status = TestAgentStatus.ToBeRestarted;
-                ////await _testAgentRepository.UpdateAsync(testAgent.TestAgentId, testAgent);
             }
         }
 
@@ -483,6 +478,8 @@ namespace Meissa.Core.Services
             var testRunOutput = await _testRunOutputServiceClient.GetTestRunOutputByTestRunIdAsync(testRun.TestRunId).ConfigureAwait(false);
             if (testRunOutput == null)
             {
+                // DEBUG:
+                await _testRunLogService.CreateTestRunLogAsync("The test run output cannot be null.", testAgentRun.TestRunId).ConfigureAwait(false);
                 throw new ArgumentException("The test run output cannot be null.");
             }
 

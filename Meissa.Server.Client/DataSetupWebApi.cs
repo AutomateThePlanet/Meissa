@@ -55,8 +55,8 @@ namespace Meissa.Server.Client
                     RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
                     Content = httpContent,
                 },
-                5,
-                2000).ConfigureAwait(false);
+                1,
+                0).ConfigureAwait(false);
             if (response != null)
             {
                 var entity = await DeserializeResponse<TEntityDto>(response).ConfigureAwait(false);
@@ -81,8 +81,8 @@ namespace Meissa.Server.Client
                                                                         RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
                                                                         Content = httpContent,
                                                                     },
-                5,
-                2000).ConfigureAwait(false);
+                1,
+                0).ConfigureAwait(false);
         }
 
         public async Task DeleteAsync<TSearchCriteria>(TSearchCriteria id)
@@ -100,8 +100,8 @@ namespace Meissa.Server.Client
                                                                         RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
                                                                         Content = httpContent,
                                                                     },
-                5,
-                2000).ConfigureAwait(false);
+                1,
+                0).ConfigureAwait(false);
         }
 
         public async Task<TEntityDto> GetAsync<TSearchCriteria>(TSearchCriteria searchCriteria)
@@ -120,8 +120,8 @@ namespace Meissa.Server.Client
                 RequestUri = new Uri($"{BaseUrl}{ControllerUrl}/id"),
                 Content = httpContent,
             },
-            5,
-            2000).ConfigureAwait(false);
+            1,
+            0).ConfigureAwait(false);
             if (response != null)
             {
                 var entity = await DeserializeResponse<TEntityDto>(response).ConfigureAwait(false);
@@ -143,8 +143,8 @@ namespace Meissa.Server.Client
                 Method = HttpMethod.Get,
                 RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
             },
-            5,
-            2000).ConfigureAwait(false);
+            1,
+            0).ConfigureAwait(false);
             var entitiesList = await DeserializeResponse<List<TEntityDto>>(response).ConfigureAwait(false);
 
             if (entitiesList == null)

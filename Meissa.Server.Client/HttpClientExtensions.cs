@@ -44,10 +44,12 @@ namespace Meissa.Server.Client
                         throw;
                     }
 
+                    Console.WriteLine(e.ToString());
                     Thread.Sleep(sleepIntervalMilliseconds);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Console.WriteLine(e.ToString());
                     Thread.Sleep(sleepIntervalMilliseconds);
                 }
             }

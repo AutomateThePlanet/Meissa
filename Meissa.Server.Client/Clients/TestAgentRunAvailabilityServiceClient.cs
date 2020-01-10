@@ -44,8 +44,8 @@ namespace Meissa.Server.Client.Clients
                 RequestUri = new Uri($"{BaseUrl}{ControllerUrl}/testAgentRun"),
                 Content = httpContent,
             },
-            5,
-            2000).ConfigureAwait(false);
+            1,
+            0).ConfigureAwait(false);
             var entity = await DeserializeResponse<TestAgentRunAvailabilityDto>(response).ConfigureAwait(false);
 
             return entity;

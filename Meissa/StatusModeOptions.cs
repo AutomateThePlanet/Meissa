@@ -18,10 +18,10 @@ namespace Meissa
     [Verb("status", HelpText = "Displays the status of the test agents with a specific tag.")]
     public class StatusModeOptions
     {
-        [Option('t', "agentTag", Required = true, HelpText = "The status of the test agents with this tag will be displayed.")]
+        [Option('t', "tag", Required = true, HelpText = "The status of the test agents with this tag will be displayed.")]
         public string AgentTag { get; set; }
 
-        [Option('u', "serverUrl", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
+        [Option('u', "server", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
         public string ServerUrl { get; set; }
     }
 }

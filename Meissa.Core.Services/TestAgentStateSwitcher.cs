@@ -32,7 +32,8 @@ namespace Meissa.Core.Services
             var currentAgentTag = testAgentTag;
             if ((await _testAgentRepository.GetAllAsync().ConfigureAwait(false)).Any(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag))
             {
-                var testAgent = (await _testAgentRepository.GetAllAsync().ConfigureAwait(false)).SingleOrDefault(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag);
+                var testAgent = (await _testAgentRepository.GetAllAsync().ConfigureAwait
+                    (false)).SingleOrDefault(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag);
                 if (testAgent != null && testAgent.Status != TestAgentStatus.Active)
                 {
                     testAgent.Status = TestAgentStatus.Active;

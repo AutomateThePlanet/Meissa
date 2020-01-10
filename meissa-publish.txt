@@ -1,3 +1,9 @@
+
+%USERPROFILE%\.dotnet\tools
+
+dotnet tool uninstall --global meissaserver
+dotnet tool uninstall --global meissa
+
 dotnet tool install --global --add-source ./nupkg meissaserver
 dotnet tool install --global --add-source ./nupkg meissa
 
@@ -5,31 +11,23 @@ dotnet build --configuration=Release
 Get-ChildItem -File -Recurse | % {$_.LastWriteTime = (Get-Date)}
 dotnet pack --no-build --configuration=Release
 
+meissa agent --tag="APIAgent" --server="http://127.0.0.1:89"
 
-dotnet tool uninstall --global meissaserver
-dotnet tool uninstall --global meissa
-
-meissa testAgent --testAgentTag="APIAgent" --testServerUrl="http://127.0.0.1:5000"
-
-meissa runner --resultsFilePath="result.trx" --agentTag="APIAgent" --testTechnology="MSTestCore" --testLibraryPath="SmallMSTestTestProject.dll" --testServerUrl="http://127.0.0.1:5000" --outputFilesLocation="%CD%"
+meissa setServerUrl --server="http://127.0.0.1:89"
 
 
-dotnet new -i Meissa.Windows64
-dotnet new -i Meissa.OSX
+
+--tag="BELLA" --server="http:\\127.0.0.1:89"
+
+meissa agent --tag="BELLA" --server="http:\\127.0.0.1:89"
+
+meissa status --tag="BELLA" --serveр="http:\\127.0.0.1:89"
+
+meissa dump --server="http:\\127.0.0.1:89"
+
 
 
 dotnet tool update --global meissaserver
 
 TODO: copy plugins to MEISSA\Plugins
-TODO: test for specflow execution --> update models for NUnit and MSTest
 
-config -> custom folder to search for plugins?
-remove outputFiles location --> get current dll folder
-- be able to run directly from the folder no full poaths.
-
-
-MSTestCore --> rename to MSTest docs
-no more set remove from docs
-more than one agent on machine, different tags?
-
-global tool as service?

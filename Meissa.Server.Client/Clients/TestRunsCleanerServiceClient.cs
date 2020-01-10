@@ -40,8 +40,8 @@ namespace Meissa.Server.Client.Clients
                                                                         Method = HttpMethod.Delete,
                                                                         RequestUri = new Uri($"{_baseUrl}{ControllerUrl}"),
                                                                     },
-                5,
-                2000).ConfigureAwait(false);
+                1,
+                0).ConfigureAwait(false);
         }
 
         public async Task DeleteOldTestRunDataByTestRunIdAsync(Guid id)
@@ -60,8 +60,8 @@ namespace Meissa.Server.Client.Clients
                                                                         RequestUri = new Uri($"{_baseUrl}{ControllerUrl}/testRun"),
                                                                         Content = httpContent,
                                                                     },
-                5,
-                2000).ConfigureAwait(false);
+                1,
+                0).ConfigureAwait(false);
         }
     }
 }

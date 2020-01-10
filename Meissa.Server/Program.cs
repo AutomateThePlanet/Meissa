@@ -41,12 +41,10 @@ namespace Meissa.Server
                         {
                             serverOptions.Limits.MaxConcurrentConnections = null;
                             serverOptions.Limits.MaxConcurrentUpgradedConnections = null;
-                            //serverOptions.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(60);
+                            serverOptions.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(180);
                             serverOptions.Limits.MaxRequestBodySize = null;
-                            serverOptions.Limits.MinRequestBodyDataRate =
-                                new MinDataRate(bytesPerSecond: 100, gracePeriod: TimeSpan.FromSeconds(60));
-                            serverOptions.Limits.MinResponseDataRate =
-                                new MinDataRate(bytesPerSecond: 100, gracePeriod: TimeSpan.FromSeconds(60));
+                            serverOptions.Limits.MinRequestBodyDataRate = null;
+                            serverOptions.Limits.MinResponseDataRate = null;
                         })
                         .UseContentRoot(Directory.GetCurrentDirectory())
                         .UseIISIntegration()

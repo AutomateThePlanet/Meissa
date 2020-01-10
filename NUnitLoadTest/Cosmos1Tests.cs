@@ -8,7 +8,6 @@ using System.Reflection;
 namespace LoadTestsProject
 {
     [TestFixture]
-    [Parallelizable(ParallelScope.All)]
     public class Cosmos1Tests
     {
         [Test]

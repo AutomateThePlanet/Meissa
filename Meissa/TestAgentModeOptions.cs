@@ -15,16 +15,16 @@ using CommandLine;
 
 namespace Meissa
 {
-    [Verb("testAgent", HelpText = "Executes Meissa in --testAgent mode. When Meissa is started in this mode it will wait for test run commands from test runners connected to the same test execution server.")]
+    [Verb("agent", HelpText = "Executes Meissa in --testAgent mode. When Meissa is started in this mode it will wait for test run commands from test runners connected to the same test execution server.")]
     public class TestAgentModeOptions
     {
-        [Option('u', "serverUrl", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
+        [Option('u', "server", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
         public string ServerUrl { get; set; }
 
-        [Option('t', "agentTag", Required = true, HelpText = "The tag will be used to control the test agent remotely and to build a group of test agents. This way you will be able to run a specific set of tests to a group of your test agents.")]
+        [Option('t', "tag", Required = true, HelpText = "The tag will be used to control the test agent remotely and to build a group of test agents. This way you will be able to run a specific set of tests to a group of your test agents.")]
         public string AgentTag { get; set; }
 
-        [Option('r', "testAgentRunTimeout", HelpText = "The time in minutes after which the test agent run will be stopped.")]
+        [Option('r', "runTimeout", HelpText = "The time in minutes after which the test agent run will be stopped.")]
         public int TestAgentRunTimeout { get; set; } = 180;
 
         [Option("restarted", HelpText = "Used for internal purposes only.")]

@@ -155,12 +155,12 @@ namespace Meissa
                             {
                                 testAgentRunProvider.RunTestsForCurrentAgentAsync(options.AgentTag, options.TestAgentRunTimeout).Wait();
                             },
-                            2000);
+                            5000);
 
                     var verifyStatusTask = taskProvider.StartNewLongRunningRepeating(
                             cancellationTokenSource,
                             () => testAgentsService.VerifyActiveStatusAsync(options.AgentTag).Wait(),
-                            2000);
+                            15000);
 
                     Task.WaitAll(testsRunTask, verifyStatusTask);
 

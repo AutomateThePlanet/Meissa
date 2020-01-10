@@ -9,7 +9,7 @@
   "profiles": {
     "Meissa": {
       "commandName": "Project",
-      "commandLineArgs": "testAgent --agentTag=\"BELLA\" --serverUrl=\"http:\\\\192.168.100.1:89\""
+      "commandLineArgs": "agent --tag=\"BELLA\" --server=\"http:\\\\192.168.100.1:89\""
     }
   }
 }

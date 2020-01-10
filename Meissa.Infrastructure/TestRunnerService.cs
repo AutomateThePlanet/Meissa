@@ -229,16 +229,13 @@ namespace Meissa.Infrastructure
                                          if (!ranProcesses.Contains(process.GetHashCode()))
                                          {
                                              _processStarter.StartProcess(process, LogStandardOutput, LogErrorOutput);
-                                             Thread.Sleep(1000);
+                                             Thread.Sleep(500);
                                              ranProcesses.Add(process.GetHashCode());
                                              coresCount--;
                                          }
                                      }
                                  }
 
-                                 // Do not start all processes upfront
-                                 // if parallel here start all of them?
-                                 // run in task and pass cancellation token. If is canceled kill all processes. DO IT for NUNIT TOO
                                  foreach (var process in testRunProcesses)
                                  {
                                      if (outerCancellationTokenSource.Token.IsCancellationRequested)
@@ -299,7 +296,7 @@ namespace Meissa.Infrastructure
                                  }
                              }
                          },
-                         1000);
+                         500);
             checkCancellationRequestsTask.Wait();
 
             string result = null;
@@ -361,6 +358,7 @@ namespace Meissa.Infrastructure
         {
             if (!string.IsNullOrEmpty(message) && !message.Contains("Test:"))
             {
+                _consoleProvider.WriteLine(message);
                 var testRunLog = new TestRunLogDto
                 {
                     Message = message,
@@ -377,10 +375,28 @@ namespace Meissa.Infrastructure
                     _consoleProvider.WriteLine(e.Message);
                 }
             }
-
-            _consoleProvider.WriteLine(message);
         }
 
-        public void LogErrorOutput(string message) => _consoleProvider.WriteLine(message);
+        public void LogErrorOutput(string message)
+        {
+            if (!string.IsNullOrEmpty(message))
+            {
+                _consoleProvider.WriteLine(message);
+                var testRunLog = new TestRunLogDto
+                {
+                    Message = message,
+                    TestRunId = _currentTestRunId,
+                    Status = TestRunLogStatus.New,
+                };
+                try
+                {
+                    _testRunLogRepository.CreateAsync(testRunLog).Wait();
+                }
+                catch (Exception e)
+                {
+                    _consoleProvider.WriteLine(e.Message);
+                }
+            }
+        }
     }
 }

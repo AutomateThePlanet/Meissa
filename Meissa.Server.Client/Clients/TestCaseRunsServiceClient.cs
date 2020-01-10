@@ -51,8 +51,8 @@ namespace Meissa.Server.Client.Clients
                 RequestUri = new Uri($"{_baseUrl}{_controllerUrl}"),
                 Content = httpContent,
             },
-            5,
-            2000).ConfigureAwait(false);
+            1,
+            0).ConfigureAwait(false);
         }
 
         public async Task DeleteOlderTestCasesHistoryAsync()
@@ -67,8 +67,8 @@ namespace Meissa.Server.Client.Clients
                 Method = HttpMethod.Delete,
                 RequestUri = new Uri($"{_baseUrl}{_controllerUrl}"),
             },
-            5,
-            2000).ConfigureAwait(false);
+            1,
+            0).ConfigureAwait(false);
         }
     }
 }

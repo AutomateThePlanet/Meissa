@@ -61,6 +61,7 @@
     <Compile Include="Cosmos1Tests.cs" />
     <Compile Include="DriverFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomTestActionManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\AutomateThePlanet.licenseheader">

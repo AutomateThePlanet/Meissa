@@ -12,6 +12,7 @@
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,8 +42,8 @@ namespace Meissa.Server.Client.Clients
                         Method = HttpMethod.Delete,
                         RequestUri = new Uri($"{BaseUrl}{ControllerUrl}/outputFiles"),
                     },
-                5,
-                2000).ConfigureAwait(false);
+                1,
+                0).ConfigureAwait(false);
         }
 
         public async Task DeleteTestRunOutputByTestRunIdAsync(Guid id)
@@ -62,8 +63,8 @@ namespace Meissa.Server.Client.Clients
                         RequestUri = new Uri($"{BaseUrl}{ControllerUrl}/testRun"),
                         Content = httpContent,
                     },
-                5,
-                2000).ConfigureAwait(false);
+                1,
+                0).ConfigureAwait(false);
         }
 
         public async Task<TestRunOutputDto> GetTestRunOutputByTestRunIdAsync(Guid id)
@@ -82,8 +83,13 @@ namespace Meissa.Server.Client.Clients
                 RequestUri = new Uri($"{BaseUrl}{ControllerUrl}/testRun"),
                 Content = httpContent,
             },
-            5,
-            2000).ConfigureAwait(false);
+            1,
+            0).ConfigureAwait(false);
+            if (response == null)
+            {
+                throw new InvalidDataException("The response for getting run output was null.");
+            }
+
             var entity = await DeserializeResponse<TestRunOutputDto>(response).ConfigureAwait(false);
 
             return entity;

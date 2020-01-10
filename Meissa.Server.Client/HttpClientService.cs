@@ -23,9 +23,9 @@ namespace Meissa.Server.Client
         {
             Client = new HttpClient
             {
-                Timeout = TimeSpan.FromSeconds(60),
+                Timeout = TimeSpan.FromSeconds(180),
             };
-            Client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue()
+            Client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
             {
                 NoCache = true,
             };
