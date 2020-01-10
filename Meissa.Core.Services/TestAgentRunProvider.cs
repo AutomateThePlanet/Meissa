@@ -541,7 +541,14 @@ namespace Meissa.Core.Services
         {
             if (_directoryProvider.DoesDirectoryExists(tempExecutionFolder))
             {
-                _directoryProvider.Delete(tempExecutionFolder, true);
+                try
+                {
+                    _directoryProvider.Delete(tempExecutionFolder, true);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    _consoleProvider.Write("The temp execution couldn't be deleted. You should start the agent with Administrative permissions.");
+                }
             }
         }
 
