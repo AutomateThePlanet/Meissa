@@ -15,8 +15,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
+using Meissa.Server.Models;
 using Meissa.Tests.Factories;
 using Moq;
 using NUnit.Framework;
@@ -48,7 +48,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentsServiceTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
             // Act
-            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag);
+            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
 
             // Assert
             Assert.That(actualTestAgents, Is.Empty);
@@ -62,7 +62,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentsServiceTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
             // Act
-            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag);
+            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
 
             // Assert
             Assert.That(actualTestAgents, Is.Empty);
@@ -90,7 +90,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentsServiceTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgent));
 
             // Act
-            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag);
+            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
 
             // Assert
             Assert.That(actualTestAgents, Has.Exactly(1).EqualTo(testAgent.First()));
@@ -105,7 +105,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentsServiceTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(currentTagTestAgent.Union(differentTagsTestAgents)));
 
             // Act
-            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag);
+            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
 
             // Assert
             Assert.That(actualTestAgents, Has.Exactly(1).EqualTo(currentTagTestAgent.First()));
@@ -119,7 +119,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentsServiceTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
             // Act
-            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag);
+            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
 
             // Assert
             Assert.That(actualTestAgents, Is.EquivalentTo(testAgents.ToList()));
@@ -134,7 +134,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentsServiceTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(currentTagTestAgents.Union(differentTagsTestAgents)));
 
             // Act
-            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag);
+            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
 
             // Assert
             Assert.That(actualTestAgents, Is.EquivalentTo(currentTagTestAgents.ToList()));

@@ -15,9 +15,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
 using Meissa.Core.Model;
+using Meissa.Server.Models;
 using Meissa.Tests.Factories;
 using Moq;
 using NUnit.Framework;
@@ -44,7 +44,7 @@ namespace Meissa.Core.Services.UnitTests.TestRunProviderTests
             _dateTimeProviderMock = new Mock<IDateTimeProvider>();
             _guidServiceMock = new Mock<IGuidService>();
             _testRunOutputRepositoryMock = new Mock<ITestRunOutputServiceClient>();
-            _testRunProvider = new TestRunProvider(_testRunRepositoryMock.Object, _testRunCustomArgumentRepositoryMock.Object, _testRunOutputRepositoryMock.Object, _dateTimeProviderMock.Object, _guidServiceMock.Object);
+            _testRunProvider = new TestRunProvider((IServiceClient<Server.Models.TestRunDto>)_testRunRepositoryMock.Object, _testRunCustomArgumentRepositoryMock.Object, _testRunOutputRepositoryMock.Object, _dateTimeProviderMock.Object, _guidServiceMock.Object);
             _fixture = new Fixture();
             _testRunId = _fixture.Create<Guid>();
         }
@@ -105,7 +105,7 @@ namespace Meissa.Core.Services.UnitTests.TestRunProviderTests
             _testRunRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testRun));
 
             // Act
-            await _testRunProvider.CompleteTestRunAsync(_testRunId, status);
+            await _testRunProvider.CompleteTestRunAsync(_testRunId, status).ConfigureAwait(false);
 
             // Assert
             _testRunRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<int>(), It.Is<TestRunDto>(i => i.TestRunId == _testRunId && i.Status == status)), Times.Once);
@@ -122,11 +122,15 @@ namespace Meissa.Core.Services.UnitTests.TestRunProviderTests
             _testRunRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(currentTestRun.Union(otherTestRuns)));
 
             // Act
-            await _testRunProvider.CompleteTestRunAsync(_testRunId, status);
+            await _testRunProvider.CompleteTestRunAsync(_testRunId, status).ConfigureAwait(false);
 
             // Assert
             _testRunRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<int>(), It.Is<TestRunDto>(i => i.TestRunId == _testRunId && i.Status == status)), Times.Once);
             _testRunRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<int>(), It.IsAny<TestRunDto>()), Times.Once);
+        }
+
+        private class TestRunDto
+        {
         }
     }
 }

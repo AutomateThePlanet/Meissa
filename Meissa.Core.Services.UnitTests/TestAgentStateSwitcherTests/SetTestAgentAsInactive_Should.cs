@@ -15,9 +15,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
-using Meissa.API.Models;
 using Meissa.Core.Contracts;
 using Meissa.Core.Model;
+using Meissa.Server.Models;
 using Meissa.Tests.Factories;
 using Moq;
 using NUnit.Framework;
@@ -48,7 +48,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentStateSwitcherTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
             // Act
-            await _testAgentStateSwitcher.SetTestAgentAsInactiveAsync(testAgents.First().AgentTag);
+            await _testAgentStateSwitcher.SetTestAgentAsInactiveAsync(testAgents.First().AgentTag).ConfigureAwait(false);
 
             // Assert
             _testAgentRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<int>(), It.Is<TestAgentDto>(i => i.TestAgentId == testAgentId && i.Status == TestAgentStatus.Inactive)), Times.Once);
@@ -66,7 +66,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentStateSwitcherTests
             _testAgentRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<int>(), It.Is<TestAgentDto>(i => i.TestAgentId == testAgentId)));
 
             // Act
-            await _testAgentStateSwitcher.SetTestAgentAsInactiveAsync(testAgents.First().AgentTag);
+            await _testAgentStateSwitcher.SetTestAgentAsInactiveAsync(testAgents.First().AgentTag).ConfigureAwait(false);
 
             // Assert
             _testAgentRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<int>(), It.Is<TestAgentDto>(i => i.TestAgentId == testAgentId && i.Status == TestAgentStatus.Inactive)), Times.Never);
@@ -81,7 +81,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentStateSwitcherTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
             // Act
-            await _testAgentStateSwitcher.SetTestAgentAsInactiveAsync(testAgents.First().AgentTag);
+            await _testAgentStateSwitcher.SetTestAgentAsInactiveAsync(testAgents.First().AgentTag).ConfigureAwait(false);
 
             // Assert
             _testAgentRepositoryMock.Verify(x => x.GetAllAsync(), Times.Once);
@@ -96,7 +96,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentStateSwitcherTests
             _testAgentRepositoryMock.SetupSequence(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents)).Returns(Task.FromResult(TestAgentFactory.CreateEmpty()));
 
             // Act
-            await _testAgentStateSwitcher.SetTestAgentAsInactiveAsync(testAgents.First().AgentTag);
+            await _testAgentStateSwitcher.SetTestAgentAsInactiveAsync(testAgents.First().AgentTag).ConfigureAwait(false);
 
             // Assert
             _testAgentRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<int>(), It.IsAny<TestAgentDto>()), Times.Never);
@@ -110,7 +110,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentStateSwitcherTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
             // Act
-            await _testAgentStateSwitcher.SetTestAgentAsInactiveAsync(FixtureFactory.Create().Create<string>());
+            await _testAgentStateSwitcher.SetTestAgentAsInactiveAsync(FixtureFactory.Create().Create<string>()).ConfigureAwait(false);
 
             // Assert
             _testAgentRepositoryMock.Verify(x => x.GetAllAsync(), Times.Once);
@@ -130,7 +130,7 @@ namespace Meissa.Core.Services.UnitTests.TestAgentStateSwitcherTests
             _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
             // Act
-            await _testAgentStateSwitcher.SetTestAgentAsInactiveAsync(testAgents.First().AgentTag);
+            await _testAgentStateSwitcher.SetTestAgentAsInactiveAsync(testAgents.First().AgentTag).ConfigureAwait(false);
 
             // Assert
             _testAgentRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<int>(), It.Is<TestAgentDto>(i => i.TestAgentId == testAgentId && i.Status == TestAgentStatus.Inactive)), Times.Once());

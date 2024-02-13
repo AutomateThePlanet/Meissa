@@ -13,7 +13,7 @@
 // <site>https://bellatrix.solutions/</site>
 using System.Linq;
 using AutoFixture;
-using Meissa.API.Models;
+using Meissa.Server.Models;
 
 namespace Meissa.Tests.Factories
 {

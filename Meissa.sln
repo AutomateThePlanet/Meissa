@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29609.76
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34302.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meissa", "Meissa\Meissa.csproj", "{23ED0FEF-E564-4E36-8297-114EB6B7EDDC}"
 EndProject
@@ -46,6 +46,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meissa.Server.Client", "Meissa.Server.Client\Meissa.Server.Client.csproj", "{DFE01800-2D51-46D8-A3CB-C4787CE54121}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateLoadTestProjects", "GenerateLoadTestProjects\GenerateLoadTestProjects.csproj", "{FAA38984-3035-45AD-97C8-AD0D3D658F01}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meissa.Core.Services.UnitTests", "Meissa.Core.Services.UnitTests\Meissa.Core.Services.UnitTests.csproj", "{2BA3A50D-AEFB-4D6F-B59E-45930E522EAE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meissa.Infrastructure.UnitTests", "Meissa.Infrastructure.UnitTests\Meissa.Infrastructure.UnitTests.csproj", "{F4A3E541-FCC9-4307-B7D9-87791B106E1C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meissa.Tests.Factories", "Meissa.Tests.Factories\Meissa.Tests.Factories.csproj", "{5D719C98-C59A-42B7-B646-09A1724D0A87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,6 +127,18 @@ Global
 		{FAA38984-3035-45AD-97C8-AD0D3D658F01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAA38984-3035-45AD-97C8-AD0D3D658F01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAA38984-3035-45AD-97C8-AD0D3D658F01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BA3A50D-AEFB-4D6F-B59E-45930E522EAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BA3A50D-AEFB-4D6F-B59E-45930E522EAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BA3A50D-AEFB-4D6F-B59E-45930E522EAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BA3A50D-AEFB-4D6F-B59E-45930E522EAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4A3E541-FCC9-4307-B7D9-87791B106E1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4A3E541-FCC9-4307-B7D9-87791B106E1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4A3E541-FCC9-4307-B7D9-87791B106E1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4A3E541-FCC9-4307-B7D9-87791B106E1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D719C98-C59A-42B7-B646-09A1724D0A87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D719C98-C59A-42B7-B646-09A1724D0A87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D719C98-C59A-42B7-B646-09A1724D0A87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D719C98-C59A-42B7-B646-09A1724D0A87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -141,6 +159,9 @@ Global
 		{192F14FA-71BC-4674-93A5-0A36F631EABF} = {A4938590-6875-45A5-972A-CDEA1CFF5E59}
 		{8F6889B8-6EFE-443E-B31B-98E379F0EA89} = {0230A84D-7F7E-4C9A-BF57-5DC311106345}
 		{DFE01800-2D51-46D8-A3CB-C4787CE54121} = {0230A84D-7F7E-4C9A-BF57-5DC311106345}
+		{2BA3A50D-AEFB-4D6F-B59E-45930E522EAE} = {A4938590-6875-45A5-972A-CDEA1CFF5E59}
+		{F4A3E541-FCC9-4307-B7D9-87791B106E1C} = {A4938590-6875-45A5-972A-CDEA1CFF5E59}
+		{5D719C98-C59A-42B7-B646-09A1724D0A87} = {A4938590-6875-45A5-972A-CDEA1CFF5E59}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {547D0377-2E1C-4635-9CCA-FDC4AD0A2300}

@@ -14,8 +14,8 @@
 using System;
 using System.Linq;
 using AutoFixture;
-using Meissa.API.Models;
 using Meissa.Core.Model;
+using Meissa.Server.Models;
 
 namespace Meissa.Tests.Factories
 {
