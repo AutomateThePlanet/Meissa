@@ -1,5 +1,5 @@
 ﻿// <copyright file="XmlSerializer.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -17,42 +17,41 @@ using System.Xml;
 using Meissa.Core.Contracts;
 using Xml = System.Xml.Serialization;
 
-namespace Meissa.Infrastructure
+namespace Meissa.Infrastructure;
+
+public class XmlSerializer : IXmlSerializer
 {
-    public class XmlSerializer : IXmlSerializer
+    public string Serialize<TEntity>(TEntity entityToBeSerialized)
     {
-        public string Serialize<TEntity>(TEntity entityToBeSerialized)
+        var settings = new XmlWriterSettings
         {
-            var settings = new XmlWriterSettings
-            {
-                Encoding = new UnicodeEncoding(false, false),
-                Indent = false,
-                OmitXmlDeclaration = false,
-            };
-            var xmlSerializer = new Xml.XmlSerializer(typeof(TEntity));
-            string result;
+            Encoding = new UnicodeEncoding(false, false),
+            Indent = false,
+            OmitXmlDeclaration = false,
+        };
+        var xmlSerializer = new Xml.XmlSerializer(typeof(TEntity));
+        string result;
 
-            using (var stringWriter = new StringWriter())
-            {
-                using var writer = XmlWriter.Create(stringWriter, settings);
-                xmlSerializer.Serialize(writer, entityToBeSerialized);
-                result = stringWriter.ToString();
-            }
-
-            result = result.Replace("xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"", string.Empty);
-            result = result.Replace("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"", string.Empty);
-
-            return result;
+        using (var stringWriter = new StringWriter())
+        {
+            using var writer = XmlWriter.Create(stringWriter, settings);
+            xmlSerializer.Serialize(writer, entityToBeSerialized);
+            result = stringWriter.ToString();
         }
 
-        public TEntity Deserialize<TEntity>(string content)
-        {
-            var serializer = new Xml.XmlSerializer(typeof(TEntity));
-            var reader = new StringReader(content);
-            var testRun = (TEntity)serializer.Deserialize(reader);
-            reader.Close();
+        result = result.Replace("xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"", string.Empty);
+        result = result.Replace("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"", string.Empty);
 
-            return testRun;
-        }
+        return result;
+    }
+
+    public TEntity Deserialize<TEntity>(string content)
+    {
+        var serializer = new Xml.XmlSerializer(typeof(TEntity));
+        var reader = new StringReader(content);
+        var testRun = (TEntity)serializer.Deserialize(reader);
+        reader.Close();
+
+        return testRun;
     }
 }

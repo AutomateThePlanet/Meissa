@@ -1,5 +1,5 @@
 ﻿// <copyright file="NativeTestsRunnerTestCasesPluginService.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -20,42 +20,41 @@ using System.Text.RegularExpressions;
 using Meissa.Core.Model;
 using Meissa.Plugins.Contracts;
 
-namespace Meissa.Plugins.Protractor
+namespace Meissa.Plugins.Protractor;
+
+[Export(typeof(INativeTestsRunnerTestCasesPluginService))]
+public class NativeTestsRunnerTestCasesPluginService : INativeTestsRunnerTestCasesPluginService
 {
-    [Export(typeof(INativeTestsRunnerTestCasesPluginService))]
-    public class NativeTestsRunnerTestCasesPluginService : INativeTestsRunnerTestCasesPluginService
+    private const string ItNamePattern = @"(?'before'.*)(?'itBegin'it\(')(?'itName'.*)(?'thirdPart'(',).*)";
+
+    public string Name => "Protractor";
+
+    // Should point the path where all spec files are placed.
+    public List<TestCase> ExtractAllTestCasesFromTestLibrary(string testLibraryPath)
     {
-        private const string ItNamePattern = @"(?'before'.*)(?'itBegin'it\(')(?'itName'.*)(?'thirdPart'(',).*)";
-
-        public string Name => "Protractor";
-
-        // Should point the path where all spec files are placed.
-        public List<TestCase> ExtractAllTestCasesFromTestLibrary(string testLibraryPath)
+        if (!File.Exists(testLibraryPath))
         {
-            if (!File.Exists(testLibraryPath))
-            {
-                throw new ArgumentException($"{testLibraryPath} doesn't exist.");
-            }
-
-            ////var ext = new List<string> { "js" };
-            var specFiles = Directory.GetFiles(new FileInfo(testLibraryPath).Directory.FullName, "*.js", SearchOption.TopDirectoryOnly);
-            var testCases = new List<TestCase>();
-
-            foreach (var specFile in specFiles)
-            {
-                string fileContent = File.ReadAllText(specFile);
-                List<string> itNames = Regex.Matches(fileContent, ItNamePattern, RegexOptions.IgnoreCase)
-                                            .Cast<Match>()
-                                            .Where(m => m.Groups.Count > 5)
-                                            .Select(match => match.Groups[4].Value)
-                                            .ToList();
-                foreach (var itName in itNames)
-                {
-                    testCases.Add(new TestCase(itName, specFile));
-                }
-            }
-
-            return testCases;
+            throw new ArgumentException($"{testLibraryPath} doesn't exist.");
         }
+
+        ////var ext = new List<string> { "js" };
+        var specFiles = Directory.GetFiles(new FileInfo(testLibraryPath).Directory.FullName, "*.js", SearchOption.TopDirectoryOnly);
+        var testCases = new List<TestCase>();
+
+        foreach (var specFile in specFiles)
+        {
+            string fileContent = File.ReadAllText(specFile);
+            List<string> itNames = Regex.Matches(fileContent, ItNamePattern, RegexOptions.IgnoreCase)
+                                        .Cast<Match>()
+                                        .Where(m => m.Groups.Count > 5)
+                                        .Select(match => match.Groups[4].Value)
+                                        .ToList();
+            foreach (var itName in itNames)
+            {
+                testCases.Add(new TestCase(itName, specFile));
+            }
+        }
+
+        return testCases;
     }
 }

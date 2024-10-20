@@ -1,5 +1,5 @@
 ﻿// <copyright file="TaskProvider.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -16,97 +16,96 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meissa.Core.Contracts;
 
-namespace Meissa.Infrastructure
+namespace Meissa.Infrastructure;
+
+public class TaskProvider : ITaskProvider
 {
-    public class TaskProvider : ITaskProvider
+    private readonly IDistributeLogger _logger;
+
+    public TaskProvider(IDistributeLogger logger) => _logger = logger;
+
+    public Task StartNewLongRunningRepeating(CancellationTokenSource cancellationTokenSource, Action action, int frequency)
     {
-        private readonly IDistributeLogger _logger;
-
-        public TaskProvider(IDistributeLogger logger) => _logger = logger;
-
-        public Task StartNewLongRunningRepeating(CancellationTokenSource cancellationTokenSource, Action action, int frequency)
-        {
-            var waitTask = Task.Factory.StartNew(
-                () =>
+        var waitTask = Task.Factory.StartNew(
+            () =>
+            {
+                try
                 {
-                    try
+                    do
                     {
-                        do
+                        if (action == null)
                         {
-                            if (action == null)
-                            {
-                                return;
-                            }
-
-                            if (cancellationTokenSource.Token.IsCancellationRequested)
-                            {
-                                return;
-                            }
-
-                            try
-                            {
-                                action.Invoke();
-                            }
-                            catch (OperationCanceledException)
-                            {
-                                return;
-                            }
-
-                            if (cancellationTokenSource.Token.IsCancellationRequested)
-                            {
-                                return;
-                            }
-
-                            Thread.Sleep(frequency);
+                            return;
                         }
-                        while (true);
-                    }
-                    catch (AggregateException aex)
-                    {
-                        foreach (var ex in aex.InnerExceptions)
+
+                        if (cancellationTokenSource.Token.IsCancellationRequested)
                         {
-                            Console.WriteLine(ex);
-                            _logger.LogErrorAsync(ex.GetType().Name, ex).Wait();
+                            return;
                         }
+
+                        try
+                        {
+                            action.Invoke();
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            return;
+                        }
+
+                        if (cancellationTokenSource.Token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        Thread.Sleep(frequency);
                     }
-                    catch (Exception ex)
+                    while (true);
+                }
+                catch (AggregateException aex)
+                {
+                    foreach (var ex in aex.InnerExceptions)
                     {
                         Console.WriteLine(ex);
-                        _logger.LogErrorAsync(ex.Message, ex).Wait();
+                        _logger.LogErrorAsync(ex.GetType().Name, ex).Wait();
                     }
-                },
-                cancellationTokenSource.Token,
-                TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
-            return waitTask;
-        }
-
-        public Task StartNewLongRunning(Action<CancellationTokenSource> action, CancellationTokenSource cancellationTokenSource)
-        {
-            var waitTask = Task.Factory.StartNew(
-                () =>
+                }
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        action.Invoke(cancellationTokenSource);
-                    }
-                    catch (AggregateException aex)
-                    {
-                        foreach (var ex in aex.InnerExceptions)
-                        {
-                            _logger.LogErrorAsync(ex.GetType().Name, ex).Wait();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogErrorAsync(ex.Message, ex).Wait();
-                    }
-                },
-                cancellationTokenSource.Token,
-                TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
+                    Console.WriteLine(ex);
+                    _logger.LogErrorAsync(ex.Message, ex).Wait();
+                }
+            },
+            cancellationTokenSource.Token,
+            TaskCreationOptions.LongRunning,
+            TaskScheduler.Default);
+        return waitTask;
+    }
 
-            return waitTask;
-        }
+    public Task StartNewLongRunning(Action<CancellationTokenSource> action, CancellationTokenSource cancellationTokenSource)
+    {
+        var waitTask = Task.Factory.StartNew(
+            () =>
+            {
+                try
+                {
+                    action.Invoke(cancellationTokenSource);
+                }
+                catch (AggregateException aex)
+                {
+                    foreach (var ex in aex.InnerExceptions)
+                    {
+                        _logger.LogErrorAsync(ex.GetType().Name, ex).Wait();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogErrorAsync(ex.Message, ex).Wait();
+                }
+            },
+            cancellationTokenSource.Token,
+            TaskCreationOptions.LongRunning,
+            TaskScheduler.Default);
+
+        return waitTask;
     }
 }

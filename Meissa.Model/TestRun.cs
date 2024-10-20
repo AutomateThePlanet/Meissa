@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestRun.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,39 +15,38 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Meissa.Model
+namespace Meissa.Model;
+
+public class TestRun
 {
-    public class TestRun
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid TestRunId { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public Guid TestRunId { get; set; }
 
-        public TestRunStatus Status { get; set; }
+    public TestRunStatus Status { get; set; }
 
-        [Required]
-        public string TestAssemblyName { get; set; }
+    [Required]
+    public string TestAssemblyName { get; set; }
 
-        [Required]
-        public DateTime DateStarted { get; set; }
+    [Required]
+    public DateTime DateStarted { get; set; }
 
-        public DateTime DateFinished { get; set; }
+    public DateTime DateFinished { get; set; }
 
-        public string NativeArguments { get; set; }
+    public string NativeArguments { get; set; }
 
-        public int RetriesCount { get; set; }
+    public int RetriesCount { get; set; }
 
-        public double Threshold { get; set; }
+    public double Threshold { get; set; }
 
-        public bool RunInParallel { get; set; }
+    public bool RunInParallel { get; set; }
 
-        public bool IsTimeBasedBalance { get; set; }
+    public bool IsTimeBasedBalance { get; set; }
 
-        public bool SameMachineByClass { get; set; }
+    public bool SameMachineByClass { get; set; }
 
-        public int MaxParallelProcessesCount { get; set; }
+    public int MaxParallelProcessesCount { get; set; }
 
-        [Required]
-        public string TestTechnology { get; set; }
-    }
+    [Required]
+    public string TestTechnology { get; set; }
 }

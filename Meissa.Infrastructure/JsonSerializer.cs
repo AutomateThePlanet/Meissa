@@ -1,5 +1,5 @@
 ﻿// <copyright file="JsonSerializer.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,12 +14,11 @@
 using Meissa.Core.Contracts;
 using Newtonsoft.Json;
 
-namespace Meissa.Infrastructure
-{
-    public class JsonSerializer : IJsonSerializer
-    {
-        public string Serialize<TEntity>(TEntity entityToBeSerialized) => JsonConvert.SerializeObject(entityToBeSerialized);
+namespace Meissa.Infrastructure;
 
-        public TEntity Deserialize<TEntity>(string content) => JsonConvert.DeserializeObject<TEntity>(content);
-    }
+public class JsonSerializer : IJsonSerializer
+{
+    public string Serialize<TEntity>(TEntity entityToBeSerialized) => JsonConvert.SerializeObject(entityToBeSerialized);
+
+    public TEntity Deserialize<TEntity>(string content) => JsonConvert.DeserializeObject<TEntity>(content);
 }

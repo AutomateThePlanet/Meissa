@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestRunCustomArgumentController.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -21,118 +21,117 @@ using Meissa.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Meissa.Server.Controllers
+namespace Meissa.Server.Controllers;
+
+[Route("api/testruncustomarguments")]
+public class TestRunCustomArgumentController : Controller
 {
-    [Route("api/testruncustomarguments")]
-    public class TestRunCustomArgumentController : Controller
+    private readonly ILogger<TestRunCustomArgument> _logger;
+    private readonly MeissaRepository _meissaRepository;
+
+    public TestRunCustomArgumentController(ILogger<TestRunCustomArgument> logger, MeissaRepository repository)
     {
-        private readonly ILogger<TestRunCustomArgument> _logger;
-        private readonly MeissaRepository _meissaRepository;
+        _logger = logger;
+        _meissaRepository = repository;
+    }
 
-        public TestRunCustomArgumentController(ILogger<TestRunCustomArgument> logger, MeissaRepository repository)
+    [HttpGet("id")]
+    public async Task<IActionResult> GetTestRunCustomArgument([FromBody] int id)
+    {
+        try
         {
-            _logger = logger;
-            _meissaRepository = repository;
-        }
-
-        [HttpGet("id")]
-        public async Task<IActionResult> GetTestRunCustomArgument([FromBody] int id)
-        {
-            try
-            {
-                var testRunCustomArgument = await _meissaRepository.GetByIdAsync<TestRunCustomArgument>(id).ConfigureAwait(false);
-                if (testRunCustomArgument == null)
-                {
-                    return NotFound();
-                }
-
-                var testRunCustomArgumentDto = Mapper.Map<TestRunCustomArgumentDto>(testRunCustomArgument);
-
-                return Ok(testRunCustomArgumentDto);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical($"Exception while getting test run with id {id}.", ex);
-                return StatusCode(500, "A problem happened while handling your request.");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetTestRunCustomArguments()
-        {
-            try
-            {
-                var testRunCustomArguments = await _meissaRepository.GetAllQueryWithRefreshAsync<TestRunCustomArgument>().ConfigureAwait(false);
-                var testRunCustomArgumentDtos = Mapper.Map<IEnumerable<TestRunCustomArgumentDto>>(testRunCustomArguments);
-
-                return Ok(testRunCustomArgumentDtos);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical("Exception while getting logs.", ex);
-                return StatusCode(500, "A problem happened while handling your request.");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateTestRunCustomArgumentAsync([FromBody] TestRunCustomArgumentDto testRunCustomArgumentDto)
-        {
-            if (testRunCustomArgumentDto == null)
-            {
-                return BadRequest();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var testRunCustomArgument = Mapper.Map<TestRunCustomArgument>(testRunCustomArgumentDto);
-
-            var result = await _meissaRepository.InsertWithSaveAsync(testRunCustomArgument).ConfigureAwait(false);
-
-            var resultDto = Mapper.Map<TestRunCustomArgumentDto>(result);
-
-            return Ok(resultDto);
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateTestRunCustomArgumentAsync([FromBody] KeyValuePair<int, TestRunCustomArgumentDto> updateObject)
-        {
-            if (updateObject.Value == null)
-            {
-                return BadRequest();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var entityToBeUpdated = await _meissaRepository.GetByIdAsync<TestRunCustomArgument>(updateObject.Key).ConfigureAwait(false);
-            if (entityToBeUpdated == null)
+            var testRunCustomArgument = await _meissaRepository.GetByIdAsync<TestRunCustomArgument>(id).ConfigureAwait(false);
+            if (testRunCustomArgument == null)
             {
                 return NotFound();
             }
 
-            entityToBeUpdated = Mapper.Map(updateObject.Value, entityToBeUpdated);
-            await _meissaRepository.UpdateWithSaveAsync(entityToBeUpdated).ConfigureAwait(false);
+            var testRunCustomArgumentDto = Mapper.Map<TestRunCustomArgumentDto>(testRunCustomArgument);
 
-            return NoContent();
+            return Ok(testRunCustomArgumentDto);
         }
-
-        [HttpDelete]
-        public async Task<IActionResult> DeleteTestRunCustomArgumentAsync([FromBody] int id)
+        catch (Exception ex)
         {
-            var entityToBeRemoved = await _meissaRepository.GetByIdAsync<TestRunCustomArgument>(id).ConfigureAwait(false);
-            if (entityToBeRemoved == null)
-            {
-                return NotFound();
-            }
-
-            await _meissaRepository.DeleteWithSaveAsync(entityToBeRemoved).ConfigureAwait(false);
-
-            return NoContent();
+            _logger.LogCritical($"Exception while getting test run with id {id}.", ex);
+            return StatusCode(500, "A problem happened while handling your request.");
         }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetTestRunCustomArguments()
+    {
+        try
+        {
+            var testRunCustomArguments = await _meissaRepository.GetAllQueryWithRefreshAsync<TestRunCustomArgument>().ConfigureAwait(false);
+            var testRunCustomArgumentDtos = Mapper.Map<IEnumerable<TestRunCustomArgumentDto>>(testRunCustomArguments);
+
+            return Ok(testRunCustomArgumentDtos);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical("Exception while getting logs.", ex);
+            return StatusCode(500, "A problem happened while handling your request.");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateTestRunCustomArgumentAsync([FromBody] TestRunCustomArgumentDto testRunCustomArgumentDto)
+    {
+        if (testRunCustomArgumentDto == null)
+        {
+            return BadRequest();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var testRunCustomArgument = Mapper.Map<TestRunCustomArgument>(testRunCustomArgumentDto);
+
+        var result = await _meissaRepository.InsertWithSaveAsync(testRunCustomArgument).ConfigureAwait(false);
+
+        var resultDto = Mapper.Map<TestRunCustomArgumentDto>(result);
+
+        return Ok(resultDto);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateTestRunCustomArgumentAsync([FromBody] KeyValuePair<int, TestRunCustomArgumentDto> updateObject)
+    {
+        if (updateObject.Value == null)
+        {
+            return BadRequest();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var entityToBeUpdated = await _meissaRepository.GetByIdAsync<TestRunCustomArgument>(updateObject.Key).ConfigureAwait(false);
+        if (entityToBeUpdated == null)
+        {
+            return NotFound();
+        }
+
+        entityToBeUpdated = Mapper.Map(updateObject.Value, entityToBeUpdated);
+        await _meissaRepository.UpdateWithSaveAsync(entityToBeUpdated).ConfigureAwait(false);
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteTestRunCustomArgumentAsync([FromBody] int id)
+    {
+        var entityToBeRemoved = await _meissaRepository.GetByIdAsync<TestRunCustomArgument>(id).ConfigureAwait(false);
+        if (entityToBeRemoved == null)
+        {
+            return NotFound();
+        }
+
+        await _meissaRepository.DeleteWithSaveAsync(entityToBeRemoved).ConfigureAwait(false);
+
+        return NoContent();
     }
 }

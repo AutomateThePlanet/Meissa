@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestCasesHistoryService.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -19,137 +19,136 @@ using Meissa.Core.Contracts;
 using Meissa.Core.Model;
 using Meissa.Model;
 
-namespace Meissa.Core.Services
+namespace Meissa.Core.Services;
+
+public class TestCasesHistoryService : ITestCasesHistoryService
 {
-    public class TestCasesHistoryService : ITestCasesHistoryService
+    private const string TestCasesHistoryFileName = "testCasesHistory.json";
+    private readonly IJsonSerializer _jsonSerializer;
+    private readonly IFileProvider _fileProvider;
+    private readonly IPathProvider _pathProvider;
+    private readonly IDirectoryProvider _directoryProvider;
+    private readonly IServiceClient<TestCaseHistoryDto> _testCaseHistoryRepository;
+    private readonly IServiceClient<TestCaseHistoryEntryDto> _testCaseHistoryEntryRepository;
+    private readonly ITestCaseRunsServiceClient _testCaseRunsServiceClient;
+
+    public TestCasesHistoryService(
+        IServiceClient<TestCaseHistoryDto> testCaseHistoryRepository,
+        IServiceClient<TestCaseHistoryEntryDto> testCaseHistoryEntryRepository,
+        ITestCaseRunsServiceClient testCaseRunsServiceClient,
+        IJsonSerializer jsonSerializer,
+        IFileProvider fileProvider,
+        IPathProvider pathProvider,
+        IDirectoryProvider directoryProvider)
     {
-        private const string TestCasesHistoryFileName = "testCasesHistory.json";
-        private readonly IJsonSerializer _jsonSerializer;
-        private readonly IFileProvider _fileProvider;
-        private readonly IPathProvider _pathProvider;
-        private readonly IDirectoryProvider _directoryProvider;
-        private readonly IServiceClient<TestCaseHistoryDto> _testCaseHistoryRepository;
-        private readonly IServiceClient<TestCaseHistoryEntryDto> _testCaseHistoryEntryRepository;
-        private readonly ITestCaseRunsServiceClient _testCaseRunsServiceClient;
+        _testCaseHistoryRepository = testCaseHistoryRepository;
+        _testCaseHistoryEntryRepository = testCaseHistoryEntryRepository;
+        _testCaseRunsServiceClient = testCaseRunsServiceClient;
+        _jsonSerializer = jsonSerializer;
+        _fileProvider = fileProvider;
+        _pathProvider = pathProvider;
+        _directoryProvider = directoryProvider;
+    }
 
-        public TestCasesHistoryService(
-            IServiceClient<TestCaseHistoryDto> testCaseHistoryRepository,
-            IServiceClient<TestCaseHistoryEntryDto> testCaseHistoryEntryRepository,
-            ITestCaseRunsServiceClient testCaseRunsServiceClient,
-            IJsonSerializer jsonSerializer,
-            IFileProvider fileProvider,
-            IPathProvider pathProvider,
-            IDirectoryProvider directoryProvider)
+    public async Task<List<ExecutedTestCase>> GetExecutedTestCasesAsync(List<TestCase> testCasesToBeExecuted)
+    {
+        var executedTestCases = new List<ExecutedTestCase>();
+        var testCasesHistory = await _testCaseHistoryRepository.GetAllAsync().ConfigureAwait(false);
+        foreach (var testCase in testCasesToBeExecuted)
         {
-            _testCaseHistoryRepository = testCaseHistoryRepository;
-            _testCaseHistoryEntryRepository = testCaseHistoryEntryRepository;
-            _testCaseRunsServiceClient = testCaseRunsServiceClient;
-            _jsonSerializer = jsonSerializer;
-            _fileProvider = fileProvider;
-            _pathProvider = pathProvider;
-            _directoryProvider = directoryProvider;
-        }
-
-        public async Task<List<ExecutedTestCase>> GetExecutedTestCasesAsync(List<TestCase> testCasesToBeExecuted)
-        {
-            var executedTestCases = new List<ExecutedTestCase>();
-            var testCasesHistory = await _testCaseHistoryRepository.GetAllAsync().ConfigureAwait(false);
-            foreach (var testCase in testCasesToBeExecuted)
+            if (testCasesHistory.Any(x => x.FullName.Equals(testCase.FullName)))
             {
-                if (testCasesHistory.Any(x => x.FullName.Equals(testCase.FullName)))
+                var currentHistoryTestCase = testCasesHistory.FirstOrDefault(x => x.FullName.Equals(testCase.FullName));
+                if (currentHistoryTestCase != null)
                 {
-                    var currentHistoryTestCase = testCasesHistory.FirstOrDefault(x => x.FullName.Equals(testCase.FullName));
-                    if (currentHistoryTestCase != null)
-                    {
-                        executedTestCases.Add(new ExecutedTestCase(testCase, currentHistoryTestCase.AvgDuration));
-                    }
-                }
-                else
-                {
-                    executedTestCases.Add(new ExecutedTestCase(testCase));
+                    executedTestCases.Add(new ExecutedTestCase(testCase, currentHistoryTestCase.AvgDuration));
                 }
             }
-
-            return executedTestCases;
+            else
+            {
+                executedTestCases.Add(new ExecutedTestCase(testCase));
+            }
         }
 
-        public async Task DeleteOlderTestCasesHistoryAsync() => await _testCaseRunsServiceClient.DeleteOlderTestCasesHistoryAsync().ConfigureAwait(false);
+        return executedTestCases;
+    }
 
-        public async Task UpdateTestCaseExecutionHistoryAsync(List<TestCaseRun> testCaseRuns)
+    public async Task DeleteOlderTestCasesHistoryAsync() => await _testCaseRunsServiceClient.DeleteOlderTestCasesHistoryAsync().ConfigureAwait(false);
+
+    public async Task UpdateTestCaseExecutionHistoryAsync(List<TestCaseRun> testCaseRuns)
+    {
+        await _testCaseRunsServiceClient.UpdateTestCaseExecutionHistoryAsync(testCaseRuns).ConfigureAwait(false);
+    }
+
+    public async Task PersistsHistoryToFileAsync()
+    {
+        var testCaseHistoryCollection = new List<TestCaseHistoryDto>();
+
+        var testCasesHistoryEntries = await _testCaseHistoryRepository.GetAllAsync().ConfigureAwait(false);
+        var historyEntries = await _testCaseHistoryEntryRepository.GetAllAsync().ConfigureAwait(false);
+        foreach (var testCaseHistory in testCasesHistoryEntries)
         {
-            await _testCaseRunsServiceClient.UpdateTestCaseExecutionHistoryAsync(testCaseRuns).ConfigureAwait(false);
+           var currentTestCaseHistoryEntries = historyEntries.Where(x => x.TestCaseHistoryId == testCaseHistory.TestCaseHistoryId);
+           foreach (var testCaseHistoryEntry in currentTestCaseHistoryEntries)
+           {
+               testCaseHistory.Durations.Add(testCaseHistoryEntry.AvgDuration);
+           }
         }
 
-        public async Task PersistsHistoryToFileAsync()
+        var fileContent = _jsonSerializer.Serialize(testCaseHistoryCollection);
+        await _fileProvider.WriteAllTextAsync(GetTestCasesHistoryFileNamePath(), fileContent).ConfigureAwait(false);
+    }
+
+    public async Task LoadTestCaseHistoryCollectionAsync()
+    {
+        var testCaseHistoryCollection = new List<TestCaseHistoryDto>();
+
+        var testCasesHistoryFilePath = GetTestCasesHistoryFileNamePath();
+        var testCaseHistoryFileContent = string.Empty;
+        if (_fileProvider.Exists(testCasesHistoryFilePath))
         {
-            var testCaseHistoryCollection = new List<TestCaseHistoryDto>();
-
-            var testCasesHistoryEntries = await _testCaseHistoryRepository.GetAllAsync().ConfigureAwait(false);
-            var historyEntries = await _testCaseHistoryEntryRepository.GetAllAsync().ConfigureAwait(false);
-            foreach (var testCaseHistory in testCasesHistoryEntries)
-            {
-               var currentTestCaseHistoryEntries = historyEntries.Where(x => x.TestCaseHistoryId == testCaseHistory.TestCaseHistoryId);
-               foreach (var testCaseHistoryEntry in currentTestCaseHistoryEntries)
-               {
-                   testCaseHistory.Durations.Add(testCaseHistoryEntry.AvgDuration);
-               }
-            }
-
-            var fileContent = _jsonSerializer.Serialize(testCaseHistoryCollection);
-            await _fileProvider.WriteAllTextAsync(GetTestCasesHistoryFileNamePath(), fileContent).ConfigureAwait(false);
+            testCaseHistoryFileContent = await _fileProvider.ReadAllTextAsync(testCasesHistoryFilePath).ConfigureAwait(false);
         }
 
-        public async Task LoadTestCaseHistoryCollectionAsync()
+        if (!string.IsNullOrEmpty(testCaseHistoryFileContent))
         {
-            var testCaseHistoryCollection = new List<TestCaseHistoryDto>();
+            testCaseHistoryCollection = _jsonSerializer.Deserialize<List<TestCaseHistoryDto>>(testCaseHistoryFileContent);
+        }
 
-            var testCasesHistoryFilePath = GetTestCasesHistoryFileNamePath();
-            var testCaseHistoryFileContent = string.Empty;
-            if (_fileProvider.Exists(testCasesHistoryFilePath))
+        if (testCaseHistoryCollection.Any())
+        {
+            foreach (var testCaseHistory in testCaseHistoryCollection)
             {
-                testCaseHistoryFileContent = await _fileProvider.ReadAllTextAsync(testCasesHistoryFilePath).ConfigureAwait(false);
-            }
+                var createdTestCaseHistory = await _testCaseHistoryRepository.CreateAsync(testCaseHistory).ConfigureAwait(false);
 
-            if (!string.IsNullOrEmpty(testCaseHistoryFileContent))
-            {
-                testCaseHistoryCollection = _jsonSerializer.Deserialize<List<TestCaseHistoryDto>>(testCaseHistoryFileContent);
-            }
-
-            if (testCaseHistoryCollection.Any())
-            {
-                foreach (var testCaseHistory in testCaseHistoryCollection)
+                if (testCaseHistory.Durations.Any())
                 {
-                    var createdTestCaseHistory = await _testCaseHistoryRepository.CreateAsync(testCaseHistory).ConfigureAwait(false);
-
-                    if (testCaseHistory.Durations.Any())
+                    foreach (var currentDuration in testCaseHistory.Durations)
                     {
-                        foreach (var currentDuration in testCaseHistory.Durations)
+                        var testCaseHistoryEntry = new TestCaseHistoryEntryDto
                         {
-                            var testCaseHistoryEntry = new TestCaseHistoryEntryDto
-                            {
-                                TestCaseHistoryId = createdTestCaseHistory.TestCaseHistoryId,
-                                AvgDuration = currentDuration,
-                            };
+                            TestCaseHistoryId = createdTestCaseHistory.TestCaseHistoryId,
+                            AvgDuration = currentDuration,
+                        };
 
-                            await _testCaseHistoryEntryRepository.CreateAsync(testCaseHistoryEntry).ConfigureAwait(false);
-                        }
+                        await _testCaseHistoryEntryRepository.CreateAsync(testCaseHistoryEntry).ConfigureAwait(false);
                     }
                 }
             }
         }
+    }
 
-        private string GetTestCasesHistoryFileNamePath()
-        {
-            var testCasesHistoryFileNamePath = _pathProvider.Combine(GetAppDataMeissaFolder(), TestCasesHistoryFileName);
-            return testCasesHistoryFileNamePath;
-        }
+    private string GetTestCasesHistoryFileNamePath()
+    {
+        var testCasesHistoryFileNamePath = _pathProvider.Combine(GetAppDataMeissaFolder(), TestCasesHistoryFileName);
+        return testCasesHistoryFileNamePath;
+    }
 
-        private string GetAppDataMeissaFolder()
-        {
-            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var meissaAppDataFolder = _pathProvider.Combine(appData, "MEISSA");
-            _directoryProvider.CreateDirectory(meissaAppDataFolder);
-            return meissaAppDataFolder;
-        }
+    private string GetAppDataMeissaFolder()
+    {
+        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        var meissaAppDataFolder = _pathProvider.Combine(appData, "MEISSA");
+        _directoryProvider.CreateDirectory(meissaAppDataFolder);
+        return meissaAppDataFolder;
     }
 }

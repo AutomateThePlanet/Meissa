@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestRunAvailabilityServiceClient.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -19,36 +19,35 @@ using Meissa.Core.Contracts;
 using Meissa.Model;
 using Newtonsoft.Json;
 
-namespace Meissa.Server.Client.Clients
+namespace Meissa.Server.Client.Clients;
+
+public class TestRunAvailabilityServiceClient : RestClientRepository<TestRunAvailabilityDto>, ITestRunAvailabilityServiceClient
 {
-    public class TestRunAvailabilityServiceClient : RestClientRepository<TestRunAvailabilityDto>, ITestRunAvailabilityServiceClient
+    public TestRunAvailabilityServiceClient(string ip, int port)
+        : base(ip, port, "testRunAvailabilities")
     {
-        public TestRunAvailabilityServiceClient(string ip, int port)
-            : base(ip, port, "testRunAvailabilities")
+    }
+
+    public async Task<TestRunAvailabilityDto> GetLastTestRunAvailabilityForTestRun(Guid id)
+    {
+        if (HttpClientService.Client.BaseAddress == null)
         {
+            HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
         }
 
-        public async Task<TestRunAvailabilityDto> GetLastTestRunAvailabilityForTestRun(Guid id)
+        string jsonToBeCreated = JsonConvert.SerializeObject(id);
+        var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
+
+        var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
         {
-            if (HttpClientService.Client.BaseAddress == null)
-            {
-                HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
-            }
+            Method = HttpMethod.Get,
+            RequestUri = new Uri($"{BaseUrl}{ControllerUrl}/testRun"),
+            Content = httpContent,
+        },
+        1,
+        0).ConfigureAwait(false);
+        var entity = await DeserializeResponse<TestRunAvailabilityDto>(response).ConfigureAwait(false);
 
-            string jsonToBeCreated = JsonConvert.SerializeObject(id);
-            var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
-
-            var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri($"{BaseUrl}{ControllerUrl}/testRun"),
-                Content = httpContent,
-            },
-            1,
-            0).ConfigureAwait(false);
-            var entity = await DeserializeResponse<TestRunAvailabilityDto>(response).ConfigureAwait(false);
-
-            return entity;
-        }
+        return entity;
     }
 }

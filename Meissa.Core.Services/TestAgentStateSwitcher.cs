@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestAgentStateSwitcher.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -18,70 +18,69 @@ using Meissa.Core.Contracts;
 using Meissa.Core.Model;
 using Meissa.Server.Models;
 
-namespace Meissa.Core.Services
+namespace Meissa.Core.Services;
+
+public class TestAgentStateSwitcher : ITestAgentStateSwitcher
 {
-    public class TestAgentStateSwitcher : ITestAgentStateSwitcher
+    private readonly IServiceClient<TestAgentDto> _testAgentRepository;
+
+    public TestAgentStateSwitcher(IServiceClient<TestAgentDto> testAgentRepository) => _testAgentRepository = testAgentRepository;
+
+    public async Task SetTestAgentAsActiveAsync(string testAgentTag)
     {
-        private readonly IServiceClient<TestAgentDto> _testAgentRepository;
-
-        public TestAgentStateSwitcher(IServiceClient<TestAgentDto> testAgentRepository) => _testAgentRepository = testAgentRepository;
-
-        public async Task SetTestAgentAsActiveAsync(string testAgentTag)
+        var currentMachineName = Environment.MachineName;
+        var currentAgentTag = testAgentTag;
+        if ((await _testAgentRepository.GetAllAsync().ConfigureAwait(false)).Any(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag))
         {
-            var currentMachineName = Environment.MachineName;
-            var currentAgentTag = testAgentTag;
-            if ((await _testAgentRepository.GetAllAsync().ConfigureAwait(false)).Any(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag))
+            var testAgent = (await _testAgentRepository.GetAllAsync().ConfigureAwait
+                (false)).SingleOrDefault(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag);
+            if (testAgent != null && testAgent.Status != TestAgentStatus.Active)
             {
-                var testAgent = (await _testAgentRepository.GetAllAsync().ConfigureAwait
-                    (false)).SingleOrDefault(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag);
-                if (testAgent != null && testAgent.Status != TestAgentStatus.Active)
-                {
-                    testAgent.Status = TestAgentStatus.Active;
-                    testAgent.AgentTag = currentAgentTag;
-                    await _testAgentRepository.UpdateAsync(testAgent.TestAgentId, testAgent).ConfigureAwait(false);
-                }
-            }
-            else
-            {
-                var testAgent = new TestAgentDto
-                {
-                    MachineName = currentMachineName,
-                    AgentTag = currentAgentTag,
-                    Status = TestAgentStatus.Active,
-                };
-
-                await _testAgentRepository.CreateAsync(testAgent).ConfigureAwait(false);
+                testAgent.Status = TestAgentStatus.Active;
+                testAgent.AgentTag = currentAgentTag;
+                await _testAgentRepository.UpdateAsync(testAgent.TestAgentId, testAgent).ConfigureAwait(false);
             }
         }
-
-        public async Task SetTestAgentAsInactiveAsync(string testAgentTag)
+        else
         {
-            var currentMachineName = Environment.MachineName;
-            var currentAgentTag = testAgentTag;
-            if ((await _testAgentRepository.GetAllAsync().ConfigureAwait(false)).Any(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag))
+            var testAgent = new TestAgentDto
             {
-                var testAgent = (await _testAgentRepository.GetAllAsync().ConfigureAwait(false)).SingleOrDefault(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag);
-                if (testAgent != null && testAgent.Status != TestAgentStatus.Inactive)
-                {
-                    testAgent.Status = TestAgentStatus.Inactive;
-                    await _testAgentRepository.UpdateAsync(testAgent.TestAgentId, testAgent).ConfigureAwait(false);
-                }
+                MachineName = currentMachineName,
+                AgentTag = currentAgentTag,
+                Status = TestAgentStatus.Active,
+            };
+
+            await _testAgentRepository.CreateAsync(testAgent).ConfigureAwait(false);
+        }
+    }
+
+    public async Task SetTestAgentAsInactiveAsync(string testAgentTag)
+    {
+        var currentMachineName = Environment.MachineName;
+        var currentAgentTag = testAgentTag;
+        if ((await _testAgentRepository.GetAllAsync().ConfigureAwait(false)).Any(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag))
+        {
+            var testAgent = (await _testAgentRepository.GetAllAsync().ConfigureAwait(false)).SingleOrDefault(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag);
+            if (testAgent != null && testAgent.Status != TestAgentStatus.Inactive)
+            {
+                testAgent.Status = TestAgentStatus.Inactive;
+                await _testAgentRepository.UpdateAsync(testAgent.TestAgentId, testAgent).ConfigureAwait(false);
             }
         }
+    }
 
-        public async Task SetTestAgentAsRunningTestsAsync(string testAgentTag)
+    public async Task SetTestAgentAsRunningTestsAsync(string testAgentTag)
+    {
+        var currentMachineName = Environment.MachineName;
+        var currentAgentTag = testAgentTag;
+        var testAgents = await _testAgentRepository.GetAllAsync().ConfigureAwait(false);
+        if (testAgents.Any(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag))
         {
-            var currentMachineName = Environment.MachineName;
-            var currentAgentTag = testAgentTag;
-            var testAgents = await _testAgentRepository.GetAllAsync().ConfigureAwait(false);
-            if (testAgents.Any(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag))
+            var testAgent = testAgents.SingleOrDefault(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag);
+            if (testAgent != null && testAgent.Status != TestAgentStatus.RunningTests)
             {
-                var testAgent = testAgents.SingleOrDefault(x => x.MachineName == currentMachineName && x.AgentTag == currentAgentTag);
-                if (testAgent != null && testAgent.Status != TestAgentStatus.RunningTests)
-                {
-                    testAgent.Status = TestAgentStatus.RunningTests;
-                    await _testAgentRepository.UpdateAsync(testAgent.TestAgentId, testAgent).ConfigureAwait(false);
-                }
+                testAgent.Status = TestAgentStatus.RunningTests;
+                await _testAgentRepository.UpdateAsync(testAgent.TestAgentId, testAgent).ConfigureAwait(false);
             }
         }
     }

@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestAgentRunAvailabilityController.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -21,142 +21,141 @@ using Meissa.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Meissa.Server.Controllers
+namespace Meissa.Server.Controllers;
+
+[Route("api/testAgentRunAvailabilities")]
+public class TestAgentRunAvailabilityController : Controller
 {
-    [Route("api/testAgentRunAvailabilities")]
-    public class TestAgentRunAvailabilityController : Controller
+    private readonly ILogger<TestAgentRunAvailabilityController> _logger;
+    private readonly MeissaRepository _meissaRepository;
+
+    public TestAgentRunAvailabilityController(ILogger<TestAgentRunAvailabilityController> logger, MeissaRepository repository)
     {
-        private readonly ILogger<TestAgentRunAvailabilityController> _logger;
-        private readonly MeissaRepository _meissaRepository;
+        _logger = logger;
+        _meissaRepository = repository;
+    }
 
-        public TestAgentRunAvailabilityController(ILogger<TestAgentRunAvailabilityController> logger, MeissaRepository repository)
+    [HttpGet("testAgentRun")]
+    public async Task<IActionResult> GetLastTestAgentRunAvailabilityForTestRun([FromBody] int id)
+    {
+        try
         {
-            _logger = logger;
-            _meissaRepository = repository;
-        }
-
-        [HttpGet("testAgentRun")]
-        public async Task<IActionResult> GetLastTestAgentRunAvailabilityForTestRun([FromBody] int id)
-        {
-            try
+            var testRunAvailability = (await _meissaRepository.GetAllQueryWithRefreshAsync<TestAgentRunAvailability>().ConfigureAwait(false)).LastOrDefault(x => x.TestAgentRunId.Equals(id));
+            if (testRunAvailability == null)
             {
-                var testRunAvailability = (await _meissaRepository.GetAllQueryWithRefreshAsync<TestAgentRunAvailability>().ConfigureAwait(false)).LastOrDefault(x => x.TestAgentRunId.Equals(id));
-                if (testRunAvailability == null)
-                {
-                    _logger.LogInformation($"Test Agent Run Availability with testAgentRunId {id} wasn't found.");
-                    return NotFound();
-                }
-
-                var testRunAvailabilityDto = Mapper.Map<TestAgentRunAvailabilityDto>(testRunAvailability);
-
-                return Ok(testRunAvailabilityDto);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical($"Exception while getting test run availability with id {id}.", ex);
-                return StatusCode(500, "A problem happened while handling your request.");
-            }
-        }
-
-        [HttpGet("id")]
-        public async Task<IActionResult> GetTestAgentRunAvailability([FromBody] int id)
-        {
-            try
-            {
-                var testRunAvailability = await _meissaRepository.GetByIdAsync<TestAgentRunAvailability>(id).ConfigureAwait(false);
-                if (testRunAvailability == null)
-                {
-                    _logger.LogInformation($"Test Agent Run Availability with id {id} wasn't found.");
-                    return NotFound();
-                }
-
-                var testRunAvailabilityDto = Mapper.Map<TestAgentRunAvailabilityDto>(testRunAvailability);
-
-                return Ok(testRunAvailabilityDto);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical($"Exception while getting test run availability with id {id}.", ex);
-                return StatusCode(500, "A problem happened while handling your request.");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetTestRunAvailabilities()
-        {
-            try
-            {
-                var testAvailabilities = await _meissaRepository.GetAllQueryWithRefreshAsync<TestAgentRunAvailability>().ConfigureAwait(false);
-                var testRunAvailabilityDtos = Mapper.Map<IEnumerable<TestAgentRunAvailabilityDto>>(testAvailabilities);
-
-                return Ok(testRunAvailabilityDtos);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical("Exception while getting test run availabilities.", ex);
-                return StatusCode(500, "A problem happened while handling your request.");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateTestAgentRunAvailabilityAsync([FromBody] TestAgentRunAvailabilityDto testRunAvailabilityDto)
-        {
-            if (testRunAvailabilityDto == null)
-            {
-                return BadRequest();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var testRunAvailability = Mapper.Map<TestAgentRunAvailability>(testRunAvailabilityDto);
-
-            var result = await _meissaRepository.InsertWithSaveAsync(testRunAvailability).ConfigureAwait(false);
-
-            var resultDto = Mapper.Map<TestAgentRunAvailabilityDto>(result);
-
-            return Ok(resultDto);
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateTestAgentRunAvailabilityAsync([FromBody] KeyValuePair<int, TestAgentRunAvailabilityDto> updateObject)
-        {
-            if (updateObject.Value == null)
-            {
-                return BadRequest();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var entityToBeUpdated = await _meissaRepository.GetByIdAsync<TestAgentRunAvailability>(updateObject.Key).ConfigureAwait(false);
-            if (entityToBeUpdated == null)
-            {
+                _logger.LogInformation($"Test Agent Run Availability with testAgentRunId {id} wasn't found.");
                 return NotFound();
             }
 
-            entityToBeUpdated = Mapper.Map(updateObject.Value, entityToBeUpdated);
-            await _meissaRepository.UpdateWithSaveAsync(entityToBeUpdated).ConfigureAwait(false);
+            var testRunAvailabilityDto = Mapper.Map<TestAgentRunAvailabilityDto>(testRunAvailability);
 
-            return NoContent();
+            return Ok(testRunAvailabilityDto);
         }
-
-        [HttpDelete]
-        public async Task<IActionResult> DeleteTestAgentRunAvailabilityAsync([FromBody] int id)
+        catch (Exception ex)
         {
-            var entityToBeRemoved = await _meissaRepository.GetByIdAsync<TestAgentRunAvailability>(id).ConfigureAwait(false);
-            if (entityToBeRemoved == null)
+            _logger.LogCritical($"Exception while getting test run availability with id {id}.", ex);
+            return StatusCode(500, "A problem happened while handling your request.");
+        }
+    }
+
+    [HttpGet("id")]
+    public async Task<IActionResult> GetTestAgentRunAvailability([FromBody] int id)
+    {
+        try
+        {
+            var testRunAvailability = await _meissaRepository.GetByIdAsync<TestAgentRunAvailability>(id).ConfigureAwait(false);
+            if (testRunAvailability == null)
             {
+                _logger.LogInformation($"Test Agent Run Availability with id {id} wasn't found.");
                 return NotFound();
             }
 
-            await _meissaRepository.DeleteWithSaveAsync(entityToBeRemoved).ConfigureAwait(false);
+            var testRunAvailabilityDto = Mapper.Map<TestAgentRunAvailabilityDto>(testRunAvailability);
 
-            return NoContent();
+            return Ok(testRunAvailabilityDto);
         }
+        catch (Exception ex)
+        {
+            _logger.LogCritical($"Exception while getting test run availability with id {id}.", ex);
+            return StatusCode(500, "A problem happened while handling your request.");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetTestRunAvailabilities()
+    {
+        try
+        {
+            var testAvailabilities = await _meissaRepository.GetAllQueryWithRefreshAsync<TestAgentRunAvailability>().ConfigureAwait(false);
+            var testRunAvailabilityDtos = Mapper.Map<IEnumerable<TestAgentRunAvailabilityDto>>(testAvailabilities);
+
+            return Ok(testRunAvailabilityDtos);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical("Exception while getting test run availabilities.", ex);
+            return StatusCode(500, "A problem happened while handling your request.");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateTestAgentRunAvailabilityAsync([FromBody] TestAgentRunAvailabilityDto testRunAvailabilityDto)
+    {
+        if (testRunAvailabilityDto == null)
+        {
+            return BadRequest();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var testRunAvailability = Mapper.Map<TestAgentRunAvailability>(testRunAvailabilityDto);
+
+        var result = await _meissaRepository.InsertWithSaveAsync(testRunAvailability).ConfigureAwait(false);
+
+        var resultDto = Mapper.Map<TestAgentRunAvailabilityDto>(result);
+
+        return Ok(resultDto);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateTestAgentRunAvailabilityAsync([FromBody] KeyValuePair<int, TestAgentRunAvailabilityDto> updateObject)
+    {
+        if (updateObject.Value == null)
+        {
+            return BadRequest();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var entityToBeUpdated = await _meissaRepository.GetByIdAsync<TestAgentRunAvailability>(updateObject.Key).ConfigureAwait(false);
+        if (entityToBeUpdated == null)
+        {
+            return NotFound();
+        }
+
+        entityToBeUpdated = Mapper.Map(updateObject.Value, entityToBeUpdated);
+        await _meissaRepository.UpdateWithSaveAsync(entityToBeUpdated).ConfigureAwait(false);
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteTestAgentRunAvailabilityAsync([FromBody] int id)
+    {
+        var entityToBeRemoved = await _meissaRepository.GetByIdAsync<TestAgentRunAvailability>(id).ConfigureAwait(false);
+        if (entityToBeRemoved == null)
+        {
+            return NotFound();
+        }
+
+        await _meissaRepository.DeleteWithSaveAsync(entityToBeRemoved).ConfigureAwait(false);
+
+        return NoContent();
     }
 }

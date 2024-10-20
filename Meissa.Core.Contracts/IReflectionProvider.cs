@@ -1,5 +1,5 @@
 ﻿// <copyright file="IReflectionProvider.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,28 +15,27 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Meissa.Core.Contracts
+namespace Meissa.Core.Contracts;
+
+public interface IReflectionProvider
 {
-    public interface IReflectionProvider
-    {
-        Assembly GetAssemblyFromFile(string fullFilePath);
+    Assembly GetAssemblyFromFile(string fullFilePath);
 
-        Type[] GetTypes(Assembly assembly);
+    Type[] GetTypes(Assembly assembly);
 
-        MethodInfo[] GetMethods(Type type);
+    MethodInfo[] GetMethods(Type type);
 
-        IEnumerable<Attribute> GetCustomAttributes(Type type);
+    IEnumerable<Attribute> GetCustomAttributes(Type type);
 
-        IEnumerable<Attribute> GetCustomAttributes(MethodInfo method);
+    IEnumerable<Attribute> GetCustomAttributes(MethodInfo method);
 
-        IEnumerable<CustomAttributeData> GetCustomAttributesData(Type type);
+    IEnumerable<CustomAttributeData> GetCustomAttributesData(Type type);
 
-        string GetTypeFullName(Type type);
+    string GetTypeFullName(Type type);
 
-        string GetMethodReflectedTypeFullName(MethodInfo method);
+    string GetMethodReflectedTypeFullName(MethodInfo method);
 
-        string GetMethodName(MethodInfo method);
+    string GetMethodName(MethodInfo method);
 
-        string GetRunningAssemblyPath();
-    }
+    string GetRunningAssemblyPath();
 }

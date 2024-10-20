@@ -1,5 +1,5 @@
 ﻿// <copyright file="NativeTestsRunnerTestCasesPluginService.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -20,76 +20,75 @@ using Meissa.Plugins.Contracts;
 using Mono.Cecil;
 using Mono.Cecil.Rocks;
 
-namespace Meissa.Plugins.MSTest
+namespace Meissa.Plugins.MSTest;
+
+[Export(typeof(INativeTestsRunnerTestCasesPluginService))]
+public class NativeTestsRunnerTestCasesPluginService : INativeTestsRunnerTestCasesPluginService
 {
-    [Export(typeof(INativeTestsRunnerTestCasesPluginService))]
-    public class NativeTestsRunnerTestCasesPluginService : INativeTestsRunnerTestCasesPluginService
+    private const string MsTestCategoryAttributeName = "Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute";
+    private const string MsTestClassAttributeName = "Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute";
+    private const string MsTestTestAttributeName = "Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute";
+    private const string MsCodedUITestClassAttributeName = "Microsoft.VisualStudio.TestTools.UITesting.CodedUITestAttribute"; // search codded UI tests
+
+    public string Name => "MSTest";
+
+    public List<TestCase> ExtractAllTestCasesFromTestLibrary(string testLibraryPath)
     {
-        private const string MsTestCategoryAttributeName = "Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute";
-        private const string MsTestClassAttributeName = "Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute";
-        private const string MsTestTestAttributeName = "Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute";
-        private const string MsCodedUITestClassAttributeName = "Microsoft.VisualStudio.TestTools.UITesting.CodedUITestAttribute"; // search codded UI tests
+        var module = ModuleDefinition.ReadModule(testLibraryPath);
+        var testCases = new List<TestCase>();
 
-        public string Name => "MSTest";
-
-        public List<TestCase> ExtractAllTestCasesFromTestLibrary(string testLibraryPath)
+        foreach (var currentType in module.GetTypes())
         {
-            var module = ModuleDefinition.ReadModule(testLibraryPath);
-            var testCases = new List<TestCase>();
-
-            foreach (var currentType in module.GetTypes())
+            if (currentType.CustomAttributes.Any(x => x.AttributeType.FullName.ToString().Contains(MsTestClassAttributeName) || x.AttributeType.FullName.ToString().Contains(MsCodedUITestClassAttributeName)))
             {
-                if (currentType.CustomAttributes.Any(x => x.AttributeType.FullName.ToString().Contains(MsTestClassAttributeName) || x.AttributeType.FullName.ToString().Contains(MsCodedUITestClassAttributeName)))
-                {
-                    // This is a Nunit test class - create new test suite for it.
-                    ////var currentTestSuite = CreateTestSuite(currentType);
+                // This is a Nunit test class - create new test suite for it.
+                ////var currentTestSuite = CreateTestSuite(currentType);
 
-                    foreach (var currentMethod in currentType.GetMethods())
+                foreach (var currentMethod in currentType.GetMethods())
+                {
+                    if (currentMethod.CustomAttributes.Any(x => x.AttributeType.FullName.ToString().Equals(MsTestTestAttributeName)))
                     {
-                        if (currentMethod.CustomAttributes.Any(x => x.AttributeType.FullName.ToString().Equals(MsTestTestAttributeName)))
-                        {
-                            // This is a Nunit test - add it to the current test class list of tests.
-                            var currentTestCase = CreateTestCase(currentMethod);
-                            testCases.Add(currentTestCase);
-                        }
+                        // This is a Nunit test - add it to the current test class list of tests.
+                        var currentTestCase = CreateTestCase(currentMethod);
+                        testCases.Add(currentTestCase);
                     }
                 }
             }
-
-            return testCases;
         }
 
-        private TestCase CreateTestCase(MethodDefinition testMethod)
-        {
-            var testCase = new TestCase
-            {
-                FullName = string.Concat(testMethod?.DeclaringType?.FullName, ".", testMethod.Name),
-                ClassName = testMethod.DeclaringType.FullName,
-            };
-            var testCaseCategoryAttributes = testMethod.CustomAttributes.Where(x => x.AttributeType.FullName.ToString().Contains(MsTestCategoryAttributeName));
-            testCase.Categories = GetCategoryNamesFromAttributes(testCaseCategoryAttributes);
+        return testCases;
+    }
 
-            return testCase;
-        }
-
-        private List<string> GetCategoryNamesFromAttributes(IEnumerable<CustomAttribute> attributes)
+    private TestCase CreateTestCase(MethodDefinition testMethod)
+    {
+        var testCase = new TestCase
         {
-            var categoryNames = new List<string>();
-            if (attributes != null)
+            FullName = string.Concat(testMethod?.DeclaringType?.FullName, ".", testMethod.Name),
+            ClassName = testMethod.DeclaringType.FullName,
+        };
+        var testCaseCategoryAttributes = testMethod.CustomAttributes.Where(x => x.AttributeType.FullName.ToString().Contains(MsTestCategoryAttributeName));
+        testCase.Categories = GetCategoryNamesFromAttributes(testCaseCategoryAttributes);
+
+        return testCase;
+    }
+
+    private List<string> GetCategoryNamesFromAttributes(IEnumerable<CustomAttribute> attributes)
+    {
+        var categoryNames = new List<string>();
+        if (attributes != null)
+        {
+            foreach (var categoryAttribute in attributes)
             {
-                foreach (var categoryAttribute in attributes)
+                if (categoryAttribute.HasConstructorArguments)
                 {
-                    if (categoryAttribute.HasConstructorArguments)
+                    foreach (var constructorArg in categoryAttribute.ConstructorArguments)
                     {
-                        foreach (var constructorArg in categoryAttribute.ConstructorArguments)
-                        {
-                            categoryNames.Add(constructorArg.Value.ToString());
-                        }
+                        categoryNames.Add(constructorArg.Value.ToString());
                     }
                 }
             }
-
-            return categoryNames;
         }
+
+        return categoryNames;
     }
 }

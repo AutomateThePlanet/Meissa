@@ -1,5 +1,5 @@
 ﻿// <copyright file="InitializeServerModeOptions.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,10 +13,9 @@
 // <site>https://bellatrix.solutions/</site>
 using CommandLine;
 
-namespace Meissa
+namespace Meissa;
+
+[Verb("initServer", HelpText = "Set up Meissa test execution server that will be used by all test runners and agents for communication and storing data.")]
+public class InitializeServerModeOptions
 {
-    [Verb("initServer", HelpText = "Set up Meissa test execution server that will be used by all test runners and agents for communication and storing data.")]
-    public class InitializeServerModeOptions
-    {
-    }
 }

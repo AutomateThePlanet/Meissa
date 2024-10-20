@@ -1,5 +1,5 @@
 ﻿// <copyright file="GetMethodName_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,23 +14,22 @@
 using System.Linq;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.ReflectionProviderTests
+namespace Meissa.Infrastructure.UnitTests.ReflectionProviderTests;
+
+[TestFixture]
+public class GetMethodName_Should
 {
-    [TestFixture]
-    public class GetMethodName_Should
+    [Test]
+    public void CorrectMethodNameReturned()
     {
-        [Test]
-        public void CorrectMethodNameReturned()
-        {
-            // Arrange
-            var expectedMethodName = GetType().GetMethods().FirstOrDefault()?.Name;
+        // Arrange
+        var expectedMethodName = GetType().GetMethods().FirstOrDefault()?.Name;
 
-            // Act
-            var reflectionProvider = new ReflectionProvider();
-            var actualMethodName = reflectionProvider.GetMethodName(GetType().GetMethods().FirstOrDefault());
+        // Act
+        var reflectionProvider = new ReflectionProvider();
+        var actualMethodName = reflectionProvider.GetMethodName(GetType().GetMethods().FirstOrDefault());
 
-            // Assert
-            Assert.That(actualMethodName, Is.EqualTo(expectedMethodName));
-        }
+        // Assert
+        Assert.That(actualMethodName, Is.EqualTo(expectedMethodName));
     }
 }

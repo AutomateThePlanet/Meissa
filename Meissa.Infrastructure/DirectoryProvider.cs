@@ -1,5 +1,5 @@
 ﻿// <copyright file="DirectoryProvider.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,20 +14,19 @@
 using System.IO;
 using Meissa.Core.Contracts;
 
-namespace Meissa.Infrastructure
+namespace Meissa.Infrastructure;
+
+public class DirectoryProvider : IDirectoryProvider
 {
-    public class DirectoryProvider : IDirectoryProvider
-    {
-        public bool DoesDirectoryExists(string path) => Directory.Exists(path);
+    public bool DoesDirectoryExists(string path) => Directory.Exists(path);
 
-        public string[] GetFiles(string path) => Directory.GetFiles(path);
+    public string[] GetFiles(string path) => Directory.GetFiles(path);
 
-        public string[] GetFiles(string path, string searchPattern) => Directory.GetFiles(path, searchPattern);
+    public string[] GetFiles(string path, string searchPattern) => Directory.GetFiles(path, searchPattern);
 
-        public void CreateDirectory(string path) => Directory.CreateDirectory(path);
+    public void CreateDirectory(string path) => Directory.CreateDirectory(path);
 
-        public bool Exists(string path) => Directory.Exists(path);
+    public bool Exists(string path) => Directory.Exists(path);
 
-        public void Delete(string path, bool recursive) => Directory.Delete(path, recursive);
-    }
+    public void Delete(string path, bool recursive) => Directory.Delete(path, recursive);
 }

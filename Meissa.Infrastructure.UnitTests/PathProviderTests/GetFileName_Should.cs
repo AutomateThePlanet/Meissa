@@ -1,5 +1,5 @@
 ﻿// <copyright file="GetFileName_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,23 +15,22 @@ using System.IO;
 using AutoFixture;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.PathProviderTests
+namespace Meissa.Infrastructure.UnitTests.PathProviderTests;
+
+[TestFixture]
+public class GetFileName_Should
 {
-    [TestFixture]
-    public class GetFileName_Should
+    [Test]
+    public void ReturnNewUniqueFilePath()
     {
-        [Test]
-        public void ReturnNewUniqueFilePath()
-        {
-            // Arrange
-            var fixture = new Fixture();
+        // Arrange
+        var fixture = new Fixture();
 
-            // Act
-            var pathProvider = new PathProvider();
-            string actualFileName = pathProvider.GetFileName(fixture.Create<string>());
+        // Act
+        var pathProvider = new PathProvider();
+        string actualFileName = pathProvider.GetFileName(fixture.Create<string>());
 
-            // Assert
-            Assert.That(File.Exists(actualFileName), Is.False);
-        }
+        // Assert
+        Assert.That(File.Exists(actualFileName), Is.False);
     }
 }

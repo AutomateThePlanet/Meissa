@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestAgentFactory.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -17,140 +17,139 @@ using AutoFixture;
 using Meissa.Core.Model;
 using Meissa.Server.Models;
 
-namespace Meissa.Tests.Factories
+namespace Meissa.Tests.Factories;
+
+public static class TestAgentFactory
 {
-    public static class TestAgentFactory
+    public static IQueryable<TestAgentDto> CreateEmpty()
     {
-        public static IQueryable<TestAgentDto> CreateEmpty()
-        {
-            var fixture = new Fixture();
+        var fixture = new Fixture();
 
-            var result = fixture.CreateMany<TestAgentDto>(0).AsQueryable();
+        var result = fixture.CreateMany<TestAgentDto>(0).AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<TestAgentDto> CreateWithCurrentMachineName(TestAgentStatus status, int count)
-        {
-            var fixture = new Fixture();
-            string agentTag = fixture.Create<string>();
-            fixture.Register(() => status);
-            fixture.Customize<TestAgentDto>(ta => ta.With(x => x.MachineName, Environment.MachineName).With(x => x.AgentTag, agentTag));
+    public static IQueryable<TestAgentDto> CreateWithCurrentMachineName(TestAgentStatus status, int count)
+    {
+        var fixture = new Fixture();
+        string agentTag = fixture.Create<string>();
+        fixture.Register(() => status);
+        fixture.Customize<TestAgentDto>(ta => ta.With(x => x.MachineName, Environment.MachineName).With(x => x.AgentTag, agentTag));
 
-            var result = fixture.CreateMany<TestAgentDto>(count).AsQueryable();
+        var result = fixture.CreateMany<TestAgentDto>(count).AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<TestAgentDto> CreateWithoutCurrentMachineName(TestAgentStatus status)
-        {
-            var fixture = new Fixture();
+    public static IQueryable<TestAgentDto> CreateWithoutCurrentMachineName(TestAgentStatus status)
+    {
+        var fixture = new Fixture();
 
-            fixture.Register(() => status);
+        fixture.Register(() => status);
 
-            var result = fixture.CreateMany<TestAgentDto>().AsQueryable();
+        var result = fixture.CreateMany<TestAgentDto>().AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<TestAgentDto> CreateWithoutCurrentMachineName(TestAgentStatus status, int count, int testAgentId)
-        {
-            var fixture = new Fixture();
+    public static IQueryable<TestAgentDto> CreateWithoutCurrentMachineName(TestAgentStatus status, int count, int testAgentId)
+    {
+        var fixture = new Fixture();
 
-            fixture.Register(() => status);
-            fixture.Customize<TestAgentDto>(ta => ta.With(x => x.TestAgentId, testAgentId));
+        fixture.Register(() => status);
+        fixture.Customize<TestAgentDto>(ta => ta.With(x => x.TestAgentId, testAgentId));
 
-            var result = fixture.CreateMany<TestAgentDto>(count).AsQueryable();
+        var result = fixture.CreateMany<TestAgentDto>(count).AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<TestAgentDto> CreateWithoutCurrentMachineNameInActiveStatus(int count)
-        {
-            var fixture = new Fixture();
+    public static IQueryable<TestAgentDto> CreateWithoutCurrentMachineNameInActiveStatus(int count)
+    {
+        var fixture = new Fixture();
 
-            fixture.Register(() => TestAgentStatus.Active);
+        fixture.Register(() => TestAgentStatus.Active);
 
-            var result = fixture.CreateMany<TestAgentDto>(count).AsQueryable();
+        var result = fixture.CreateMany<TestAgentDto>(count).AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<TestAgentDto> CreateManyActiveOnlyOneWithCurrentMachineName(int currentMachineTestAgentId)
-        {
-            var fixture = new Fixture();
+    public static IQueryable<TestAgentDto> CreateManyActiveOnlyOneWithCurrentMachineName(int currentMachineTestAgentId)
+    {
+        var fixture = new Fixture();
 
-            fixture.Register(() => TestAgentStatus.Active);
-            var withoutCurrentMachineTestAgents = fixture.CreateMany<TestAgentDto>().AsQueryable();
-            fixture.Customize<TestAgentDto>(ta => ta.With(x => x.MachineName, Environment.MachineName).With(x => x.TestAgentId, currentMachineTestAgentId));
-            var currentMachineTestAgent = fixture.CreateMany<TestAgentDto>(1).AsQueryable();
+        fixture.Register(() => TestAgentStatus.Active);
+        var withoutCurrentMachineTestAgents = fixture.CreateMany<TestAgentDto>().AsQueryable();
+        fixture.Customize<TestAgentDto>(ta => ta.With(x => x.MachineName, Environment.MachineName).With(x => x.TestAgentId, currentMachineTestAgentId));
+        var currentMachineTestAgent = fixture.CreateMany<TestAgentDto>(1).AsQueryable();
 
-            return currentMachineTestAgent.Union(withoutCurrentMachineTestAgents);
-        }
+        return currentMachineTestAgent.Union(withoutCurrentMachineTestAgents);
+    }
 
-        public static IQueryable<TestAgentDto> CreateManyOnlyOneWithCurrentMachineName(TestAgentStatus status)
-        {
-            var fixture = new Fixture();
+    public static IQueryable<TestAgentDto> CreateManyOnlyOneWithCurrentMachineName(TestAgentStatus status)
+    {
+        var fixture = new Fixture();
 
-            fixture.Register(() => status);
-            var withoutCurrentMachineTestAgents = fixture.CreateMany<TestAgentDto>().AsQueryable();
-            fixture.Customize<TestAgentDto>(ta => ta.With(x => x.MachineName, Environment.MachineName));
-            var currentMachineTestAgent = fixture.CreateMany<TestAgentDto>(1).AsQueryable();
+        fixture.Register(() => status);
+        var withoutCurrentMachineTestAgents = fixture.CreateMany<TestAgentDto>().AsQueryable();
+        fixture.Customize<TestAgentDto>(ta => ta.With(x => x.MachineName, Environment.MachineName));
+        var currentMachineTestAgent = fixture.CreateMany<TestAgentDto>(1).AsQueryable();
 
-            return currentMachineTestAgent.Union(withoutCurrentMachineTestAgents);
-        }
+        return currentMachineTestAgent.Union(withoutCurrentMachineTestAgents);
+    }
 
-        public static IQueryable<TestAgentDto> CreateMany()
-        {
-            var fixture = new Fixture();
+    public static IQueryable<TestAgentDto> CreateMany()
+    {
+        var fixture = new Fixture();
 
-            var result = fixture.CreateMany<TestAgentDto>().AsQueryable();
+        var result = fixture.CreateMany<TestAgentDto>().AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<TestAgentDto> CreateMany(TestAgentStatus status)
-        {
-            var fixture = new Fixture();
+    public static IQueryable<TestAgentDto> CreateMany(TestAgentStatus status)
+    {
+        var fixture = new Fixture();
 
-            fixture.Register(() => status);
-            var result = fixture.CreateMany<TestAgentDto>().AsQueryable();
+        fixture.Register(() => status);
+        var result = fixture.CreateMany<TestAgentDto>().AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<TestAgentDto> CreateSingle(string agentTag)
-        {
-            var fixture = new Fixture();
+    public static IQueryable<TestAgentDto> CreateSingle(string agentTag)
+    {
+        var fixture = new Fixture();
 
-            fixture.Customize<TestAgentDto>(ta => ta.With(x => x.AgentTag, agentTag));
+        fixture.Customize<TestAgentDto>(ta => ta.With(x => x.AgentTag, agentTag));
 
-            var result = fixture.CreateMany<TestAgentDto>(1).AsQueryable();
+        var result = fixture.CreateMany<TestAgentDto>(1).AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<TestAgentDto> CreateMany(string agentTag)
-        {
-            var fixture = new Fixture();
+    public static IQueryable<TestAgentDto> CreateMany(string agentTag)
+    {
+        var fixture = new Fixture();
 
-            fixture.Customize<TestAgentDto>(ta => ta.With(x => x.AgentTag, agentTag));
+        fixture.Customize<TestAgentDto>(ta => ta.With(x => x.AgentTag, agentTag));
 
-            var result = fixture.CreateMany<TestAgentDto>().AsQueryable();
+        var result = fixture.CreateMany<TestAgentDto>().AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<TestAgentDto> CreateMany(string agentTag, TestAgentStatus status)
-        {
-            var fixture = new Fixture();
+    public static IQueryable<TestAgentDto> CreateMany(string agentTag, TestAgentStatus status)
+    {
+        var fixture = new Fixture();
 
-            fixture.Register(() => status);
-            fixture.Customize<TestAgentDto>(ta => ta.With(x => x.AgentTag, agentTag));
+        fixture.Register(() => status);
+        fixture.Customize<TestAgentDto>(ta => ta.With(x => x.AgentTag, agentTag));
 
-            var result = fixture.CreateMany<TestAgentDto>().AsQueryable();
+        var result = fixture.CreateMany<TestAgentDto>().AsQueryable();
 
-            return result;
-        }
+        return result;
     }
 }

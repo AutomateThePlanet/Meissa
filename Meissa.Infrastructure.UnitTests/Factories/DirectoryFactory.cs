@@ -1,5 +1,5 @@
 ﻿// <copyright file="DirectoryFactory.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,23 +14,22 @@
 using System;
 using System.IO;
 
-namespace Meissa.Infrastructure.UnitTests.Factories
+namespace Meissa.Infrastructure.UnitTests.Factories;
+
+public static class DirectoryFactory
 {
-    public static class DirectoryFactory
+    public static string CreateTestDirectory()
     {
-        public static string CreateTestDirectory()
-        {
-            var destinationFolder = GetUniqueTestDirectory();
-            Directory.CreateDirectory(destinationFolder);
+        var destinationFolder = GetUniqueTestDirectory();
+        Directory.CreateDirectory(destinationFolder);
 
-            return destinationFolder;
-        }
+        return destinationFolder;
+    }
 
-        public static string GetUniqueTestDirectory()
-        {
-            var destinationFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+    public static string GetUniqueTestDirectory()
+    {
+        var destinationFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 
-            return destinationFolder;
-        }
+        return destinationFolder;
     }
 }

@@ -1,5 +1,5 @@
 ﻿// <copyright file="ITestAgentsService.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,18 +15,17 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Meissa.Server.Models;
 
-namespace Meissa.Core.Contracts
+namespace Meissa.Core.Contracts;
+
+public interface ITestAgentsService
 {
-    public interface ITestAgentsService
-    {
-        Task<List<TestAgentDto>> GetAllActiveTestAgentsByTagAsync(string tag);
+    Task<List<TestAgentDto>> GetAllActiveTestAgentsByTagAsync(string tag);
 
-        Task VerifyActiveStatusAsync(string agentTag);
+    Task VerifyActiveStatusAsync(string agentTag);
 
-        Task SetAllActiveAgentsToVerifyTheirStatusAsync(string tag);
+    Task SetAllActiveAgentsToVerifyTheirStatusAsync(string tag);
 
-        void WaitAllActiveAgentsToVerifyTheirStatusAsync(List<TestAgentDto> activeTestAgents);
+    void WaitAllActiveAgentsToVerifyTheirStatusAsync(List<TestAgentDto> activeTestAgents);
 
-        Task<bool> IsTestAgentActive(string agentTag);
-    }
+    Task<bool> IsTestAgentActive(string agentTag);
 }

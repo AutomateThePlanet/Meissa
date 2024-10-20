@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestAgentRunAvailability.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,18 +15,17 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Meissa.Model
+namespace Meissa.Model;
+
+public class TestAgentRunAvailability
 {
-    public class TestAgentRunAvailability
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
 
-        [Required]
-        public DateTime LastAvailable { get; set; }
+    [Required]
+    public DateTime LastAvailable { get; set; }
 
-        [Required]
-        public int TestAgentRunId { get; set; }
-    }
+    [Required]
+    public int TestAgentRunId { get; set; }
 }

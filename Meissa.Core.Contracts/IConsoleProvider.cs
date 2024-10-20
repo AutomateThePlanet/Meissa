@@ -1,5 +1,5 @@
 ﻿// <copyright file="IConsoleProvider.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,22 +11,21 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
-namespace Meissa.Core.Contracts
+namespace Meissa.Core.Contracts;
+
+public interface IConsoleProvider
 {
-    public interface IConsoleProvider
-    {
-        void WriteLine(string format, params object[] arguments);
+    void WriteLine(string format, params object[] arguments);
 
-        void WriteLine(string message);
+    void WriteLine(string message);
 
-        void Write(string format, params object[] arguments);
+    void Write(string format, params object[] arguments);
 
-        void Write(string message);
+    void Write(string message);
 
-        void WriteLine();
+    void WriteLine();
 
-        void Clear();
+    void Clear();
 
-        string ReadLine();
-    }
+    string ReadLine();
 }

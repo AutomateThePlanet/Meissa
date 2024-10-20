@@ -1,5 +1,5 @@
 ﻿// <copyright file="GetCurrentTime_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,22 +14,21 @@
 using System;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.DateTimeProviderTests
+namespace Meissa.Infrastructure.UnitTests.DateTimeProviderTests;
+
+[TestFixture]
+public class GetCurrentTime_Should
 {
-    [TestFixture]
-    public class GetCurrentTime_Should
+    [Test]
+    public void CorrectCurrentTimeReturned()
     {
-        [Test]
-        public void CorrectCurrentTimeReturned()
-        {
-            // Arrange
-            var dateTimeProvider = new DateTimeProvider();
+        // Arrange
+        var dateTimeProvider = new DateTimeProvider();
 
-            // Act
-            var now = dateTimeProvider.GetCurrentTime();
+        // Act
+        var now = dateTimeProvider.GetCurrentTime();
 
-            // Assert
-            Assert.That(now, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromMilliseconds(5)));
-        }
+        // Assert
+        Assert.That(now, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromMilliseconds(5)));
     }
 }

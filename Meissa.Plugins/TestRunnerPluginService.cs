@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestRunnerPluginService.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,13 +15,12 @@ using System;
 using System.Composition;
 using Meissa.Plugins.Contracts;
 
-namespace Meissa.Plugins
-{
-    [Export(typeof(ITestRunnerPluginService))]
-    public class TestRunnerPluginService : ITestRunnerPluginService
-    {
-        public void ExecutePreTestRunLogic() => Console.WriteLine("FROM TestRunnerPluginService ExecutePreTestRunLogic $$$$$$$$$$$$$$$");
+namespace Meissa.Plugins;
 
-        public void ExecutePostTestRunLogic() => Console.WriteLine("FROM TestRunnerPluginService ExecutePostTestRunLogic $$$$$$$$$$$$$$$");
-    }
+[Export(typeof(ITestRunnerPluginService))]
+public class TestRunnerPluginService : ITestRunnerPluginService
+{
+    public void ExecutePreTestRunLogic() => Console.WriteLine("FROM TestRunnerPluginService ExecutePreTestRunLogic $$$$$$$$$$$$$$$");
+
+    public void ExecutePostTestRunLogic() => Console.WriteLine("FROM TestRunnerPluginService ExecutePostTestRunLogic $$$$$$$$$$$$$$$");
 }

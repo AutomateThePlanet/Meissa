@@ -1,5 +1,5 @@
 ﻿// <copyright file="IServiceClient.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,19 +14,18 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Meissa.Core.Contracts
+namespace Meissa.Core.Contracts;
+
+public interface IServiceClient<TEntityDto>
+    where TEntityDto : class
 {
-    public interface IServiceClient<TEntityDto>
-        where TEntityDto : class
-    {
-        Task<TEntityDto> GetAsync<TSearchCriteria>(TSearchCriteria searchCriteria);
+    Task<TEntityDto> GetAsync<TSearchCriteria>(TSearchCriteria searchCriteria);
 
-        Task<IQueryable<TEntityDto>> GetAllAsync();
+    Task<IQueryable<TEntityDto>> GetAllAsync();
 
-        Task DeleteAsync<TSearchCriteria>(TSearchCriteria id);
+    Task DeleteAsync<TSearchCriteria>(TSearchCriteria id);
 
-        Task<TEntityDto> CreateAsync(TEntityDto entityToBeCreated);
+    Task<TEntityDto> CreateAsync(TEntityDto entityToBeCreated);
 
-        Task UpdateAsync<TSearchCriteria>(TSearchCriteria id, TEntityDto entityToBeUpdatedDto);
-    }
+    Task UpdateAsync<TSearchCriteria>(TSearchCriteria id, TEntityDto entityToBeUpdatedDto);
 }

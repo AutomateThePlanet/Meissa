@@ -1,5 +1,5 @@
 ﻿// <copyright file="ITestAgentRunProvider.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -16,20 +16,19 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Meissa.Server.Models;
 
-namespace Meissa.Core.Contracts
+namespace Meissa.Core.Contracts;
+
+public interface ITestAgentRunProvider
 {
-    public interface ITestAgentRunProvider
-    {
-        Task<List<TestAgentRunDto>> CreateNewTestAgentRunsAsync(Guid testRunId, List<TestAgentDto> testAgents, List<string> testLists);
+    Task<List<TestAgentRunDto>> CreateNewTestAgentRunsAsync(Guid testRunId, List<TestAgentDto> testAgents, List<string> testLists);
 
-        Task WaitForTestAgentRunsToFinishAsync(List<TestAgentRunDto> testAgentRuns, double testRunTimeout, int frequency);
+    Task WaitForTestAgentRunsToFinishAsync(List<TestAgentRunDto> testAgentRuns, double testRunTimeout, int frequency);
 
-        Task RunTestsForCurrentAgentAsync(string testAgentTag, int testAgentRunTimeout);
+    Task RunTestsForCurrentAgentAsync(string testAgentTag, int testAgentRunTimeout);
 
-        Task AbortAllTestAgentRunsInProgressForCurrentTestAgentAsync(string agentTag);
+    Task AbortAllTestAgentRunsInProgressForCurrentTestAgentAsync(string agentTag);
 
-        Task AbortAllTestAgentRunsInTestRunAsync(Guid testRunId);
+    Task AbortAllTestAgentRunsInTestRunAsync(Guid testRunId);
 
-        Task<bool> AreThereAbortedTestAgentRunsAsync(Guid testRunId);
-    }
+    Task<bool> AreThereAbortedTestAgentRunsAsync(Guid testRunId);
 }

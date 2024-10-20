@@ -1,5 +1,5 @@
 ﻿// <copyright file="ConfigurationService.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -17,30 +17,29 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 
-namespace Meissa.Infrastructure
+namespace Meissa.Infrastructure;
+
+public sealed class ConfigurationService
 {
-    public sealed class ConfigurationService
+    private static ConfigurationService _instance;
+
+    static ConfigurationService() => Root = InitializeConfiguration();
+
+    public static ConfigurationService Instance => _instance ?? (_instance = new ConfigurationService());
+
+    public static IConfigurationRoot Root { get; }
+
+    private static IConfigurationRoot InitializeConfiguration()
     {
-        private static ConfigurationService _instance;
-
-        static ConfigurationService() => Root = InitializeConfiguration();
-
-        public static ConfigurationService Instance => _instance ?? (_instance = new ConfigurationService());
-
-        public static IConfigurationRoot Root { get; }
-
-        private static IConfigurationRoot InitializeConfiguration()
+        var filesInExecutionDir = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException());
+        var settingsFile =
+            filesInExecutionDir.FirstOrDefault(x => x.Contains("meissaSettings") && x.EndsWith(".json", StringComparison.Ordinal));
+        var builder = new ConfigurationBuilder();
+        if (settingsFile != null)
         {
-            var filesInExecutionDir = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException());
-            var settingsFile =
-                filesInExecutionDir.FirstOrDefault(x => x.Contains("meissaSettings") && x.EndsWith(".json", StringComparison.Ordinal));
-            var builder = new ConfigurationBuilder();
-            if (settingsFile != null)
-            {
-                builder.AddJsonFile(settingsFile, optional: true, reloadOnChange: true);
-            }
-
-            return builder.Build();
+            builder.AddJsonFile(settingsFile, optional: true, reloadOnChange: true);
         }
+
+        return builder.Build();
     }
 }

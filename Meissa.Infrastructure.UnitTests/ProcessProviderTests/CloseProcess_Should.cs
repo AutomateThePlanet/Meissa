@@ -1,5 +1,5 @@
 ﻿// <copyright file="CloseProcess_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,31 +15,30 @@ using System;
 using System.Diagnostics;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.ProcessProviderTests
+namespace Meissa.Infrastructure.UnitTests.ProcessProviderTests;
+
+[TestFixture]
+public class CloseProcess_Should
 {
-    [TestFixture]
-    public class CloseProcess_Should
+    [Test]
+    public void ClosesExistingProcess()
     {
-        [Test]
-        public void ClosesExistingProcess()
+        // Arrange
+        var process = new Process();
+        var startInfo = new ProcessStartInfo
         {
-            // Arrange
-            var process = new Process();
-            var startInfo = new ProcessStartInfo
-            {
-                WindowStyle = ProcessWindowStyle.Hidden,
-                FileName = "cmd.exe",
-            };
-            process.StartInfo = startInfo;
-            process.Start();
-            var processProvider = new ProcessProvider();
+            WindowStyle = ProcessWindowStyle.Hidden,
+            FileName = "cmd.exe",
+        };
+        process.StartInfo = startInfo;
+        process.Start();
+        var processProvider = new ProcessProvider();
 
-            // Act
-            processProvider.CloseProcess(process);
+        // Act
+        processProvider.CloseProcess(process);
 
-            // Assert
-            // ReSharper disable once UnusedVariable
-            Assert.Throws<InvalidOperationException>(() => { var processName = process.ProcessName; });
-        }
+        // Assert
+        // ReSharper disable once UnusedVariable
+        Assert.Throws<InvalidOperationException>(() => { var processName = process.ProcessName; });
     }
 }

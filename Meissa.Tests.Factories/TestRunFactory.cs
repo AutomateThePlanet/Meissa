@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestRunFactory.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -17,39 +17,38 @@ using AutoFixture;
 using Meissa.Core.Model;
 using Meissa.Server.Models;
 
-namespace Meissa.Tests.Factories
+namespace Meissa.Tests.Factories;
+
+public static class TestRunFactory
 {
-    public static class TestRunFactory
+    public static IQueryable<TestRunDto> CreateSingleInProgress(Guid testRunId)
     {
-        public static IQueryable<TestRunDto> CreateSingleInProgress(Guid testRunId)
-        {
-            var fixture = FixtureFactory.Create();
+        var fixture = FixtureFactory.Create();
 
-            fixture.Register(() => TestRunStatus.InProgress);
-            fixture.Customize<TestRunDto>(tr => tr.With(x => x.TestRunId, testRunId));
+        fixture.Register(() => TestRunStatus.InProgress);
+        fixture.Customize<TestRunDto>(tr => tr.With(x => x.TestRunId, testRunId));
 
-            var result = fixture.CreateMany<TestRunDto>(1).AsQueryable();
+        var result = fixture.CreateMany<TestRunDto>(1).AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<TestRunDto> CreateMany()
-        {
-            var fixture = FixtureFactory.Create();
+    public static IQueryable<TestRunDto> CreateMany()
+    {
+        var fixture = FixtureFactory.Create();
 
-            var result = fixture.CreateMany<TestRunDto>().AsQueryable();
+        var result = fixture.CreateMany<TestRunDto>().AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<TestRunDto> CreateMany(Guid testRunId)
-        {
-            var fixture = FixtureFactory.Create();
-            fixture.Customize<TestRunDto>(tr => tr.With(x => x.TestRunId, testRunId));
+    public static IQueryable<TestRunDto> CreateMany(Guid testRunId)
+    {
+        var fixture = FixtureFactory.Create();
+        fixture.Customize<TestRunDto>(tr => tr.With(x => x.TestRunId, testRunId));
 
-            var result = fixture.CreateMany<TestRunDto>().AsQueryable();
+        var result = fixture.CreateMany<TestRunDto>().AsQueryable();
 
-            return result;
-        }
+        return result;
     }
 }

@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestRunsCleanerServiceClient.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -18,50 +18,49 @@ using System.Threading.Tasks;
 using Meissa.Core.Contracts;
 using Newtonsoft.Json;
 
-namespace Meissa.Server.Client.Clients
+namespace Meissa.Server.Client.Clients;
+
+public class TestRunsCleanerServiceClient : ITestRunsCleanerServiceClient
 {
-    public class TestRunsCleanerServiceClient : ITestRunsCleanerServiceClient
+    private const string AppJson = "application/json";
+    private const string ControllerUrl = "api/testrunscleaner";
+    private readonly string _baseUrl;
+
+    public TestRunsCleanerServiceClient(string ip, int port) => _baseUrl = $"http://{ip}:{port}/";
+
+    public async Task DeleteOldTestRunsDataAsync()
     {
-        private const string AppJson = "application/json";
-        private const string ControllerUrl = "api/testrunscleaner";
-        private readonly string _baseUrl;
-
-        public TestRunsCleanerServiceClient(string ip, int port) => _baseUrl = $"http://{ip}:{port}/";
-
-        public async Task DeleteOldTestRunsDataAsync()
+        if (HttpClientService.Client.BaseAddress == null)
         {
-            if (HttpClientService.Client.BaseAddress == null)
-            {
-                HttpClientService.Client.BaseAddress = new Uri(_baseUrl);
-            }
-
-            await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-                                                                    {
-                                                                        Method = HttpMethod.Delete,
-                                                                        RequestUri = new Uri($"{_baseUrl}{ControllerUrl}"),
-                                                                    },
-                1,
-                0).ConfigureAwait(false);
+            HttpClientService.Client.BaseAddress = new Uri(_baseUrl);
         }
 
-        public async Task DeleteOldTestRunDataByTestRunIdAsync(Guid id)
+        await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
+                                                                {
+                                                                    Method = HttpMethod.Delete,
+                                                                    RequestUri = new Uri($"{_baseUrl}{ControllerUrl}"),
+                                                                },
+            1,
+            0).ConfigureAwait(false);
+    }
+
+    public async Task DeleteOldTestRunDataByTestRunIdAsync(Guid id)
+    {
+        if (HttpClientService.Client.BaseAddress == null)
         {
-            if (HttpClientService.Client.BaseAddress == null)
-            {
-                HttpClientService.Client.BaseAddress = new Uri(_baseUrl);
-            }
-
-            string jsonToBeCreated = JsonConvert.SerializeObject(id);
-            var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
-
-            await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-                                                                    {
-                                                                        Method = HttpMethod.Delete,
-                                                                        RequestUri = new Uri($"{_baseUrl}{ControllerUrl}/testRun"),
-                                                                        Content = httpContent,
-                                                                    },
-                1,
-                0).ConfigureAwait(false);
+            HttpClientService.Client.BaseAddress = new Uri(_baseUrl);
         }
+
+        string jsonToBeCreated = JsonConvert.SerializeObject(id);
+        var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
+
+        await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
+                                                                {
+                                                                    Method = HttpMethod.Delete,
+                                                                    RequestUri = new Uri($"{_baseUrl}{ControllerUrl}/testRun"),
+                                                                    Content = httpContent,
+                                                                },
+            1,
+            0).ConfigureAwait(false);
     }
 }

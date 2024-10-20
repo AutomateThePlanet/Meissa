@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestRunCustomArgumentDto.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,16 +13,15 @@
 // <site>https://bellatrix.solutions/</site>
 using System;
 
-namespace Meissa.Server.Models
+namespace Meissa.Server.Models;
+
+public sealed class TestRunCustomArgumentDto
 {
-    public sealed class TestRunCustomArgumentDto
-    {
-        public int TestRunCustomArgumentId { get; set; }
+    public int TestRunCustomArgumentId { get; set; }
 
-        public Guid TestRunId { get; set; }
+    public Guid TestRunId { get; set; }
 
-        public string Key { get; set; }
+    public string Key { get; set; }
 
-        public string Value { get; set; }
-    }
+    public string Value { get; set; }
 }

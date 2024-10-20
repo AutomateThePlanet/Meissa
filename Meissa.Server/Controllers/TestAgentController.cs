@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestAgentController.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -21,119 +21,118 @@ using Meissa.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Meissa.Server.Controllers
+namespace Meissa.Server.Controllers;
+
+[Route("api/testagents")]
+public class TestAgentController : Controller
 {
-    [Route("api/testagents")]
-    public class TestAgentController : Controller
+    private readonly ILogger<TestAgentController> _logger;
+    private readonly MeissaRepository _meissaRepository;
+
+    public TestAgentController(ILogger<TestAgentController> logger, MeissaRepository repository)
     {
-        private readonly ILogger<TestAgentController> _logger;
-        private readonly MeissaRepository _meissaRepository;
+        _logger = logger;
+        _meissaRepository = repository;
+    }
 
-        public TestAgentController(ILogger<TestAgentController> logger, MeissaRepository repository)
+    [HttpGet("id")]
+    public async Task<IActionResult> GetTestAgent([FromBody] int id)
+    {
+        try
         {
-            _logger = logger;
-            _meissaRepository = repository;
-        }
-
-        [HttpGet("id")]
-        public async Task<IActionResult> GetTestAgent([FromBody] int id)
-        {
-            try
+            var testAgent = await _meissaRepository.GetByIdAsync<TestAgent>(id).ConfigureAwait(false);
+            if (testAgent == null)
             {
-                var testAgent = await _meissaRepository.GetByIdAsync<TestAgent>(id).ConfigureAwait(false);
-                if (testAgent == null)
-                {
-                    _logger.LogInformation($"TestAgent with id {id} wasn't found.");
-                    return NotFound();
-                }
-
-                var testAgentDto = Mapper.Map<TestAgentDto>(testAgent);
-
-                return Ok(testAgentDto);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical($"Exception while getting test run with id {id}.", ex);
-                return StatusCode(500, "A problem happened while handling your request.");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetTestAgents()
-        {
-            try
-            {
-                var testAgents = await _meissaRepository.GetAllQueryWithRefreshAsync<TestAgent>().ConfigureAwait(false);
-                var testAgentDtos = Mapper.Map<IEnumerable<TestAgentDto>>(testAgents);
-
-                return Ok(testAgentDtos);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical("Exception while getting test runs.", ex);
-                return StatusCode(500, "A problem happened while handling your request.");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateTestAgentAsync([FromBody] TestAgentDto testAgentDto)
-        {
-            if (testAgentDto == null)
-            {
-                return BadRequest();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var testAgent = Mapper.Map<TestAgent>(testAgentDto);
-
-            var result = await _meissaRepository.InsertWithSaveAsync(testAgent).ConfigureAwait(false);
-
-            var resultDto = Mapper.Map<TestAgentDto>(result);
-
-            return Ok(resultDto);
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateTestAgentAsync([FromBody] KeyValuePair<int, TestAgentDto> updateObject)
-        {
-            if (updateObject.Value == null)
-            {
-                return BadRequest();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var entityToBeUpdated = await _meissaRepository.GetByIdAsync<TestAgent>(updateObject.Key).ConfigureAwait(false);
-            if (entityToBeUpdated == null)
-            {
+                _logger.LogInformation($"TestAgent with id {id} wasn't found.");
                 return NotFound();
             }
 
-            entityToBeUpdated = Mapper.Map(updateObject.Value, entityToBeUpdated);
-            await _meissaRepository.UpdateWithSaveAsync(entityToBeUpdated).ConfigureAwait(false);
+            var testAgentDto = Mapper.Map<TestAgentDto>(testAgent);
 
-            return NoContent();
+            return Ok(testAgentDto);
         }
-
-        [HttpDelete]
-        public async Task<IActionResult> DeleteTestAgentAsync([FromBody] int id)
+        catch (Exception ex)
         {
-            var entityToBeRemoved = await _meissaRepository.GetByIdAsync<TestAgent>(id).ConfigureAwait(false);
-            if (entityToBeRemoved == null)
-            {
-                return NotFound();
-            }
-
-            await _meissaRepository.DeleteWithSaveAsync(entityToBeRemoved).ConfigureAwait(false);
-
-            return NoContent();
+            _logger.LogCritical($"Exception while getting test run with id {id}.", ex);
+            return StatusCode(500, "A problem happened while handling your request.");
         }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetTestAgents()
+    {
+        try
+        {
+            var testAgents = await _meissaRepository.GetAllQueryWithRefreshAsync<TestAgent>().ConfigureAwait(false);
+            var testAgentDtos = Mapper.Map<IEnumerable<TestAgentDto>>(testAgents);
+
+            return Ok(testAgentDtos);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical("Exception while getting test runs.", ex);
+            return StatusCode(500, "A problem happened while handling your request.");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateTestAgentAsync([FromBody] TestAgentDto testAgentDto)
+    {
+        if (testAgentDto == null)
+        {
+            return BadRequest();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var testAgent = Mapper.Map<TestAgent>(testAgentDto);
+
+        var result = await _meissaRepository.InsertWithSaveAsync(testAgent).ConfigureAwait(false);
+
+        var resultDto = Mapper.Map<TestAgentDto>(result);
+
+        return Ok(resultDto);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateTestAgentAsync([FromBody] KeyValuePair<int, TestAgentDto> updateObject)
+    {
+        if (updateObject.Value == null)
+        {
+            return BadRequest();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var entityToBeUpdated = await _meissaRepository.GetByIdAsync<TestAgent>(updateObject.Key).ConfigureAwait(false);
+        if (entityToBeUpdated == null)
+        {
+            return NotFound();
+        }
+
+        entityToBeUpdated = Mapper.Map(updateObject.Value, entityToBeUpdated);
+        await _meissaRepository.UpdateWithSaveAsync(entityToBeUpdated).ConfigureAwait(false);
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteTestAgentAsync([FromBody] int id)
+    {
+        var entityToBeRemoved = await _meissaRepository.GetByIdAsync<TestAgent>(id).ConfigureAwait(false);
+        if (entityToBeRemoved == null)
+        {
+            return NotFound();
+        }
+
+        await _meissaRepository.DeleteWithSaveAsync(entityToBeRemoved).ConfigureAwait(false);
+
+        return NoContent();
     }
 }

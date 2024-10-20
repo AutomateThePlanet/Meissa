@@ -1,5 +1,5 @@
 ﻿// <copyright file="ITestRunnerPluginService.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,11 +11,10 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
-namespace Meissa.Plugins.Contracts
+namespace Meissa.Plugins.Contracts;
+
+public interface ITestRunnerPluginService
 {
-    public interface ITestRunnerPluginService
-    {
-        void ExecutePreTestRunLogic();
-        void ExecutePostTestRunLogic();
-    }
+    void ExecutePreTestRunLogic();
+    void ExecutePostTestRunLogic();
 }

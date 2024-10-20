@@ -1,5 +1,5 @@
 ﻿// <copyright file="DisposeDriverService .cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,43 +15,42 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Meissa.Plugins.Services
+namespace Meissa.Plugins.Services;
+
+public static class DisposeDriverService
 {
-    public static class DisposeDriverService
+    private static readonly List<string> _processesToCheck = new List<string>
+    { "chromedriver", "opera", "chrome", "firefox", "ie", "gecko", "phantomjs", "edge", "microsoftwebdriver", "webdriver" };
+
+    public static DateTime? TestRunStartTime { get; set; }
+
+    public static void Dispose()
     {
-        private static readonly List<string> _processesToCheck = new List<string>
-        { "chromedriver", "opera", "chrome", "firefox", "ie", "gecko", "phantomjs", "edge", "microsoftwebdriver", "webdriver" };
-
-        public static DateTime? TestRunStartTime { get; set; }
-
-        public static void Dispose()
+        var processes = Process.GetProcesses();
+        foreach (var process in processes)
         {
-            var processes = Process.GetProcesses();
-            foreach (var process in processes)
+            try
             {
-                try
+                Debug.WriteLine(process.ProcessName);
+                var shouldKill = false;
+                foreach (var processName in _processesToCheck)
                 {
-                    Debug.WriteLine(process.ProcessName);
-                    var shouldKill = false;
-                    foreach (var processName in _processesToCheck)
+                    if (process.ProcessName.ToLower().Contains(processName))
                     {
-                        if (process.ProcessName.ToLower().Contains(processName))
-                        {
-                            shouldKill = true;
-                            break;
-                        }
+                        shouldKill = true;
+                        break;
                     }
+                }
 
-                    if (shouldKill)
-                    {
-                        process.Kill();
-                        process.WaitForExit();
-                    }
-                }
-                catch (Exception e)
+                if (shouldKill)
                 {
-                    Debug.WriteLine(e);
+                    process.Kill();
+                    process.WaitForExit();
                 }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
             }
         }
     }

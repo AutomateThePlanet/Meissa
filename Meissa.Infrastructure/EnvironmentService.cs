@@ -1,5 +1,5 @@
 ﻿// <copyright file="EnvironmentService.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,14 +15,13 @@ using System;
 using System.Threading;
 using Meissa.Core.Contracts;
 
-namespace Meissa.Infrastructure
+namespace Meissa.Infrastructure;
+
+public class EnvironmentService : IEnvironmentService
 {
-    public class EnvironmentService : IEnvironmentService
-    {
-        public string MachineName => Environment.MachineName;
+    public string MachineName => Environment.MachineName;
 
-        public void SetEnvironmentVariable(string variable, string value) => Environment.SetEnvironmentVariable(variable, value, EnvironmentVariableTarget.User);
+    public void SetEnvironmentVariable(string variable, string value) => Environment.SetEnvironmentVariable(variable, value, EnvironmentVariableTarget.User);
 
-        public void Sleep(int seconds) => Thread.Sleep(seconds * 1000);
-    }
+    public void Sleep(int seconds) => Thread.Sleep(seconds * 1000);
 }

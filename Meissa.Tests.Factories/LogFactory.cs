@@ -1,5 +1,5 @@
 ﻿// <copyright file="LogFactory.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,26 +15,25 @@ using System.Linq;
 using AutoFixture;
 using Meissa.Server.Models;
 
-namespace Meissa.Tests.Factories
+namespace Meissa.Tests.Factories;
+
+public static class LogFactory
 {
-    public static class LogFactory
+    public static IQueryable<LogDto> CreateEmpty()
     {
-        public static IQueryable<LogDto> CreateEmpty()
-        {
-            var fixture = FixtureFactory.Create();
+        var fixture = FixtureFactory.Create();
 
-            var result = fixture.CreateMany<LogDto>(0).AsQueryable();
+        var result = fixture.CreateMany<LogDto>(0).AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<LogDto> Create(int count)
-        {
-            var fixture = FixtureFactory.Create();
+    public static IQueryable<LogDto> Create(int count)
+    {
+        var fixture = FixtureFactory.Create();
 
-            var result = fixture.CreateMany<LogDto>(count).AsQueryable();
+        var result = fixture.CreateMany<LogDto>(count).AsQueryable();
 
-            return result;
-        }
+        return result;
     }
 }

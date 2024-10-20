@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestCasesFilterService.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -17,30 +17,29 @@ using System.Linq.Expressions;
 using Meissa.Core.Contracts;
 using Meissa.Core.Model;
 
-namespace Meissa.Core.Services
+namespace Meissa.Core.Services;
+
+public class TestCasesFilterService : ITestCasesFilterService
 {
-    public class TestCasesFilterService : ITestCasesFilterService
+    public List<TestCase> FilterCases(List<TestCase> testCasesToBeFiltered, string filter)
     {
-        public List<TestCase> FilterCases(List<TestCase> testCasesToBeFiltered, string filter)
+        if (string.IsNullOrEmpty(filter))
         {
-            if (string.IsNullOrEmpty(filter))
-            {
-                return testCasesToBeFiltered;
-            }
-
-            var filteredTestCases = new List<TestCase>();
-            var parameter = Expression.Parameter(typeof(TestCase), "test");
-            var lambdaExpression = DynamicExpressionParser.ParseLambda(new[] { parameter }, null, filter);
-            foreach (var testCase in testCasesToBeFiltered)
-            {
-                bool shouldAdd = (bool)lambdaExpression.Compile().DynamicInvoke(testCase);
-                if (shouldAdd)
-                {
-                    filteredTestCases.Add(testCase);
-                }
-            }
-
-            return filteredTestCases;
+            return testCasesToBeFiltered;
         }
+
+        var filteredTestCases = new List<TestCase>();
+        var parameter = Expression.Parameter(typeof(TestCase), "test");
+        var lambdaExpression = DynamicExpressionParser.ParseLambda(new[] { parameter }, null, filter);
+        foreach (var testCase in testCasesToBeFiltered)
+        {
+            bool shouldAdd = (bool)lambdaExpression.Compile().DynamicInvoke(testCase);
+            if (shouldAdd)
+            {
+                filteredTestCases.Add(testCase);
+            }
+        }
+
+        return filteredTestCases;
     }
 }

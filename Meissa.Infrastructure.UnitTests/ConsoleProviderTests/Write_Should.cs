@@ -1,5 +1,5 @@
 ﻿// <copyright file="Write_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,94 +15,93 @@ using System.IO;
 using AutoFixture;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.ConsoleProviderTests
+namespace Meissa.Infrastructure.UnitTests.ConsoleProviderTests;
+
+[TestFixture]
+public class Write_Should
 {
-    [TestFixture]
-    public class Write_Should
+    [Test]
+    public void PrintFormattedString_When_OneArgumentIsSpecified()
     {
-        [Test]
-        public void PrintFormattedString_When_OneArgumentIsSpecified()
+        // Arrange
+        var originalConsoleOut = System.Console.Out;
+        string formattedStringToBePrinted;
+        var fixture = new Fixture();
+        var expectedText = fixture.Create<string>();
+        using (var writer = new StringWriter())
         {
-            // Arrange
-            var originalConsoleOut = System.Console.Out;
-            string formattedStringToBePrinted;
-            var fixture = new Fixture();
-            var expectedText = fixture.Create<string>();
-            using (var writer = new StringWriter())
-            {
-                System.Console.SetOut(writer);
+            System.Console.SetOut(writer);
 
-                // Act
-                var consoleProvider = new ConsoleProvider();
-                consoleProvider.Write(expectedText);
+            // Act
+            var consoleProvider = new ConsoleProvider();
+            consoleProvider.Write(expectedText);
 
-                writer.Flush();
+            writer.Flush();
 
-                formattedStringToBePrinted = writer.GetStringBuilder().ToString();
-            }
-
-            // Assert
-            Assert.That(formattedStringToBePrinted, Is.EqualTo(expectedText));
-
-            // Clean-up
-            System.Console.SetOut(originalConsoleOut);
+            formattedStringToBePrinted = writer.GetStringBuilder().ToString();
         }
 
-        [Test]
-        public void PrintFormattedString_When_FormatAndOneArgumentAreSpecified()
+        // Assert
+        Assert.That(formattedStringToBePrinted, Is.EqualTo(expectedText));
+
+        // Clean-up
+        System.Console.SetOut(originalConsoleOut);
+    }
+
+    [Test]
+    public void PrintFormattedString_When_FormatAndOneArgumentAreSpecified()
+    {
+        // Arrange
+        var fixture = new Fixture();
+        var expectedText = fixture.Create<string>();
+        var originalConsoleOut = System.Console.Out;
+        string formattedStringToBePrinted;
+        using (var writer = new StringWriter())
         {
-            // Arrange
-            var fixture = new Fixture();
-            var expectedText = fixture.Create<string>();
-            var originalConsoleOut = System.Console.Out;
-            string formattedStringToBePrinted;
-            using (var writer = new StringWriter())
-            {
-                System.Console.SetOut(writer);
+            System.Console.SetOut(writer);
 
-                // Act
-                var consoleProvider = new ConsoleProvider();
-                consoleProvider.Write("{0}", expectedText);
+            // Act
+            var consoleProvider = new ConsoleProvider();
+            consoleProvider.Write("{0}", expectedText);
 
-                writer.Flush();
+            writer.Flush();
 
-                formattedStringToBePrinted = writer.GetStringBuilder().ToString();
-            }
-
-            // Assert
-            Assert.That(formattedStringToBePrinted, Is.EqualTo(expectedText));
-
-            // Clean-up
-            System.Console.SetOut(originalConsoleOut);
+            formattedStringToBePrinted = writer.GetStringBuilder().ToString();
         }
 
-        [Test]
-        public void PrintFormattedString_When_FormatAndTwoArgumentAreSpecified()
+        // Assert
+        Assert.That(formattedStringToBePrinted, Is.EqualTo(expectedText));
+
+        // Clean-up
+        System.Console.SetOut(originalConsoleOut);
+    }
+
+    [Test]
+    public void PrintFormattedString_When_FormatAndTwoArgumentAreSpecified()
+    {
+        // Arrange
+        var fixture = new Fixture();
+        var expectedText1 = fixture.Create<string>();
+        var expectedText2 = fixture.Create<string>();
+        var originalConsoleOut = System.Console.Out;
+        string formattedStringToBePrinted;
+        using (var writer = new StringWriter())
         {
-            // Arrange
-            var fixture = new Fixture();
-            var expectedText1 = fixture.Create<string>();
-            var expectedText2 = fixture.Create<string>();
-            var originalConsoleOut = System.Console.Out;
-            string formattedStringToBePrinted;
-            using (var writer = new StringWriter())
-            {
-                System.Console.SetOut(writer);
+            System.Console.SetOut(writer);
 
-                // Act
-                var consoleProvider = new ConsoleProvider();
-                consoleProvider.Write("{0}{1}", expectedText1, expectedText2);
+            // Act
+            var consoleProvider = new ConsoleProvider();
+            consoleProvider.Write("{0}{1}", expectedText1, expectedText2);
 
-                writer.Flush();
+            writer.Flush();
 
-                formattedStringToBePrinted = writer.GetStringBuilder().ToString();
-            }
-
-            // Assert
-            Assert.That(formattedStringToBePrinted, Is.EqualTo(string.Concat(expectedText1, expectedText2)));
-
-            // Clean-up
-            System.Console.SetOut(originalConsoleOut);
+            formattedStringToBePrinted = writer.GetStringBuilder().ToString();
         }
+
+        // Assert
+        Assert.That(formattedStringToBePrinted, Is.EqualTo(string.Concat(expectedText1, expectedText2)));
+
+        // Clean-up
+        System.Console.SetOut(originalConsoleOut);
     }
 }

@@ -1,5 +1,5 @@
 ﻿// <copyright file="IDirectoryProvider.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,20 +11,19 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
-namespace Meissa.Core.Contracts
+namespace Meissa.Core.Contracts;
+
+public interface IDirectoryProvider
 {
-    public interface IDirectoryProvider
-    {
-        bool DoesDirectoryExists(string path);
+    bool DoesDirectoryExists(string path);
 
-        string[] GetFiles(string path);
+    string[] GetFiles(string path);
 
-        string[] GetFiles(string path, string searchPattern);
+    string[] GetFiles(string path, string searchPattern);
 
-        void CreateDirectory(string path);
+    void CreateDirectory(string path);
 
-        bool Exists(string path);
+    bool Exists(string path);
 
-        void Delete(string path, bool recursive);
-    }
+    void Delete(string path, bool recursive);
 }

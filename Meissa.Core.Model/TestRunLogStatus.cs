@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestRunLogStatus.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,11 +11,10 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
-namespace Meissa.Core.Model
+namespace Meissa.Core.Model;
+
+public enum TestRunLogStatus : byte
 {
-    public enum TestRunLogStatus : byte
-    {
-        New = 0,
-        Published = 1,
-    }
+    New = 0,
+    Published = 1,
 }

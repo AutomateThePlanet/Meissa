@@ -1,5 +1,5 @@
 ﻿// <copyright file="DataSetupWebApi.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -20,156 +20,155 @@ using System.Threading.Tasks;
 using Meissa.Core.Contracts;
 using Newtonsoft.Json;
 
-namespace Meissa.Server.Client
+namespace Meissa.Server.Client;
+
+public class RestClientRepository<TEntityDto> : IServiceClient<TEntityDto>
+    where TEntityDto : class
 {
-    public class RestClientRepository<TEntityDto> : IServiceClient<TEntityDto>
-        where TEntityDto : class
+    protected const string AppJson = "application/json";
+
+    protected RestClientRepository(string ip, int port, string controllerPartUrl)
     {
-        protected const string AppJson = "application/json";
+        BaseUrl = $"http://{ip}:{port}/";
+        ControllerUrlPart = controllerPartUrl;
+    }
 
-        protected RestClientRepository(string ip, int port, string controllerPartUrl)
+    public string BaseUrl { get; set; }
+
+    public string ControllerUrlPart { get; set; }
+
+    public string ControllerUrl => $"api/{ControllerUrlPart}";
+
+    public async Task<TEntityDto> CreateAsync(TEntityDto entityToBeCreated)
+    {
+        if (HttpClientService.Client.BaseAddress == null)
         {
-            BaseUrl = $"http://{ip}:{port}/";
-            ControllerUrlPart = controllerPartUrl;
+            HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
         }
 
-        public string BaseUrl { get; set; }
-
-        public string ControllerUrlPart { get; set; }
-
-        public string ControllerUrl => $"api/{ControllerUrlPart}";
-
-        public async Task<TEntityDto> CreateAsync(TEntityDto entityToBeCreated)
-        {
-            if (HttpClientService.Client.BaseAddress == null)
+        string jsonToBeCreated = JsonConvert.SerializeObject(entityToBeCreated);
+        var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
+        var response = await HttpClientService.Client.SendAsyncWithRetry(
+            () => new HttpRequestMessage
             {
-                HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
-            }
-
-            string jsonToBeCreated = JsonConvert.SerializeObject(entityToBeCreated);
-            var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
-            var response = await HttpClientService.Client.SendAsyncWithRetry(
-                () => new HttpRequestMessage
-                {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
-                    Content = httpContent,
-                },
-                1,
-                0).ConfigureAwait(false);
-            if (response != null)
-            {
-                var entity = await DeserializeResponse<TEntityDto>(response).ConfigureAwait(false);
-                return entity;
-            }
-
-            return null;
-        }
-
-        public async Task UpdateAsync<TSearchCriteria>(TSearchCriteria id, TEntityDto entityToBeUpdated)
-        {
-            if (HttpClientService.Client.BaseAddress == null)
-            {
-                HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
-            }
-
-            string jsonToBeUpdated = JsonConvert.SerializeObject(new KeyValuePair<TSearchCriteria, TEntityDto>(id, entityToBeUpdated));
-            var httpContent = new StringContent(jsonToBeUpdated, Encoding.UTF8, AppJson);
-            await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-                                                                    {
-                                                                        Method = HttpMethod.Put,
-                                                                        RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
-                                                                        Content = httpContent,
-                                                                    },
-                1,
-                0).ConfigureAwait(false);
-        }
-
-        public async Task DeleteAsync<TSearchCriteria>(TSearchCriteria id)
-        {
-            if (HttpClientService.Client.BaseAddress == null)
-            {
-                HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
-            }
-
-            string jsonToBeCreated = JsonConvert.SerializeObject(id);
-            var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
-            await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-                                                                    {
-                                                                        Method = HttpMethod.Delete,
-                                                                        RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
-                                                                        Content = httpContent,
-                                                                    },
-                1,
-                0).ConfigureAwait(false);
-        }
-
-        public async Task<TEntityDto> GetAsync<TSearchCriteria>(TSearchCriteria searchCriteria)
-        {
-            if (HttpClientService.Client.BaseAddress == null)
-            {
-                HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
-            }
-
-            string jsonToBeCreated = JsonConvert.SerializeObject(searchCriteria);
-            var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
-
-            var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri($"{BaseUrl}{ControllerUrl}/id"),
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
                 Content = httpContent,
             },
             1,
             0).ConfigureAwait(false);
-            if (response != null)
-            {
-                var entity = await DeserializeResponse<TEntityDto>(response).ConfigureAwait(false);
-                return entity;
-            }
+        if (response != null)
+        {
+            var entity = await DeserializeResponse<TEntityDto>(response).ConfigureAwait(false);
+            return entity;
+        }
 
+        return null;
+    }
+
+    public async Task UpdateAsync<TSearchCriteria>(TSearchCriteria id, TEntityDto entityToBeUpdated)
+    {
+        if (HttpClientService.Client.BaseAddress == null)
+        {
+            HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
+        }
+
+        string jsonToBeUpdated = JsonConvert.SerializeObject(new KeyValuePair<TSearchCriteria, TEntityDto>(id, entityToBeUpdated));
+        var httpContent = new StringContent(jsonToBeUpdated, Encoding.UTF8, AppJson);
+        await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
+                                                                {
+                                                                    Method = HttpMethod.Put,
+                                                                    RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
+                                                                    Content = httpContent,
+                                                                },
+            1,
+            0).ConfigureAwait(false);
+    }
+
+    public async Task DeleteAsync<TSearchCriteria>(TSearchCriteria id)
+    {
+        if (HttpClientService.Client.BaseAddress == null)
+        {
+            HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
+        }
+
+        string jsonToBeCreated = JsonConvert.SerializeObject(id);
+        var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
+        await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
+                                                                {
+                                                                    Method = HttpMethod.Delete,
+                                                                    RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
+                                                                    Content = httpContent,
+                                                                },
+            1,
+            0).ConfigureAwait(false);
+    }
+
+    public async Task<TEntityDto> GetAsync<TSearchCriteria>(TSearchCriteria searchCriteria)
+    {
+        if (HttpClientService.Client.BaseAddress == null)
+        {
+            HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
+        }
+
+        string jsonToBeCreated = JsonConvert.SerializeObject(searchCriteria);
+        var httpContent = new StringContent(jsonToBeCreated, Encoding.UTF8, AppJson);
+
+        var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
+        {
+            Method = HttpMethod.Get,
+            RequestUri = new Uri($"{BaseUrl}{ControllerUrl}/id"),
+            Content = httpContent,
+        },
+        1,
+        0).ConfigureAwait(false);
+        if (response != null)
+        {
+            var entity = await DeserializeResponse<TEntityDto>(response).ConfigureAwait(false);
+            return entity;
+        }
+
+        return null;
+    }
+
+    public async Task<IQueryable<TEntityDto>> GetAllAsync()
+    {
+        if (HttpClientService.Client.BaseAddress == null)
+        {
+            HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
+        }
+
+        var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
+        {
+            Method = HttpMethod.Get,
+            RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
+        },
+        1,
+        0).ConfigureAwait(false);
+        var entitiesList = await DeserializeResponse<List<TEntityDto>>(response).ConfigureAwait(false);
+
+        if (entitiesList == null)
+        {
+            entitiesList = new List<TEntityDto>();
+        }
+
+        return entitiesList.AsQueryable();
+    }
+
+    protected async Task<TEntity> DeserializeResponse<TEntity>(HttpResponseMessage response)
+        where TEntity : class
+    {
+        var result = default(TEntity);
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            result = JsonConvert.DeserializeObject<TEntity>(jsonString);
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
             return null;
         }
 
-        public async Task<IQueryable<TEntityDto>> GetAllAsync()
-        {
-            if (HttpClientService.Client.BaseAddress == null)
-            {
-                HttpClientService.Client.BaseAddress = new Uri(BaseUrl);
-            }
-
-            var response = await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri($"{BaseUrl}{ControllerUrl}"),
-            },
-            1,
-            0).ConfigureAwait(false);
-            var entitiesList = await DeserializeResponse<List<TEntityDto>>(response).ConfigureAwait(false);
-
-            if (entitiesList == null)
-            {
-                entitiesList = new List<TEntityDto>();
-            }
-
-            return entitiesList.AsQueryable();
-        }
-
-        protected async Task<TEntity> DeserializeResponse<TEntity>(HttpResponseMessage response)
-            where TEntity : class
-        {
-            var result = default(TEntity);
-            if (response.IsSuccessStatusCode)
-            {
-                var jsonString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                result = JsonConvert.DeserializeObject<TEntity>(jsonString);
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return null;
-            }
-
-            return result;
-        }
+        return result;
     }
 }

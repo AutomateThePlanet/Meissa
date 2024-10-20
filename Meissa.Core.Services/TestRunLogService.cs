@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestRunLogService.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -18,41 +18,40 @@ using Meissa.Core.Contracts;
 using Meissa.Core.Model;
 using Meissa.Server.Models;
 
-namespace Meissa.Core.Services
+namespace Meissa.Core.Services;
+
+public class TestRunLogService : ITestRunLogService
 {
-    public class TestRunLogService : ITestRunLogService
+    private readonly IServiceClient<TestRunLogDto> _testRunLogRepository;
+    private readonly IConsoleProvider _consoleProvider;
+
+    public TestRunLogService(
+        IServiceClient<TestRunLogDto> testRunLogRepository,
+        IConsoleProvider consoleProvider)
     {
-        private readonly IServiceClient<TestRunLogDto> _testRunLogRepository;
-        private readonly IConsoleProvider _consoleProvider;
+        _testRunLogRepository = testRunLogRepository;
+        _consoleProvider = consoleProvider;
+    }
 
-        public TestRunLogService(
-            IServiceClient<TestRunLogDto> testRunLogRepository,
-            IConsoleProvider consoleProvider)
+    public async Task CreateTestRunLogAsync(string message, Guid testRunId)
+    {
+        if (!string.IsNullOrEmpty(message))
         {
-            _testRunLogRepository = testRunLogRepository;
-            _consoleProvider = consoleProvider;
-        }
-
-        public async Task CreateTestRunLogAsync(string message, Guid testRunId)
-        {
-            if (!string.IsNullOrEmpty(message))
+            var testRunLog = new TestRunLogDto
             {
-                var testRunLog = new TestRunLogDto
-                {
-                    Message = message,
-                    TestRunId = testRunId,
-                    Status = TestRunLogStatus.New,
-                };
-                try
-                {
-                    await _testRunLogRepository.CreateAsync(testRunLog).ConfigureAwait(false);
-                    _consoleProvider.WriteLine(message);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    _consoleProvider.WriteLine(e.Message);
-                }
+                Message = message,
+                TestRunId = testRunId,
+                Status = TestRunLogStatus.New,
+            };
+            try
+            {
+                await _testRunLogRepository.CreateAsync(testRunLog).ConfigureAwait(false);
+                _consoleProvider.WriteLine(message);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                _consoleProvider.WriteLine(e.Message);
             }
         }
     }

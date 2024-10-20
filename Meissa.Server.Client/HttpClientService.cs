@@ -1,5 +1,5 @@
 ﻿// <copyright file="HttpClientService.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,24 +15,23 @@ using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
-namespace Meissa.Server.Client
-{
-    public static class HttpClientService
-    {
-        static HttpClientService()
-        {
-            Client = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(180),
-            };
-            Client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
-            {
-                NoCache = true,
-            };
-            Client.DefaultRequestHeaders.Accept.Clear();
-            Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        }
+namespace Meissa.Server.Client;
 
-        public static HttpClient Client { get; set; }
+public static class HttpClientService
+{
+    static HttpClientService()
+    {
+        Client = new HttpClient
+        {
+            Timeout = TimeSpan.FromSeconds(180),
+        };
+        Client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
+        {
+            NoCache = true,
+        };
+        Client.DefaultRequestHeaders.Accept.Clear();
+        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
     }
+
+    public static HttpClient Client { get; set; }
 }

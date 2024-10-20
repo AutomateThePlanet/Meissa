@@ -1,5 +1,5 @@
 ﻿// <copyright file="GetStartTimeOfCurrentProcess_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,26 +14,25 @@
 using System.Diagnostics;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.ProcessProviderTests
+namespace Meissa.Infrastructure.UnitTests.ProcessProviderTests;
+
+[TestFixture]
+public class GetStartTimeOfCurrentProcess_Should
 {
-    [TestFixture]
-    public class GetStartTimeOfCurrentProcess_Should
+    [Test]
+    public void SuccessfullyStartedProcess()
     {
-        [Test]
-        public void SuccessfullyStartedProcess()
-        {
-            // Arrange
-            var processProvider = new ProcessProvider();
+        // Arrange
+        var processProvider = new ProcessProvider();
 
-            // Act
-            processProvider.Start("cmd.exe", string.Empty);
-            var process = Process.GetProcessesByName("cmd")[0];
+        // Act
+        processProvider.Start("cmd.exe", string.Empty);
+        var process = Process.GetProcessesByName("cmd")[0];
 
-            // Assert
-            Assert.That(process.HasExited, Is.EqualTo(false));
+        // Assert
+        Assert.That(process.HasExited, Is.EqualTo(false));
 
-            // Clean up
-            process.Kill();
-        }
+        // Clean up
+        process.Kill();
     }
 }

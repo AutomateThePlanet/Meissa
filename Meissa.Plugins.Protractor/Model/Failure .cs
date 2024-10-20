@@ -1,13 +1,12 @@
 ﻿using System.Xml.Serialization;
 
-namespace Meissa.Plugins.Protractor.Model
+namespace Meissa.Plugins.Protractor.Model;
+
+[XmlRoot(ElementName = "failure")]
+public class Failure
 {
-    [XmlRoot(ElementName = "failure")]
-    public class Failure
-    {
-        [XmlElement(ElementName = "message")]
-        public string Message { get; set; }
-        [XmlElement(ElementName = "stack-trace")]
-        public string Stacktrace { get; set; }
-    }
+    [XmlElement(ElementName = "message")]
+    public string Message { get; set; }
+    [XmlElement(ElementName = "stack-trace")]
+    public string Stacktrace { get; set; }
 }

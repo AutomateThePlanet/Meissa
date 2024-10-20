@@ -1,5 +1,5 @@
 ﻿// <copyright file="IPluginService.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,16 +13,15 @@
 // <site>https://bellatrix.solutions/</site>
 using Meissa.Plugins.Contracts;
 
-namespace Meissa.Core.Contracts
+namespace Meissa.Core.Contracts;
+
+public interface IPluginService
 {
-    public interface IPluginService
-    {
-        void ExecuteAllTestRunnerPluginsPreTestRunLogic();
-        void ExecuteAllTestRunnerPluginsPostTestRunLogic();
-        void ExecuteAllTestAgentPluginsPreTestRunLogic();
-        void ExecuteAllTestAgentPluginsPostTestRunLogic();
-        void ExecuteAllTestAgentPluginsAbortTestRunLogic();
-        INativeTestsRunnerPluginService GetNativeTestRunnerService(string name);
-        INativeTestsRunnerTestCasesPluginService GetNativeTestsRunnerTestCasesPluginService(string name);
-    }
+    void ExecuteAllTestRunnerPluginsPreTestRunLogic();
+    void ExecuteAllTestRunnerPluginsPostTestRunLogic();
+    void ExecuteAllTestAgentPluginsPreTestRunLogic();
+    void ExecuteAllTestAgentPluginsPostTestRunLogic();
+    void ExecuteAllTestAgentPluginsAbortTestRunLogic();
+    INativeTestsRunnerPluginService GetNativeTestRunnerService(string name);
+    INativeTestsRunnerTestCasesPluginService GetNativeTestsRunnerTestCasesPluginService(string name);
 }

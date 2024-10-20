@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestRunLogFactory.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -17,37 +17,36 @@ using AutoFixture;
 using Meissa.Core.Model;
 using Meissa.Server.Models;
 
-namespace Meissa.Tests.Factories
+namespace Meissa.Tests.Factories;
+
+public static class TestRunLogFactory
 {
-    public static class TestRunLogFactory
+    public static IQueryable<TestRunLogDto> CreateEmpty()
     {
-        public static IQueryable<TestRunLogDto> CreateEmpty()
-        {
-            var fixture = FixtureFactory.Create();
+        var fixture = FixtureFactory.Create();
 
-            var result = fixture.CreateMany<TestRunLogDto>(0).AsQueryable();
+        var result = fixture.CreateMany<TestRunLogDto>(0).AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<TestRunLogDto> CreateMany()
-        {
-            var fixture = FixtureFactory.Create();
+    public static IQueryable<TestRunLogDto> CreateMany()
+    {
+        var fixture = FixtureFactory.Create();
 
-            var result = fixture.CreateMany<TestRunLogDto>().AsQueryable();
+        var result = fixture.CreateMany<TestRunLogDto>().AsQueryable();
 
-            return result;
-        }
+        return result;
+    }
 
-        public static IQueryable<TestRunLogDto> CreateMany(Guid testRunId, TestRunLogStatus testRunLogStatus = TestRunLogStatus.Published, int count = 3)
-        {
-            var fixture = FixtureFactory.Create();
+    public static IQueryable<TestRunLogDto> CreateMany(Guid testRunId, TestRunLogStatus testRunLogStatus = TestRunLogStatus.Published, int count = 3)
+    {
+        var fixture = FixtureFactory.Create();
 
-            fixture.Customize<TestRunLogDto>(tr => tr.With(x => x.TestRunId, testRunId).With(x => x.Status, testRunLogStatus));
+        fixture.Customize<TestRunLogDto>(tr => tr.With(x => x.TestRunId, testRunId).With(x => x.Status, testRunLogStatus));
 
-            var result = fixture.CreateMany<TestRunLogDto>(count).AsQueryable();
+        var result = fixture.CreateMany<TestRunLogDto>(count).AsQueryable();
 
-            return result;
-        }
+        return result;
     }
 }

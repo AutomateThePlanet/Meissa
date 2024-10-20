@@ -1,5 +1,5 @@
 ﻿// <copyright file="CreateDirectory_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,26 +15,25 @@ using System;
 using System.IO;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.DirectoryProviderTests
+namespace Meissa.Infrastructure.UnitTests.DirectoryProviderTests;
+
+[TestFixture]
+public class CreateDirectory_Should
 {
-    [TestFixture]
-    public class CreateDirectory_Should
+    [Test]
+    public void DirectoryCreatedSuccessfully()
     {
-        [Test]
-        public void DirectoryCreatedSuccessfully()
-        {
-            // Arrange
-            var directoryProvider = new DirectoryProvider();
-            string newFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        // Arrange
+        var directoryProvider = new DirectoryProvider();
+        string newFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 
-            // Act
-            directoryProvider.CreateDirectory(newFolder);
+        // Act
+        directoryProvider.CreateDirectory(newFolder);
 
-            // Assert
-            Assert.That(Directory.Exists(newFolder), Is.True);
+        // Assert
+        Assert.That(Directory.Exists(newFolder), Is.True);
 
-            // Clean-up
-            Directory.Delete(newFolder);
-        }
+        // Clean-up
+        Directory.Delete(newFolder);
     }
 }

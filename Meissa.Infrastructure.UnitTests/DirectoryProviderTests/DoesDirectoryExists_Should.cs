@@ -1,5 +1,5 @@
 ﻿// <copyright file="DoesDirectoryExists_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -16,41 +16,40 @@ using AutoFixture;
 using Meissa.Infrastructure.UnitTests.Factories;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.DirectoryProviderTests
+namespace Meissa.Infrastructure.UnitTests.DirectoryProviderTests;
+
+[TestFixture]
+public class DoesDirectoryExists_Should
 {
-    [TestFixture]
-    public class DoesDirectoryExists_Should
+    [Test]
+    public void ReturnTrue_When_FolderExists()
     {
-        [Test]
-        public void ReturnTrue_When_FolderExists()
-        {
-            // Arrange
-            string newFolder = DirectoryFactory.CreateTestDirectory();
-            var directoryProvider = new DirectoryProvider();
+        // Arrange
+        string newFolder = DirectoryFactory.CreateTestDirectory();
+        var directoryProvider = new DirectoryProvider();
 
-            // Act
-            bool doesFolderExists = directoryProvider.DoesDirectoryExists(newFolder);
+        // Act
+        bool doesFolderExists = directoryProvider.DoesDirectoryExists(newFolder);
 
-            // Assert
-            Assert.That(doesFolderExists, Is.True);
+        // Assert
+        Assert.That(doesFolderExists, Is.True);
 
-            // Clean-up
-            Directory.Delete(newFolder);
-        }
+        // Clean-up
+        Directory.Delete(newFolder);
+    }
 
-        [Test]
-        public void ReturnFalse_When_FolderExists()
-        {
-            // Arrange
-            var fixture = new Fixture();
-            string newFolder = Path.Combine(Path.GetTempPath(), fixture.Create<string>());
-            var directoryProvider = new DirectoryProvider();
+    [Test]
+    public void ReturnFalse_When_FolderExists()
+    {
+        // Arrange
+        var fixture = new Fixture();
+        string newFolder = Path.Combine(Path.GetTempPath(), fixture.Create<string>());
+        var directoryProvider = new DirectoryProvider();
 
-            // Act
-            bool doesFolderExists = directoryProvider.DoesDirectoryExists(newFolder);
+        // Act
+        bool doesFolderExists = directoryProvider.DoesDirectoryExists(newFolder);
 
-            // Assert
-            Assert.That(doesFolderExists, Is.False);
-        }
+        // Assert
+        Assert.That(doesFolderExists, Is.False);
     }
 }

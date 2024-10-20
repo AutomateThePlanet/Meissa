@@ -1,5 +1,5 @@
 ﻿// <copyright file="ReadAllText_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,25 +15,24 @@ using AutoFixture;
 using Meissa.Infrastructure.UnitTests.Factories;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.FileProviderTests
+namespace Meissa.Infrastructure.UnitTests.FileProviderTests;
+
+[TestFixture]
+public class ReadAllText_Should
 {
-    [TestFixture]
-    public class ReadAllText_Should
+    [Test]
+    public void TextSuccessfullyRead()
     {
-        [Test]
-        public void TextSuccessfullyRead()
-        {
-            // Arrange
-            var fixture = new Fixture();
-            var expectedText = fixture.Create<string>();
-            string destinationFile = FileFactory.CreateTestFile(expectedText, string.Empty);
+        // Arrange
+        var fixture = new Fixture();
+        var expectedText = fixture.Create<string>();
+        string destinationFile = FileFactory.CreateTestFile(expectedText, string.Empty);
 
-            // Act
-            var directoryProvider = new FileProvider();
-            string actualText = directoryProvider.ReadAllText(destinationFile);
+        // Act
+        var directoryProvider = new FileProvider();
+        string actualText = directoryProvider.ReadAllText(destinationFile);
 
-            // Assert
-            Assert.That(actualText, Is.EqualTo(expectedText));
-        }
+        // Assert
+        Assert.That(actualText, Is.EqualTo(expectedText));
     }
 }

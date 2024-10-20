@@ -1,5 +1,5 @@
 ﻿// <copyright file="GetAllActiveTestAgentsByTag_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -21,123 +21,122 @@ using Meissa.Tests.Factories;
 using Moq;
 using NUnit.Framework;
 
-namespace Meissa.Core.Services.UnitTests.TestAgentsServiceTests
+namespace Meissa.Core.Services.UnitTests.TestAgentsServiceTests;
+
+[TestFixture]
+public class GetAllActiveTestAgentsByTag_Should
 {
-    [TestFixture]
-    public class GetAllActiveTestAgentsByTag_Should
+    private Mock<IServiceClient<TestAgentDto>> _testAgentRepositoryMock;
+    private ITestAgentsService _testAgentsService;
+    private Fixture _fixture;
+    private string _agentTag;
+
+    [SetUp]
+    public void TestInit()
     {
-        private Mock<IServiceClient<TestAgentDto>> _testAgentRepositoryMock;
-        private ITestAgentsService _testAgentsService;
-        private Fixture _fixture;
-        private string _agentTag;
+        _testAgentRepositoryMock = new Mock<IServiceClient<TestAgentDto>>();
+        _testAgentsService = new TestAgentsService(_testAgentRepositoryMock.Object);
+        _fixture = new Fixture();
+        _agentTag = _fixture.Create<string>();
+    }
 
-        [SetUp]
-        public void TestInit()
-        {
-            _testAgentRepositoryMock = new Mock<IServiceClient<TestAgentDto>>();
-            _testAgentsService = new TestAgentsService(_testAgentRepositoryMock.Object);
-            _fixture = new Fixture();
-            _agentTag = _fixture.Create<string>();
-        }
+    [Test]
+    public async Task ReturnNoTestAgents_When_NoTestAgentsExists()
+    {
+        // Arrange
+        var testAgents = TestAgentFactory.CreateEmpty();
+        _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
-        [Test]
-        public async Task ReturnNoTestAgents_When_NoTestAgentsExists()
-        {
-            // Arrange
-            var testAgents = TestAgentFactory.CreateEmpty();
-            _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
+        // Act
+        var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
 
-            // Act
-            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
+        // Assert
+        Assert.That(actualTestAgents, Is.Empty);
+    }
 
-            // Assert
-            Assert.That(actualTestAgents, Is.Empty);
-        }
+    [Test]
+    public async Task ReturnNoTestAgents_When_NoTestAgentsExistsForTheProvidedTag()
+    {
+        // Arrange
+        var testAgents = TestAgentFactory.CreateMany();
+        _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
-        [Test]
-        public async Task ReturnNoTestAgents_When_NoTestAgentsExistsForTheProvidedTag()
-        {
-            // Arrange
-            var testAgents = TestAgentFactory.CreateMany();
-            _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
+        // Act
+        var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
 
-            // Act
-            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
+        // Assert
+        Assert.That(actualTestAgents, Is.Empty);
+    }
 
-            // Assert
-            Assert.That(actualTestAgents, Is.Empty);
-        }
+    [Test]
+    public void ThrowArgumentNullException_When_TheProvidedTagIsNull()
+    {
+        // Arrange
+        var testAgents = TestAgentFactory.CreateMany();
+        _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
-        [Test]
-        public void ThrowArgumentNullException_When_TheProvidedTagIsNull()
-        {
-            // Arrange
-            var testAgents = TestAgentFactory.CreateMany();
-            _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
+        // Act
+        var action = new TestDelegate(() => _testAgentsService.GetAllActiveTestAgentsByTagAsync(null));
 
-            // Act
-            var action = new TestDelegate(() => _testAgentsService.GetAllActiveTestAgentsByTagAsync(null));
+        // Assert
+        Assert.That(action, Throws.Exception.TypeOf<ArgumentNullException>());
+    }
 
-            // Assert
-            Assert.That(action, Throws.Exception.TypeOf<ArgumentNullException>());
-        }
+    [Test]
+    public async Task ReturnCorrectTestAgent_When_OnlyOneTestAgentExistsWithProvidedTag()
+    {
+        // Arrange
+        var testAgent = TestAgentFactory.CreateSingle(_agentTag);
+        _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgent));
 
-        [Test]
-        public async Task ReturnCorrectTestAgent_When_OnlyOneTestAgentExistsWithProvidedTag()
-        {
-            // Arrange
-            var testAgent = TestAgentFactory.CreateSingle(_agentTag);
-            _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgent));
+        // Act
+        var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
 
-            // Act
-            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
+        // Assert
+        Assert.That(actualTestAgents, Has.Exactly(1).EqualTo(testAgent.First()));
+    }
 
-            // Assert
-            Assert.That(actualTestAgents, Has.Exactly(1).EqualTo(testAgent.First()));
-        }
+    [Test]
+    public async Task ReturnCorrectTestAgent_When_OneTestAgentExistsWithProvidedTag_AndTestAgentsWithDifferentTagsExists()
+    {
+        // Arrange
+        var currentTagTestAgent = TestAgentFactory.CreateSingle(_agentTag);
+        var differentTagsTestAgents = TestAgentFactory.CreateMany();
+        _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(currentTagTestAgent.Union(differentTagsTestAgents)));
 
-        [Test]
-        public async Task ReturnCorrectTestAgent_When_OneTestAgentExistsWithProvidedTag_AndTestAgentsWithDifferentTagsExists()
-        {
-            // Arrange
-            var currentTagTestAgent = TestAgentFactory.CreateSingle(_agentTag);
-            var differentTagsTestAgents = TestAgentFactory.CreateMany();
-            _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(currentTagTestAgent.Union(differentTagsTestAgents)));
+        // Act
+        var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
 
-            // Act
-            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
+        // Assert
+        Assert.That(actualTestAgents, Has.Exactly(1).EqualTo(currentTagTestAgent.First()));
+    }
 
-            // Assert
-            Assert.That(actualTestAgents, Has.Exactly(1).EqualTo(currentTagTestAgent.First()));
-        }
+    [Test]
+    public async Task ReturnCorrectTestAgents_When_ManyTestAgentExistsWithProvidedTag()
+    {
+        // Arrange
+        var testAgents = TestAgentFactory.CreateMany(_agentTag, Model.TestAgentStatus.Active);
+        _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
 
-        [Test]
-        public async Task ReturnCorrectTestAgents_When_ManyTestAgentExistsWithProvidedTag()
-        {
-            // Arrange
-            var testAgents = TestAgentFactory.CreateMany(_agentTag, Model.TestAgentStatus.Active);
-            _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(testAgents));
+        // Act
+        var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
 
-            // Act
-            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
+        // Assert
+        Assert.That(actualTestAgents, Is.EquivalentTo(testAgents.ToList()));
+    }
 
-            // Assert
-            Assert.That(actualTestAgents, Is.EquivalentTo(testAgents.ToList()));
-        }
+    [Test]
+    public async Task ReturnCorrectTestAgents_When_ManyTestAgentExistsWithProvidedTag_AndTestAgentsWithDifferentTagsExists()
+    {
+        // Arrange
+        var currentTagTestAgents = TestAgentFactory.CreateMany(_agentTag, Model.TestAgentStatus.Active);
+        var differentTagsTestAgents = TestAgentFactory.CreateMany(Model.TestAgentStatus.Active);
+        _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(currentTagTestAgents.Union(differentTagsTestAgents)));
 
-        [Test]
-        public async Task ReturnCorrectTestAgents_When_ManyTestAgentExistsWithProvidedTag_AndTestAgentsWithDifferentTagsExists()
-        {
-            // Arrange
-            var currentTagTestAgents = TestAgentFactory.CreateMany(_agentTag, Model.TestAgentStatus.Active);
-            var differentTagsTestAgents = TestAgentFactory.CreateMany(Model.TestAgentStatus.Active);
-            _testAgentRepositoryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(currentTagTestAgents.Union(differentTagsTestAgents)));
+        // Act
+        var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
 
-            // Act
-            var actualTestAgents = await _testAgentsService.GetAllActiveTestAgentsByTagAsync(_agentTag).ConfigureAwait(false);
-
-            // Assert
-            Assert.That(actualTestAgents, Is.EquivalentTo(currentTagTestAgents.ToList()));
-        }
+        // Assert
+        Assert.That(actualTestAgents, Is.EquivalentTo(currentTagTestAgents.ToList()));
     }
 }

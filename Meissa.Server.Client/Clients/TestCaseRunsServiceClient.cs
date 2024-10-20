@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestCaseRunsServiceClient.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -20,55 +20,54 @@ using Meissa.Core.Contracts;
 using Meissa.Core.Model;
 using Newtonsoft.Json;
 
-namespace Meissa.Server.Client.Clients
+namespace Meissa.Server.Client.Clients;
+
+public class TestCaseRunsServiceClient : ITestCaseRunsServiceClient
 {
-    public class TestCaseRunsServiceClient : ITestCaseRunsServiceClient
+    private const string AppJson = "application/json";
+    private readonly string _baseUrl;
+    private readonly string _controllerUrlPart;
+    private string _controllerUrl => $"api/{_controllerUrlPart}";
+
+    public TestCaseRunsServiceClient(string ip, int port)
     {
-        private const string AppJson = "application/json";
-        private readonly string _baseUrl;
-        private readonly string _controllerUrlPart;
-        private string _controllerUrl => $"api/{_controllerUrlPart}";
+        _baseUrl = $"http://{ip}:{port}/";
+        _controllerUrlPart = "testcaseruns";
+    }
 
-        public TestCaseRunsServiceClient(string ip, int port)
+    public async Task UpdateTestCaseExecutionHistoryAsync(List<TestCaseRun> testCaseRuns)
+    {
+        if (HttpClientService.Client.BaseAddress == null)
         {
-            _baseUrl = $"http://{ip}:{port}/";
-            _controllerUrlPart = "testcaseruns";
+            HttpClientService.Client.BaseAddress = new Uri(_baseUrl);
         }
 
-        public async Task UpdateTestCaseExecutionHistoryAsync(List<TestCaseRun> testCaseRuns)
+        string jsonToBeUpdated = JsonConvert.SerializeObject(testCaseRuns);
+        var httpContent = new StringContent(jsonToBeUpdated, Encoding.UTF8, AppJson);
+
+        await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
         {
-            if (HttpClientService.Client.BaseAddress == null)
-            {
-                HttpClientService.Client.BaseAddress = new Uri(_baseUrl);
-            }
+            Method = HttpMethod.Put,
+            RequestUri = new Uri($"{_baseUrl}{_controllerUrl}"),
+            Content = httpContent,
+        },
+        1,
+        0).ConfigureAwait(false);
+    }
 
-            string jsonToBeUpdated = JsonConvert.SerializeObject(testCaseRuns);
-            var httpContent = new StringContent(jsonToBeUpdated, Encoding.UTF8, AppJson);
-
-            await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-            {
-                Method = HttpMethod.Put,
-                RequestUri = new Uri($"{_baseUrl}{_controllerUrl}"),
-                Content = httpContent,
-            },
-            1,
-            0).ConfigureAwait(false);
+    public async Task DeleteOlderTestCasesHistoryAsync()
+    {
+        if (HttpClientService.Client.BaseAddress == null)
+        {
+            HttpClientService.Client.BaseAddress = new Uri(_baseUrl);
         }
 
-        public async Task DeleteOlderTestCasesHistoryAsync()
+        await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
         {
-            if (HttpClientService.Client.BaseAddress == null)
-            {
-                HttpClientService.Client.BaseAddress = new Uri(_baseUrl);
-            }
-
-            await HttpClientService.Client.SendAsyncWithRetry(() => new HttpRequestMessage
-            {
-                Method = HttpMethod.Delete,
-                RequestUri = new Uri($"{_baseUrl}{_controllerUrl}"),
-            },
-            1,
-            0).ConfigureAwait(false);
-        }
+            Method = HttpMethod.Delete,
+            RequestUri = new Uri($"{_baseUrl}{_controllerUrl}"),
+        },
+        1,
+        0).ConfigureAwait(false);
     }
 }

@@ -1,5 +1,5 @@
 ﻿// <copyright file="IConsoleArgumentsProvider.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,22 +11,21 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
-namespace Meissa.Core.Contracts
+namespace Meissa.Core.Contracts;
+
+public interface IConsoleArgumentsProvider
 {
-    public interface IConsoleArgumentsProvider
-    {
-        string GetTestResultsPath(string[] arguments);
+    string GetTestResultsPath(string[] arguments);
 
-        string GetTestAssemblyPath(string[] arguments);
+    string GetTestAssemblyPath(string[] arguments);
 
-        string GetTestCategories(string[] arguments);
+    string GetTestCategories(string[] arguments);
 
-        string GetOriginalOutputFilesLocation(string[] arguments);
+    string GetOriginalOutputFilesLocation(string[] arguments);
 
-        string GetSharedOutputFilesLocation(string[] arguments);
+    string GetSharedOutputFilesLocation(string[] arguments);
 
-        string GetResultsOutputLocation(string[] arguments);
+    string GetResultsOutputLocation(string[] arguments);
 
-        string GetAgentTagName(string[] arguments);
-    }
+    string GetAgentTagName(string[] arguments);
 }

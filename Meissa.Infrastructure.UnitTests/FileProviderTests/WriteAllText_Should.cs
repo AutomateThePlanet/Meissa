@@ -1,5 +1,5 @@
 ﻿// <copyright file="WriteAllText_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,26 +15,25 @@ using System;
 using System.IO;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.FileProviderTests
+namespace Meissa.Infrastructure.UnitTests.FileProviderTests;
+
+[TestFixture]
+public class WriteAllText_Should
 {
-    [TestFixture]
-    public class WriteAllText_Should
+    [Test]
+    public void TextSuccessfullyWritten()
     {
-        [Test]
-        public void TextSuccessfullyWritten()
-        {
-            // Arrange
-            string path = Path.GetTempFileName();
-            string contents = Guid.NewGuid().ToString();
+        // Arrange
+        string path = Path.GetTempFileName();
+        string contents = Guid.NewGuid().ToString();
 
-            // Act
-            var directoryProvider = new FileProvider();
-            directoryProvider.WriteAllText(path, contents);
+        // Act
+        var directoryProvider = new FileProvider();
+        directoryProvider.WriteAllText(path, contents);
 
-            string actualText = File.ReadAllText(path);
+        string actualText = File.ReadAllText(path);
 
-            // Assert
-            Assert.That(actualText, Is.EqualTo(contents));
-        }
+        // Assert
+        Assert.That(actualText, Is.EqualTo(contents));
     }
 }

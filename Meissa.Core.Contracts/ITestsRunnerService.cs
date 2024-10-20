@@ -1,5 +1,5 @@
 ﻿// <copyright file="ITestsRunnerService.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,11 +15,10 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Meissa.Core.Contracts
+namespace Meissa.Core.Contracts;
+
+public interface ITestsRunnerService
 {
-    public interface ITestsRunnerService
-    {
-        Task<string> ExecuteTestsAsync(string testTechnology, string distributedTestsList, string workingDir, Guid testRunId, string testsLibraryPath, string assemblyName, bool runInParallel, string nativeArguments, int testAgentRunTimeout, bool isTimeBasedBalance, bool sameMachineByClass, CancellationTokenSource cancellationTokenSource);
-        Task<string> ExecuteTestsWithRetryAsync(string testTechnology, string originalRunTestResults, string distributedTestsList, string workingDir, Guid testRunId, string testsLibraryPath, string assemblyName, bool runInParallel, string nativeArguments, int testAgentRunTimeout, int retriesCount, double threshold, bool isTimeBasedBalance, bool sameMachineByClass, CancellationTokenSource cancellationTokenSource);
-    }
+    Task<string> ExecuteTestsAsync(string testTechnology, string distributedTestsList, string workingDir, Guid testRunId, string testsLibraryPath, string assemblyName, bool runInParallel, string nativeArguments, int testAgentRunTimeout, bool isTimeBasedBalance, bool sameMachineByClass, CancellationTokenSource cancellationTokenSource);
+    Task<string> ExecuteTestsWithRetryAsync(string testTechnology, string originalRunTestResults, string distributedTestsList, string workingDir, Guid testRunId, string testsLibraryPath, string assemblyName, bool runInParallel, string nativeArguments, int testAgentRunTimeout, int retriesCount, double threshold, bool isTimeBasedBalance, bool sameMachineByClass, CancellationTokenSource cancellationTokenSource);
 }

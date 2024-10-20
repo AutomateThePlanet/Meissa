@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestAgentRun.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,25 +15,24 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Meissa.Model
+namespace Meissa.Model;
+
+public class TestAgentRun
 {
-    public class TestAgentRun
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int TestAgentRunId { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int TestAgentRunId { get; set; }
 
-        public Guid TestRunId { get; set; }
+    public Guid TestRunId { get; set; }
 
-        [Required]
-        public string TestList { get; set; }
+    [Required]
+    public string TestList { get; set; }
 
-        public TestAgentRunStatus Status { get; set; }
+    public TestAgentRunStatus Status { get; set; }
 
-        public string TestAgentOriginalRunResults { get; set; }
+    public string TestAgentOriginalRunResults { get; set; }
 
-        public string TestAgentRetriedRunResults { get; set; }
+    public string TestAgentRetriedRunResults { get; set; }
 
-        public int TestAgentId { get; set; }
-    }
+    public int TestAgentId { get; set; }
 }

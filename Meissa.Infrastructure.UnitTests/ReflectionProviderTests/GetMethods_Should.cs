@@ -1,5 +1,5 @@
 ﻿// <copyright file="GetMethods_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,23 +14,22 @@
 using System.Linq;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.ReflectionProviderTests
+namespace Meissa.Infrastructure.UnitTests.ReflectionProviderTests;
+
+[TestFixture]
+public class GetMethods_Should
 {
-    [TestFixture]
-    public class GetMethods_Should
+    [Test]
+    public void CorrectMethodsReturned()
     {
-        [Test]
-        public void CorrectMethodsReturned()
-        {
-            // Arrange
-            var expectedMethods = GetType().GetMethods();
+        // Arrange
+        var expectedMethods = GetType().GetMethods();
 
-            // Act
-            var reflectionProvider = new ReflectionProvider();
-            var actualMethod = reflectionProvider.GetMethods(GetType());
+        // Act
+        var reflectionProvider = new ReflectionProvider();
+        var actualMethod = reflectionProvider.GetMethods(GetType());
 
-            // Assert
-            Assert.That(actualMethod.FirstOrDefault()?.Name, Is.EqualTo(expectedMethods.FirstOrDefault()?.Name));
-        }
+        // Assert
+        Assert.That(actualMethod.FirstOrDefault()?.Name, Is.EqualTo(expectedMethods.FirstOrDefault()?.Name));
     }
 }

@@ -37,6 +37,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnitReportMerge.Spike", "N
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{82BC3A1E-0C7F-4F7D-8730-E89CFE22A034}"
 	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		LICENSE.md = LICENSE.md
+		LICENSE.txt = LICENSE.txt
 		SharedAssemblyInfo.targets = SharedAssemblyInfo.targets
 		StyleCopeRules.ruleset = StyleCopeRules.ruleset
 	EndProjectSection

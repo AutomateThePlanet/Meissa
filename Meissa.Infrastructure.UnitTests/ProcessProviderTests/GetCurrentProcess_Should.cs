@@ -1,5 +1,5 @@
 ﻿// <copyright file="GetCurrentProcess_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,23 +14,22 @@
 using System.Diagnostics;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.ProcessProviderTests
+namespace Meissa.Infrastructure.UnitTests.ProcessProviderTests;
+
+[TestFixture]
+public class GetCurrentProcess_Should
 {
-    [TestFixture]
-    public class GetCurrentProcess_Should
+    [Test]
+    public void ReturnsCorrectProcess()
     {
-        [Test]
-        public void ReturnsCorrectProcess()
-        {
-            // Arrange
-            var processProvider = new ProcessProvider();
+        // Arrange
+        var processProvider = new ProcessProvider();
 
-            // Act
-            var actualProcess = processProvider.GetCurrentProcess();
-            var expectedProcess = Process.GetCurrentProcess();
+        // Act
+        var actualProcess = processProvider.GetCurrentProcess();
+        var expectedProcess = Process.GetCurrentProcess();
 
-            // Assert
-            Assert.That(actualProcess.ProcessName, Is.EqualTo(expectedProcess.ProcessName));
-        }
+        // Assert
+        Assert.That(actualProcess.ProcessName, Is.EqualTo(expectedProcess.ProcessName));
     }
 }

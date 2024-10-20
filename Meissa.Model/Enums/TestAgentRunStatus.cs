@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestAgentRunStatus.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,13 +11,12 @@
 // </copyright>
 // <author>Anton Angelov</author>
 // <site>https://bellatrix.solutions/</site>
-namespace Meissa.Model
+namespace Meissa.Model;
+
+public enum TestAgentRunStatus : byte
 {
-    public enum TestAgentRunStatus : byte
-    {
-        New = 0,
-        InProgress = 1,
-        Completed = 2,
-        Aborted = 3,
-    }
+    New = 0,
+    InProgress = 1,
+    Completed = 2,
+    Aborted = 3,
 }

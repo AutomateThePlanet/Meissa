@@ -1,5 +1,5 @@
 ﻿// <copyright file="GetCustomAttributesByType_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,34 +15,33 @@ using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.ReflectionProviderTests
+namespace Meissa.Infrastructure.UnitTests.ReflectionProviderTests;
+
+[TestFixture]
+public class GetCustomAttributesByType_Should
 {
-    [TestFixture]
-    public class GetCustomAttributesByType_Should
+    [Test]
+    public void OneAttributeReturned_When_OneAttributeExists()
     {
-        [Test]
-        public void OneAttributeReturned_When_OneAttributeExists()
-        {
-            // Act
-            var reflectionProvider = new ReflectionProvider();
-            var actualAttributes = reflectionProvider.GetCustomAttributes(GetType());
+        // Act
+        var reflectionProvider = new ReflectionProvider();
+        var actualAttributes = reflectionProvider.GetCustomAttributes(GetType());
 
-            // Assert
-            Assert.That(actualAttributes.ToList().Count, Is.EqualTo(1));
-        }
+        // Assert
+        Assert.That(actualAttributes.ToList().Count, Is.EqualTo(1));
+    }
 
-        [Test]
-        public void CorrectAttributeReturned_When_OneAttributeExists()
-        {
-            // Arrange
-            var expectedAttributes = GetType().GetCustomAttributes();
+    [Test]
+    public void CorrectAttributeReturned_When_OneAttributeExists()
+    {
+        // Arrange
+        var expectedAttributes = GetType().GetCustomAttributes();
 
-            // Act
-            var reflectionProvider = new ReflectionProvider();
-            var actualAttributes = reflectionProvider.GetCustomAttributes(GetType());
+        // Act
+        var reflectionProvider = new ReflectionProvider();
+        var actualAttributes = reflectionProvider.GetCustomAttributes(GetType());
 
-            // Assert
-            Assert.That(actualAttributes.First().GetType().Name, Is.EqualTo(expectedAttributes.First().GetType().Name));
-        }
+        // Assert
+        Assert.That(actualAttributes.First().GetType().Name, Is.EqualTo(expectedAttributes.First().GetType().Name));
     }
 }

@@ -1,5 +1,5 @@
 ﻿// <copyright file="ITestRunProvider.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -16,23 +16,22 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Meissa.Core.Model;
 
-namespace Meissa.Core.Contracts
-{
-    public interface ITestRunProvider
-    {
-        Task CompleteTestRunAsync(Guid testRunId, TestRunStatus testRunStatus);
+namespace Meissa.Core.Contracts;
 
-        Task<Guid> CreateNewTestRunAsync(
-            string testAssemblyName,
-            byte[] outputFilesZip,
-            int retriesCount,
-            double threshold,
-            bool runInParallel,
-            int maxParallelProcessesCount,
-            string nativeArguments,
-            string testTechnology,
-            bool isTimeBasedBalance,
-            bool sameMachineByClass,
-            IEnumerable<string> customArgumentsPairs = null);
-    }
+public interface ITestRunProvider
+{
+    Task CompleteTestRunAsync(Guid testRunId, TestRunStatus testRunStatus);
+
+    Task<Guid> CreateNewTestRunAsync(
+        string testAssemblyName,
+        byte[] outputFilesZip,
+        int retriesCount,
+        double threshold,
+        bool runInParallel,
+        int maxParallelProcessesCount,
+        string nativeArguments,
+        string testTechnology,
+        bool isTimeBasedBalance,
+        bool sameMachineByClass,
+        IEnumerable<string> customArgumentsPairs = null);
 }

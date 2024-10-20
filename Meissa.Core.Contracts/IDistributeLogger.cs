@@ -1,5 +1,5 @@
 ﻿// <copyright file="IDistributeLogger.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,14 +14,13 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Meissa.Core.Contracts
+namespace Meissa.Core.Contracts;
+
+public interface IDistributeLogger
 {
-    public interface IDistributeLogger
-    {
-        Task ExecuteWithLoggingAsync(Action action, string exceptionMessage = null, bool shouldRethrowException = true);
+    Task ExecuteWithLoggingAsync(Action action, string exceptionMessage = null, bool shouldRethrowException = true);
 
-        Task LogErrorAsync(string message, Exception ex);
+    Task LogErrorAsync(string message, Exception ex);
 
-        Task LogInfoAsync(string message);
-    }
+    Task LogInfoAsync(string message);
 }

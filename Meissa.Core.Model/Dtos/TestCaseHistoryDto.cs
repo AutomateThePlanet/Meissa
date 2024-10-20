@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestCaseHistoryDto.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,22 +14,21 @@
 using System;
 using System.Collections.Generic;
 
-namespace Meissa.Model
+namespace Meissa.Model;
+
+public class TestCaseHistoryDto
 {
-    public class TestCaseHistoryDto
+    public TestCaseHistoryDto()
     {
-        public TestCaseHistoryDto()
-        {
-            Durations = new List<TimeSpan>();
-        }
-
-        public int TestCaseHistoryId { get; set; }
-        public List<TimeSpan> Durations { get; set; }
-
-        public string FullName { get; set; }
-
-        public TimeSpan AvgDuration { get; set; }
-
-        public DateTime LastUpdatedTime { get; set; }
+        Durations = new List<TimeSpan>();
     }
+
+    public int TestCaseHistoryId { get; set; }
+    public List<TimeSpan> Durations { get; set; }
+
+    public string FullName { get; set; }
+
+    public TimeSpan AvgDuration { get; set; }
+
+    public DateTime LastUpdatedTime { get; set; }
 }

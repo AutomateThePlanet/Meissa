@@ -1,5 +1,5 @@
 ﻿// <copyright file="DeleteModeOptions.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,12 +13,11 @@
 // <site>https://bellatrix.solutions/</site>
 using CommandLine;
 
-namespace Meissa
+namespace Meissa;
+
+[Verb("delete", HelpText = "Deletes all test agents' logs.")]
+public class DeleteModeOptions
 {
-    [Verb("delete", HelpText = "Deletes all test agents' logs.")]
-    public class DeleteModeOptions
-    {
-        [Option('u', "server", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
-        public string ServerUrl { get; set; }
-    }
+    [Option('u', "server", HelpText = "The test server URL with port that will be used by the test agents and runners to communicate between the machines.")]
+    public string ServerUrl { get; set; }
 }

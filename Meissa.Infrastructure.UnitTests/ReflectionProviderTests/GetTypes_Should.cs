@@ -1,5 +1,5 @@
 ﻿// <copyright file="GetTypes_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,23 +14,22 @@
 using System.Reflection;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.ReflectionProviderTests
+namespace Meissa.Infrastructure.UnitTests.ReflectionProviderTests;
+
+[TestFixture]
+public class GetTypes_Should
 {
-    [TestFixture]
-    public class GetTypes_Should
+    [Test]
+    public void CorrectTypesReturned()
     {
-        [Test]
-        public void CorrectTypesReturned()
-        {
-            // Arrange
-            var expectedAssemblyTypes = Assembly.GetExecutingAssembly().GetTypes();
+        // Arrange
+        var expectedAssemblyTypes = Assembly.GetExecutingAssembly().GetTypes();
 
-            // Act
-            var reflectionProvider = new ReflectionProvider();
-            var actualAssemblyTypes = reflectionProvider.GetTypes(Assembly.GetExecutingAssembly());
+        // Act
+        var reflectionProvider = new ReflectionProvider();
+        var actualAssemblyTypes = reflectionProvider.GetTypes(Assembly.GetExecutingAssembly());
 
-            // Assert
-            Assert.That(actualAssemblyTypes, Is.EquivalentTo(expectedAssemblyTypes));
-        }
+        // Assert
+        Assert.That(actualAssemblyTypes, Is.EquivalentTo(expectedAssemblyTypes));
     }
 }

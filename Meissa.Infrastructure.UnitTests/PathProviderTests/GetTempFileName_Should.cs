@@ -1,5 +1,5 @@
 ﻿// <copyright file="GetTempFileName_Should.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,31 +14,30 @@
 using System.IO;
 using NUnit.Framework;
 
-namespace Meissa.Infrastructure.UnitTests.PathProviderTests
+namespace Meissa.Infrastructure.UnitTests.PathProviderTests;
+
+[TestFixture]
+public class GetTempFileName_Should
 {
-    [TestFixture]
-    public class GetTempFileName_Should
+    [Test]
+    public void ReturnUniqueFilePath()
     {
-        [Test]
-        public void ReturnUniqueFilePath()
-        {
-            // Act
-            var pathProvider = new PathProvider();
-            string actualFileName = pathProvider.GetTempFileName();
+        // Act
+        var pathProvider = new PathProvider();
+        string actualFileName = pathProvider.GetTempFileName();
 
-            // Assert
-            Assert.That(File.Exists(actualFileName), Is.True);
-        }
+        // Assert
+        Assert.That(File.Exists(actualFileName), Is.True);
+    }
 
-        [Test]
-        public void ReturnEmptyFile()
-        {
-            // Act
-            var pathProvider = new PathProvider();
-            string actualFileName = pathProvider.GetTempFileName();
+    [Test]
+    public void ReturnEmptyFile()
+    {
+        // Act
+        var pathProvider = new PathProvider();
+        string actualFileName = pathProvider.GetTempFileName();
 
-            // Assert
-            Assert.That(File.ReadAllText(actualFileName), Is.EqualTo(string.Empty));
-        }
+        // Assert
+        Assert.That(File.ReadAllText(actualFileName), Is.EqualTo(string.Empty));
     }
 }

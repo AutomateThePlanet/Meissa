@@ -1,5 +1,5 @@
 ﻿// <copyright file="FileFactory.cs" company="Automate The Planet Ltd.">
-// Copyright 2018 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,39 +14,38 @@
 using System;
 using System.IO;
 
-namespace Meissa.Infrastructure.UnitTests.Factories
+namespace Meissa.Infrastructure.UnitTests.Factories;
+
+public static class FileFactory
 {
-    public static class FileFactory
+    public static string CreateTestFile(string textToWrite = null, string extension = "")
     {
-        public static string CreateTestFile(string textToWrite = null, string extension = "")
-        {
-            var destinationFolder = DirectoryFactory.CreateTestDirectory();
-            var destinationFile = CreateTestFile(destinationFolder, textToWrite, extension);
+        var destinationFolder = DirectoryFactory.CreateTestDirectory();
+        var destinationFile = CreateTestFile(destinationFolder, textToWrite, extension);
 
-            return destinationFile;
+        return destinationFile;
+    }
+
+    public static string CreateTestFile(string destinationFolder, string textToWrite = null, string extension = "")
+    {
+        var actualExtension = string.Empty;
+        if (!string.IsNullOrEmpty(extension))
+        {
+            actualExtension = string.Concat(".", extension);
         }
 
-        public static string CreateTestFile(string destinationFolder, string textToWrite = null, string extension = "")
+        var destinationFile = Path.Combine(destinationFolder, string.Concat(Guid.NewGuid().ToString(), actualExtension));
+
+        using (var writer = new StreamWriter(destinationFile))
         {
-            var actualExtension = string.Empty;
-            if (!string.IsNullOrEmpty(extension))
+            if (string.IsNullOrEmpty(textToWrite))
             {
-                actualExtension = string.Concat(".", extension);
+                textToWrite = Guid.NewGuid().ToString();
             }
 
-            var destinationFile = Path.Combine(destinationFolder, string.Concat(Guid.NewGuid().ToString(), actualExtension));
-
-            using (var writer = new StreamWriter(destinationFile))
-            {
-                if (string.IsNullOrEmpty(textToWrite))
-                {
-                    textToWrite = Guid.NewGuid().ToString();
-                }
-
-                writer.Write(textToWrite);
-            }
-
-            return destinationFile;
+            writer.Write(textToWrite);
         }
+
+        return destinationFile;
     }
 }

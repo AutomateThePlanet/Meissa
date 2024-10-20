@@ -1,5 +1,5 @@
 ﻿// <copyright file="TestRunCustomArgumentServiceClient.cs" company="Automate The Planet Ltd.">
-// Copyright 2020 Automate The Planet Ltd.
+// Copyright 2024 Automate The Planet Ltd.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,13 +13,12 @@
 // <site>https://bellatrix.solutions/</site>
 using Meissa.Server.Models;
 
-namespace Meissa.Server.Client.Clients
+namespace Meissa.Server.Client.Clients;
+
+public class TestRunCustomArgumentServiceClient : RestClientRepository<TestRunCustomArgumentDto>
 {
-    public class TestRunCustomArgumentServiceClient : RestClientRepository<TestRunCustomArgumentDto>
+    public TestRunCustomArgumentServiceClient(string ip, int port)
+        : base(ip, port, "testruncustomarguments")
     {
-        public TestRunCustomArgumentServiceClient(string ip, int port)
-            : base(ip, port, "testruncustomarguments")
-        {
-        }
     }
 }
